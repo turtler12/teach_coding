@@ -557,38 +557,12 @@ class TrustAIApp {
     updateCodeDisplay() {
         const code = this.generateCode();
         if (!code.trim()) {
-            this.codeDisplay.innerHTML = '<span class="code-comment"># Your code will appear here</span>';
+            this.codeDisplay.textContent = '# Your code will appear here';
             return;
         }
 
-        // Syntax highlighting for display only
-        const highlighted = this.highlightSyntax(code);
-        this.codeDisplay.innerHTML = highlighted;
-    }
-
-    highlightSyntax(code) {
-        const lines = code.split('\n');
-        return lines.map((line, index) => {
-            // Escape HTML first to prevent XSS
-            let escaped = line
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
-
-            let highlighted = escaped
-                // Keywords
-                .replace(/\b(if|else|elif|for|while|in|range|def|return|class|import|from|as|try|except|finally|with|and|or|not|True|False|None|pass|break|continue)\b/g,
-                    '<span class="code-keyword">$1</span>')
-                // Strings
-                .replace(/(&quot;[^&]*&quot;|"[^"]*"|'[^']*')/g, '<span class="code-string">$1</span>')
-                // Numbers
-                .replace(/\b(\d+\.?\d*)\b/g, '<span class="code-number">$1</span>')
-                // Functions
-                .replace(/\b(print|input|int|str|float|len|range|append)\b(?=\()/g,
-                    '<span class="code-function">$1</span>');
-
-            return `<span class="code-line" data-line="${index + 1}">${highlighted}</span>`;
-        }).join('\n');
+        // Display plain code without HTML formatting
+        this.codeDisplay.textContent = code;
     }
 
     // Buttons
