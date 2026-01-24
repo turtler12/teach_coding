@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAI Coding Exercises</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #fff;
+        }
+
+        h1 {
+            text-align: center;
+            color: #38bdf8;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .exercise {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border-left: 4px solid #6366f1;
+            page-break-inside: avoid;
+        }
+
+        .exercise-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .exercise-number {
+            background: #6366f1;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .exercise-title {
+            font-size: 1.4em;
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+
+        .goal {
+            background: #e8f4f8;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-style: italic;
+            color: #0369a1;
+        }
+
+        .instructions {
+            margin-bottom: 16px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .expected-output {
+            background: #1a1a2e;
+            color: #10b981;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-line;
+        }
+
+        .expected-label {
+            color: #888;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .challenge {
+            background: #fef3c7;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-top: 12px;
+            color: #92400e;
+        }
+
+        .challenge strong {
+            color: #b45309;
+        }
+
+        .tips-section {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-top: 40px;
+        }
+
+        .tips-section h2 {
+            margin-bottom: 16px;
+        }
+
+        .tips-section ul {
+            margin-left: 20px;
+        }
+
+        .tips-section li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #6366f1;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: auto;
+        }
+
+        .difficulty.beginner { background: #d1fae5; color: #065f46; }
+        .difficulty.easy { background: #dbeafe; color: #1e40af; }
+        .difficulty.medium { background: #fef3c7; color: #92400e; }
+        .difficulty.hard { background: #fee2e2; color: #991b1b; }
+
+        @media print {
+            body { padding: 20px; }
+            .exercise { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <h1>TrustAI Coding Exercises</h1>
+    <p class="subtitle">10 exercises to master block-based programming</p>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">1</span>
+            <span class="exercise-title">Hello World</span>
+            <span class="difficulty beginner">Beginner</span>
+        </div>
+        <div class="goal">Goal: Get familiar with adding blocks and running code.</div>
+        <div class="instructions">
+            <p>Add a <strong>Print</strong> block and make it display "Hello, World!"</p>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+Hello, World!
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">2</span>
+            <span class="exercise-title">Create and Print a Variable</span>
+            <span class="difficulty beginner">Beginner</span>
+        </div>
+        <div class="goal">Goal: Learn how variables store values.</div>
+        <div class="instructions">
+            <ol>
+                <li>Add a <strong>Create variable</strong> block and set <code>name</code> to <code>age</code> and <code>value</code> to <code>12</code></li>
+                <li>Add a <strong>Print variable</strong> block to display <code>age</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+12
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">3</span>
+            <span class="exercise-title">Simple Math</span>
+            <span class="difficulty beginner">Beginner</span>
+        </div>
+        <div class="goal">Goal: Practice changing variable values.</div>
+        <div class="instructions">
+            <ol>
+                <li>Create a variable called <code>score</code> with value <code>10</code></li>
+                <li>Use <strong>Change by</strong> to add <code>5</code> to <code>score</code></li>
+                <li>Print <code>score</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+15
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">4</span>
+            <span class="exercise-title">Repeat a Message</span>
+            <span class="difficulty easy">Easy</span>
+        </div>
+        <div class="goal">Goal: Introduction to loops.</div>
+        <div class="instructions">
+            <p>Use a <strong>Repeat times</strong> block to print "I love coding!" exactly 3 times.</p>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+I love coding!
+I love coding!
+I love coding!
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">5</span>
+            <span class="exercise-title">Counting Up</span>
+            <span class="difficulty easy">Easy</span>
+        </div>
+        <div class="goal">Goal: Combine loops with variables.</div>
+        <div class="instructions">
+            <ol>
+                <li>Create a variable <code>count</code> with value <code>0</code></li>
+                <li>Use a <strong>Repeat times</strong> block (5 times)</li>
+                <li>Inside the loop: <strong>Change by</strong> <code>1</code> to <code>count</code>, then <strong>Print variable</strong> <code>count</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+1
+2
+3
+4
+5
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">6</span>
+            <span class="exercise-title">Making Decisions</span>
+            <span class="difficulty medium">Medium</span>
+        </div>
+        <div class="goal">Goal: Introduction to if statements.</div>
+        <div class="instructions">
+            <ol>
+                <li>Create a variable <code>temperature</code> with value <code>35</code></li>
+                <li>Add an <strong>If</strong> block with condition <code>temperature > 30</code></li>
+                <li>Inside the if: Print <code>"It's hot outside!"</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+It's hot outside!
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">7</span>
+            <span class="exercise-title">If-Else Choices</span>
+            <span class="difficulty medium">Medium</span>
+        </div>
+        <div class="goal">Goal: Learn branching with if-else.</div>
+        <div class="instructions">
+            <ol>
+                <li>Create a variable <code>grade</code> with value <code>85</code></li>
+                <li>Add an <strong>If-Else</strong> block with condition <code>grade >= 70</code></li>
+                <li>In the if section: Print <code>"You passed!"</code></li>
+                <li>In the else section: Print <code>"Keep trying!"</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+You passed!
+        </div>
+        <div class="challenge">
+            <strong>Challenge:</strong> Change <code>grade</code> to <code>50</code> and run again. What happens?
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">8</span>
+            <span class="exercise-title">Multiplication Table</span>
+            <span class="difficulty medium">Medium</span>
+        </div>
+        <div class="goal">Goal: Combine loops and math operations.</div>
+        <div class="instructions">
+            <p>Create a program that prints the 5 times table (5 x 1 through 5 x 5):</p>
+            <ol>
+                <li>Create variable <code>result</code> with value <code>0</code></li>
+                <li>Create variable <code>multiplier</code> with value <code>0</code></li>
+                <li>Use <strong>Repeat times</strong> (5 times)</li>
+                <li>Inside: Change <code>multiplier</code> by <code>1</code>, set <code>result</code> to <code>multiplier * 5</code> using <strong>Set variable</strong>, then print <code>result</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+5
+10
+15
+20
+25
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">9</span>
+            <span class="exercise-title">Sum of Numbers</span>
+            <span class="difficulty hard">Hard</span>
+        </div>
+        <div class="goal">Goal: Use loops to accumulate a total.</div>
+        <div class="instructions">
+            <p>Calculate the sum of numbers from 1 to 10:</p>
+            <ol>
+                <li>Create <code>total</code> with value <code>0</code></li>
+                <li>Create <code>number</code> with value <code>0</code></li>
+                <li><strong>Repeat times</strong> 10 times:</li>
+                <li style="margin-left: 20px;">Change <code>number</code> by <code>1</code></li>
+                <li style="margin-left: 20px;">Change <code>total</code> by the current value of <code>number</code></li>
+                <li>After the loop, print <code>total</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+55
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">10</span>
+            <span class="exercise-title">FizzBuzz (Simplified)</span>
+            <span class="difficulty hard">Hard</span>
+        </div>
+        <div class="goal">Goal: Combine loops with multiple conditions.</div>
+        <div class="instructions">
+            <p>Print numbers 1-10, but:</p>
+            <ul>
+                <li>If the number equals 5, print "FIVE!" instead</li>
+                <li>If the number equals 10, print "TEN!" instead</li>
+            </ul>
+            <ol>
+                <li>Create <code>num</code> with value <code>0</code></li>
+                <li><strong>Repeat times</strong> 10 times:</li>
+                <li style="margin-left: 20px;">Change <code>num</code> by <code>1</code></li>
+                <li style="margin-left: 20px;">Use <strong>If-Else</strong> with condition <code>num == 5</code></li>
+                <li style="margin-left: 40px;">If true: Print <code>"FIVE!"</code></li>
+                <li style="margin-left: 40px;">Else: Use another <strong>If-Else</strong> with condition <code>num == 10</code></li>
+                <li style="margin-left: 60px;">If true: Print <code>"TEN!"</code></li>
+                <li style="margin-left: 60px;">Else: Print variable <code>num</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+1
+2
+3
+4
+FIVE!
+6
+7
+8
+9
+TEN!
+        </div>
+    </div>
+
+    <div class="tips-section">
+        <h2>Tips for Success</h2>
+        <ul>
+            <li><strong>Click</strong> on a block in the left panel to add it to your workspace</li>
+            <li>To add blocks inside a loop or if statement, <strong>click the indented area first</strong> (you'll see a dashed outline), then click the block you want to add</li>
+            <li>Use the <strong>drag handles (⋮⋮)</strong> to reorder blocks</li>
+            <li>Click <strong>"Run Code"</strong> to see your output</li>
+            <li>Click <strong>"Clear All"</strong> to start fresh</li>
+            <li>Check the <strong>Variables</strong> panel to see current values</li>
+            <li>Don't forget the <strong>quotes</strong> around text: <code>"Hello"</code> not <code>Hello</code></li>
+        </ul>
+    </div>
+
+</body>
+</html>
