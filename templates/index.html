@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAI - Learn to Code</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">&lt;/&gt;</span>
+                <span class="logo-text">TrustAI</span>
+            </div>
+            <nav class="nav-actions">
+                <button class="btn btn-secondary" id="clearBtn">Clear All</button>
+                <button class="btn btn-primary" id="runBtn">
+                    <span class="play-icon">▶</span> Run Code
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Block Palette -->
+            <aside class="block-palette">
+                <h2 class="palette-title">Blocks</h2>
+                <div class="categories">
+                    {% for category_name, category in categories.items() %}
+                    <div class="category" data-category="{{ category_name }}">
+                        <button class="category-header" style="--category-color: {{ category.color }}">
+                            <span class="category-icon">{{ category.icon }}</span>
+                            <span class="category-name">{{ category_name|title }}</span>
+                            <span class="expand-icon">▼</span>
+                        </button>
+                        <div class="category-blocks">
+                            {% for block in category.blocks %}
+                            <div class="block-template"
+                                 draggable="true"
+                                 data-block-id="{{ block.id }}"
+                                 data-template="{{ block.template }}"
+                                 data-inputs='{{ block.inputs|tojson|safe }}'
+                                 data-accepts-children="{{ block.accepts_children|default(false)|tojson }}"
+                                 data-has-else="{{ block.has_else|default(false)|tojson }}"
+                                 data-is-expression="{{ block.is_expression|default(false)|tojson }}"
+                                 style="--block-color: {{ category.color }}">
+                                <span class="block-label">{{ block.label }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </aside>
+
+            <!-- Workspace -->
+            <section class="workspace-container">
+                <div class="workspace-header">
+                    <h2>Workspace</h2>
+                    <span class="hint">Click blocks to add them</span>
+                </div>
+                <div class="workspace" id="workspace">
+                    <div class="drop-hint" id="dropHint">
+                        <div class="drop-hint-icon">+</div>
+                        <div class="drop-hint-text">Click blocks from the left panel to add them here</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Code & Output Panel -->
+            <aside class="output-panel">
+                <div class="code-section">
+                    <div class="section-header">
+                        <h3>Generated Code</h3>
+                    </div>
+                    <pre class="code-display" id="generatedCode"><span class="code-comment"># Your code will appear here</span></pre>
+                </div>
+                <div class="output-section">
+                    <div class="section-header">
+                        <h3>Output</h3>
+                        <button class="btn-icon" id="clearOutput" title="Clear output">×</button>
+                    </div>
+                    <div class="console-output" id="consoleOutput">
+                        <div class="console-placeholder">Run your code to see output here</div>
+                    </div>
+                </div>
+                <div class="variables-section">
+                    <div class="section-header">
+                        <h3>Variables</h3>
+                    </div>
+                    <div class="variables-display" id="variablesDisplay">
+                        <div class="console-placeholder">Variables will appear here</div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/blocks.js') }}"></script>
+</body>
+</html>
