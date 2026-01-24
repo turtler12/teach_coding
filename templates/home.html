@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrustAI - Learn Technology</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>TrustAI - Interactive Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0f0f13;
-            --bg-secondary: #16161d;
-            --bg-tertiary: #1c1c26;
-            --bg-elevated: #22222e;
-            --border-color: #2a2a3a;
-            --text-primary: #e8e8ed;
-            --text-secondary: #a0a0b0;
-            --text-muted: #6b6b7b;
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --bg-elevated: #3f3f46;
+            --border-color: #27272a;
+            --border-light: #3f3f46;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
             --accent-primary: #6366f1;
             --accent-hover: #818cf8;
             --accent-success: #10b981;
             --accent-warning: #f59e0b;
             --accent-blue: #3b82f6;
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-            --radius-lg: 12px;
-            --radius-xl: 20px;
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --gradient-2: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            --gradient-3: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
         }
 
         * {
@@ -36,18 +37,37 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            overflow-x: hidden;
         }
 
-        /* Header */
-        .header {
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        .nav {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 20px 24px;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
+            justify-content: space-between;
+            padding: 20px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .logo {
@@ -58,66 +78,236 @@
 
         .logo-icon {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--accent-primary);
             background: rgba(99, 102, 241, 0.15);
             padding: 8px 12px;
-            border-radius: 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
         }
 
         .logo-text {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
+            color: white;
             letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
             color: white;
         }
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 24px;
+        .nav-cta {
+            background: var(--gradient-1);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Hero Section */
         .hero {
             text-align: center;
-            max-width: 700px;
-            margin-bottom: 60px;
+            padding: 100px 60px 80px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--accent-primary);
+            margin-bottom: 32px;
+        }
+
+        .hero-badge span {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         .hero h1 {
-            font-size: 3em;
-            font-weight: 700;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #fff 0%, #a0a0b0 100%);
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+        }
+
+        .hero h1 .highlight {
+            background: var(--gradient-1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .hero p {
-            font-size: 1.2em;
+        .hero-subtitle {
+            font-size: 1.25rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto 48px;
+            line-height: 1.7;
         }
 
-        /* Cards Grid */
-        .cards-grid {
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-elevated);
+            border-color: var(--text-muted);
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 64px;
+            padding: 40px 0;
+            margin-top: 60px;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Courses Section */
+        .courses-section {
+            padding: 100px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Course Cards */
+        .courses-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
-            max-width: 1000px;
-            width: 100%;
         }
 
-        .card {
+        .course-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-xl);
+            border-radius: 20px;
             padding: 32px;
             text-decoration: none;
             color: inherit;
@@ -126,137 +316,338 @@
             overflow: hidden;
         }
 
-        .card::before {
+        .course-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: var(--card-color);
+            height: 3px;
+            background: var(--card-gradient);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
-        .card:hover {
+        .course-card:hover {
             transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--card-color);
+            border-color: var(--border-light);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        .card-icon {
-            width: 64px;
-            height: 64px;
+        .course-card:hover::before {
+            opacity: 1;
+        }
+
+        .course-card.coding { --card-gradient: var(--gradient-1); }
+        .course-card.workflow { --card-gradient: var(--gradient-2); }
+        .course-card.git { --card-gradient: var(--gradient-3); }
+
+        .course-icon {
+            width: 56px;
+            height: 56px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 24px;
             background: var(--bg-tertiary);
-            border-radius: var(--radius-lg);
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            margin-bottom: 24px;
         }
 
-        .card h2 {
-            font-size: 1.5em;
+        .course-card.coding .course-icon { background: rgba(99, 102, 241, 0.15); }
+        .course-card.workflow .course-icon { background: rgba(245, 158, 11, 0.15); }
+        .course-card.git .course-icon { background: rgba(16, 185, 129, 0.15); }
+
+        .course-title {
+            font-size: 1.5rem;
+            font-weight: 700;
             margin-bottom: 12px;
-            color: var(--text-primary);
         }
 
-        .card p {
+        .course-description {
             color: var(--text-secondary);
             line-height: 1.6;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
-        .card-tag {
-            display: inline-block;
+        .course-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .course-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             padding: 6px 12px;
             background: var(--bg-tertiary);
-            border-radius: 20px;
-            font-size: 0.85em;
-            color: var(--text-muted);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
-        .card-arrow {
-            position: absolute;
-            bottom: 32px;
-            right: 32px;
-            font-size: 24px;
+        .course-arrow {
+            margin-left: auto;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: 50%;
             color: var(--text-muted);
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
 
-        .card:hover .card-arrow {
-            color: var(--card-color);
+        .course-card:hover .course-arrow {
+            background: var(--accent-primary);
+            color: white;
             transform: translateX(4px);
         }
 
-        /* Card Colors */
-        .card.coding { --card-color: #8b5cf6; }
-        .card.workflow { --card-color: #f59e0b; }
-        .card.git { --card-color: #10b981; }
+        /* Features Section */
+        .features-section {
+            padding: 100px 60px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 24px;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 16px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+        }
+
+        .feature-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
 
         /* Footer */
         .footer {
+            padding: 40px 60px;
             text-align: center;
-            padding: 24px;
             color: var(--text-muted);
-            font-size: 0.9em;
-            border-top: 1px solid var(--border-color);
+            font-size: 14px;
         }
 
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2em;
-            }
-            .cards-grid {
+        .footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .courses-grid {
                 grid-template-columns: 1fr;
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero h1 {
+                font-size: 3rem;
+            }
+            .nav {
+                padding: 20px 24px;
+            }
+            .hero, .courses-section {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-links {
+                display: none;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .stats {
+                flex-direction: column;
+                gap: 24px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-buttons {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">
-            <span class="logo-icon">&lt;/&gt;</span>
-            <span class="logo-text">TrustAI</span>
-        </div>
-    </header>
+    <div class="bg-gradient"></div>
 
-    <main class="main-content">
-        <div class="hero">
-            <h1>Learn Technology the Smart Way</h1>
-            <p>Interactive lessons designed to teach you coding, workflow automation, and version control through hands-on practice.</p>
-        </div>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav">
+            <div class="logo">
+                <span class="logo-icon">&lt;/&gt;</span>
+                <span class="logo-text">TrustAI</span>
+            </div>
+            <div class="nav-links">
+                <a href="/coding" class="nav-link">Block Coding</a>
+                <a href="/workflows" class="nav-link">Workflows</a>
+                <a href="/git" class="nav-link">Git</a>
+            </div>
+            <a href="/coding" class="nav-cta">Start Learning</a>
+        </nav>
 
-        <div class="cards-grid">
-            <a href="/coding" class="card coding">
-                <div class="card-icon">🧩</div>
-                <h2>Block Coding</h2>
-                <p>Learn programming fundamentals with visual blocks. Drag, drop, and see your code come to life instantly.</p>
-                <span class="card-tag">Python Basics</span>
-                <span class="card-arrow">→</span>
-            </a>
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-badge">
+                <span></span>
+                Interactive Learning Platform
+            </div>
+            <h1>Learn to Code<br><span class="highlight">The Visual Way</span></h1>
+            <p class="hero-subtitle">
+                Master programming, workflow automation, and version control through
+                interactive, hands-on exercises designed for visual learners.
+            </p>
+            <div class="hero-buttons">
+                <a href="/coding" class="btn-primary">
+                    Start Learning Free
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="#courses" class="btn-secondary">
+                    View Courses
+                </a>
+            </div>
 
-            <a href="/workflows" class="card workflow">
-                <div class="card-icon">🔀</div>
-                <h2>Workflow Builder</h2>
-                <p>Master problem-solving by breaking complex tasks into nodes and branches. Learn to think like an automation engineer.</p>
-                <span class="card-tag">N8N Style</span>
-                <span class="card-arrow">→</span>
-            </a>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Interactive Courses</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">20+</div>
+                    <div class="stat-label">Hands-on Exercises</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Visual Learning</div>
+                </div>
+            </div>
+        </section>
 
-            <a href="/git" class="card git">
-                <div class="card-icon">📦</div>
-                <h2>Git Essentials</h2>
-                <p>Understand version control with interactive tutorials. Learn commit, push, pull, merge, and more.</p>
-                <span class="card-tag">Version Control</span>
-                <span class="card-arrow">→</span>
-            </a>
-        </div>
-    </main>
+        <!-- Courses -->
+        <section class="courses-section" id="courses">
+            <div class="section-header">
+                <div class="section-label">Courses</div>
+                <h2 class="section-title">Choose Your Path</h2>
+                <p class="section-subtitle">Each course is designed to be interactive and visual, making complex concepts easy to understand.</p>
+            </div>
 
-    <footer class="footer">
-        <p>Built with TrustAI - Empowering the next generation of developers</p>
-    </footer>
+            <div class="courses-grid">
+                <a href="/coding" class="course-card coding">
+                    <div class="course-icon">🧩</div>
+                    <h3 class="course-title">Block Coding</h3>
+                    <p class="course-description">
+                        Learn Python fundamentals through drag-and-drop visual blocks.
+                        Perfect for beginners who want to understand programming logic.
+                    </p>
+                    <div class="course-meta">
+                        <span class="course-tag">🐍 Python</span>
+                        <span class="course-tag">📚 10 Exercises</span>
+                        <span class="course-arrow">→</span>
+                    </div>
+                </a>
+
+                <a href="/workflows" class="course-card workflow">
+                    <div class="course-icon">🔀</div>
+                    <h3 class="course-title">Workflow Builder</h3>
+                    <p class="course-description">
+                        Master problem decomposition by building node-based workflows.
+                        Learn to think like an automation engineer.
+                    </p>
+                    <div class="course-meta">
+                        <span class="course-tag">⚡ N8N Style</span>
+                        <span class="course-tag">🔧 Interactive</span>
+                        <span class="course-arrow">→</span>
+                    </div>
+                </a>
+
+                <a href="/git" class="course-card git">
+                    <div class="course-icon">📦</div>
+                    <h3 class="course-title">Git Visualizer</h3>
+                    <p class="course-description">
+                        Understand Git through interactive visualizations. Create branches,
+                        make commits, and merge with drag-and-drop simplicity.
+                    </p>
+                    <div class="course-meta">
+                        <span class="course-tag">🌿 Branches</span>
+                        <span class="course-tag">🎮 Interactive</span>
+                        <span class="course-arrow">→</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features-section">
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <h4 class="feature-title">Learn by Doing</h4>
+                    <p class="feature-description">Every concept comes with interactive exercises you can try immediately.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">👁️</div>
+                    <h4 class="feature-title">Visual First</h4>
+                    <p class="feature-description">See your code come to life with real-time visual feedback.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🚀</div>
+                    <h4 class="feature-title">No Setup Required</h4>
+                    <p class="feature-description">Start coding instantly in your browser. No installation needed.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📱</div>
+                    <h4 class="feature-title">Works Everywhere</h4>
+                    <p class="feature-description">Learn on any device with a responsive, modern interface.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with TrustAI — Empowering the next generation of developers</p>
+        </footer>
+    </div>
 </body>
 </html>
