@@ -44,8 +44,20 @@ BLOCK_CATEGORIES = {
 }
 
 @app.route('/')
-def index():
+def home():
+    return render_template('home.html')
+
+@app.route('/coding')
+def coding():
     return render_template('index.html', categories=BLOCK_CATEGORIES)
+
+@app.route('/workflows')
+def workflows():
+    return render_template('workflows.html')
+
+@app.route('/git')
+def git():
+    return render_template('git.html')
 
 @app.route('/api/blocks')
 def get_blocks():

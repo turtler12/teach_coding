@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAI - Workflow Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f0f13;
+            --bg-secondary: #16161d;
+            --bg-tertiary: #1c1c26;
+            --bg-elevated: #22222e;
+            --border-color: #2a2a3a;
+            --border-light: #363647;
+            --text-primary: #e8e8ed;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6b6b7b;
+            --accent-primary: #6366f1;
+            --accent-hover: #818cf8;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-error: #ef4444;
+            --accent-blue: #3b82f6;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.15);
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: white;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-warning);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        /* Main Layout */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Node Palette */
+        .node-palette {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .palette-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .node-categories {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .node-category {
+            margin-bottom: 16px;
+        }
+
+        .category-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            padding: 0 8px;
+        }
+
+        .node-template {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            margin-bottom: 6px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .node-template:hover {
+            background: var(--bg-elevated);
+            border-color: var(--border-light);
+            transform: translateX(4px);
+        }
+
+        .node-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+        }
+
+        .node-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .node-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Canvas */
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(rgba(42, 42, 58, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(42, 42, 58, 0.3) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .canvas {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .canvas-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .canvas-hint.hidden {
+            display: none;
+        }
+
+        .canvas-hint-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Workflow Nodes */
+        .workflow-node {
+            position: absolute;
+            min-width: 180px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            cursor: move;
+            user-select: none;
+            box-shadow: var(--shadow-md);
+        }
+
+        .workflow-node.selected {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .workflow-node.running {
+            border-color: var(--accent-warning);
+            animation: pulse 1s infinite;
+        }
+
+        .workflow-node.completed {
+            border-color: var(--accent-success);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+        }
+
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .node-header-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+        }
+
+        .node-header-title {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .node-delete {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .node-delete:hover {
+            background: var(--accent-error);
+            color: white;
+        }
+
+        .node-body {
+            padding: 12px;
+        }
+
+        .node-field {
+            margin-bottom: 10px;
+        }
+
+        .node-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .node-field label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .node-field input,
+        .node-field select,
+        .node-field textarea {
+            width: 100%;
+            padding: 8px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .node-field input:focus,
+        .node-field select:focus,
+        .node-field textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        /* Connection Points */
+        .connection-point {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: var(--bg-elevated);
+            border: 2px solid var(--border-light);
+            border-radius: 50%;
+            cursor: crosshair;
+        }
+
+        .connection-point:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .connection-point.input {
+            left: -7px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .connection-point.output {
+            right: -7px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Connections SVG */
+        .connections-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .connection-line {
+            fill: none;
+            stroke: var(--border-light);
+            stroke-width: 2;
+        }
+
+        .connection-line.active {
+            stroke: var(--accent-primary);
+            stroke-width: 3;
+        }
+
+        /* Output Panel */
+        .output-panel {
+            width: 320px;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-section {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-header h3 {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-content {
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: var(--bg-tertiary);
+        }
+
+        .execution-log {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-icon {
+            font-size: 14px;
+        }
+
+        .log-content {
+            flex: 1;
+        }
+
+        .log-node {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .log-message {
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        .placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Problem Description */
+        .problem-section {
+            background: var(--bg-tertiary);
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .problem-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-warning);
+            margin-bottom: 8px;
+        }
+
+        .problem-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo">
+                <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 12px;">
+                    <span class="logo-icon">&lt;/&gt;</span>
+                    <span class="logo-text">TrustAI</span>
+                </a>
+            </div>
+            <nav class="nav-actions">
+                <button class="btn btn-secondary" id="clearBtn">Clear</button>
+                <button class="btn btn-secondary" id="loadExampleBtn">Load Example</button>
+                <button class="btn btn-primary" id="runBtn">▶ Run Workflow</button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <!-- Node Palette -->
+            <aside class="node-palette">
+                <h2 class="palette-title">Nodes</h2>
+                <div class="node-categories">
+                    <div class="node-category">
+                        <div class="category-title">Triggers</div>
+                        <div class="node-template" data-type="trigger" data-node="start">
+                            <div class="node-icon" style="background: #10b981;">▶</div>
+                            <div class="node-info">
+                                <h4>Start</h4>
+                                <p>Begin workflow</p>
+                            </div>
+                        </div>
+                        <div class="node-template" data-type="trigger" data-node="input">
+                            <div class="node-icon" style="background: #6366f1;">📥</div>
+                            <div class="node-info">
+                                <h4>Input Data</h4>
+                                <p>Define input values</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="node-category">
+                        <div class="category-title">Processing</div>
+                        <div class="node-template" data-type="process" data-node="transform">
+                            <div class="node-icon" style="background: #8b5cf6;">🔄</div>
+                            <div class="node-info">
+                                <h4>Transform</h4>
+                                <p>Modify data</p>
+                            </div>
+                        </div>
+                        <div class="node-template" data-type="process" data-node="filter">
+                            <div class="node-icon" style="background: #f59e0b;">🔍</div>
+                            <div class="node-info">
+                                <h4>Filter</h4>
+                                <p>Filter by condition</p>
+                            </div>
+                        </div>
+                        <div class="node-template" data-type="process" data-node="calculate">
+                            <div class="node-icon" style="background: #3b82f6;">🧮</div>
+                            <div class="node-info">
+                                <h4>Calculate</h4>
+                                <p>Math operations</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="node-category">
+                        <div class="category-title">Logic</div>
+                        <div class="node-template" data-type="logic" data-node="condition">
+                            <div class="node-icon" style="background: #ec4899;">🔀</div>
+                            <div class="node-info">
+                                <h4>Condition</h4>
+                                <p>If/Else branch</p>
+                            </div>
+                        </div>
+                        <div class="node-template" data-type="logic" data-node="merge">
+                            <div class="node-icon" style="background: #14b8a6;">🔗</div>
+                            <div class="node-info">
+                                <h4>Merge</h4>
+                                <p>Combine branches</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="node-category">
+                        <div class="category-title">Output</div>
+                        <div class="node-template" data-type="output" data-node="display">
+                            <div class="node-icon" style="background: #10b981;">📤</div>
+                            <div class="node-info">
+                                <h4>Display</h4>
+                                <p>Show result</p>
+                            </div>
+                        </div>
+                        <div class="node-template" data-type="output" data-node="end">
+                            <div class="node-icon" style="background: #ef4444;">⏹</div>
+                            <div class="node-info">
+                                <h4>End</h4>
+                                <p>Finish workflow</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Canvas -->
+            <section class="canvas-container">
+                <svg class="connections-svg" id="connectionsSvg"></svg>
+                <div class="canvas" id="canvas">
+                    <div class="canvas-hint" id="canvasHint">
+                        <div class="canvas-hint-icon">🔀</div>
+                        <p>Click nodes from the left to add them here</p>
+                        <p style="margin-top: 8px; font-size: 12px;">Connect nodes by dragging from output to input points</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Output Panel -->
+            <aside class="output-panel">
+                <div class="problem-section">
+                    <div class="problem-title">💡 Current Challenge</div>
+                    <div class="problem-description" id="problemDescription">
+                        Click "Load Example" to load a sample problem, or start building your own workflow by clicking nodes from the palette.
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-header">
+                        <h3>Workflow Output</h3>
+                    </div>
+                    <div class="panel-content" id="workflowOutput">
+                        <div class="placeholder">Run your workflow to see output</div>
+                    </div>
+                </div>
+
+                <div class="panel-section execution-log">
+                    <div class="panel-header">
+                        <h3>Execution Log</h3>
+                    </div>
+                    <div class="panel-content" id="executionLog">
+                        <div class="placeholder">Execution steps will appear here</div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script>
+        class WorkflowBuilder {
+            constructor() {
+                this.canvas = document.getElementById('canvas');
+                this.canvasHint = document.getElementById('canvasHint');
+                this.connectionsSvg = document.getElementById('connectionsSvg');
+                this.nodes = [];
+                this.connections = [];
+                this.nodeIdCounter = 0;
+                this.selectedNode = null;
+                this.draggingNode = null;
+                this.dragOffset = { x: 0, y: 0 };
+                this.connectingFrom = null;
+
+                this.nodeTypes = {
+                    start: { icon: '▶', color: '#10b981', title: 'Start', fields: [] },
+                    input: { icon: '📥', color: '#6366f1', title: 'Input Data', fields: [
+                        { name: 'value', label: 'Value', type: 'text', default: '10' }
+                    ]},
+                    transform: { icon: '🔄', color: '#8b5cf6', title: 'Transform', fields: [
+                        { name: 'operation', label: 'Operation', type: 'select', options: ['Uppercase', 'Lowercase', 'Double', 'Square'] }
+                    ]},
+                    filter: { icon: '🔍', color: '#f59e0b', title: 'Filter', fields: [
+                        { name: 'condition', label: 'Condition', type: 'text', default: '> 5' }
+                    ]},
+                    calculate: { icon: '🧮', color: '#3b82f6', title: 'Calculate', fields: [
+                        { name: 'expression', label: 'Expression', type: 'text', default: 'x * 2' }
+                    ]},
+                    condition: { icon: '🔀', color: '#ec4899', title: 'Condition', fields: [
+                        { name: 'check', label: 'If', type: 'text', default: 'x > 10' }
+                    ]},
+                    merge: { icon: '🔗', color: '#14b8a6', title: 'Merge', fields: [] },
+                    display: { icon: '📤', color: '#10b981', title: 'Display', fields: [
+                        { name: 'label', label: 'Label', type: 'text', default: 'Result' }
+                    ]},
+                    end: { icon: '⏹', color: '#ef4444', title: 'End', fields: [] }
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.setupPaletteClicks();
+                this.setupCanvasEvents();
+                this.setupButtons();
+            }
+
+            setupPaletteClicks() {
+                document.querySelectorAll('.node-template').forEach(template => {
+                    template.addEventListener('click', () => {
+                        const nodeType = template.dataset.node;
+                        this.addNode(nodeType);
+                    });
+                });
+            }
+
+            setupCanvasEvents() {
+                this.canvas.addEventListener('mousedown', (e) => {
+                    if (e.target === this.canvas || e.target === this.canvasHint) {
+                        this.deselectAll();
+                    }
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (this.draggingNode) {
+                        const rect = this.canvas.getBoundingClientRect();
+                        const x = e.clientX - rect.left - this.dragOffset.x;
+                        const y = e.clientY - rect.top - this.dragOffset.y;
+                        this.draggingNode.element.style.left = Math.max(0, x) + 'px';
+                        this.draggingNode.element.style.top = Math.max(0, y) + 'px';
+                        this.draggingNode.x = Math.max(0, x);
+                        this.draggingNode.y = Math.max(0, y);
+                        this.renderConnections();
+                    }
+                });
+
+                document.addEventListener('mouseup', () => {
+                    this.draggingNode = null;
+                });
+            }
+
+            setupButtons() {
+                document.getElementById('runBtn').addEventListener('click', () => this.runWorkflow());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearWorkflow());
+                document.getElementById('loadExampleBtn').addEventListener('click', () => this.loadExample());
+            }
+
+            addNode(type, x = null, y = null) {
+                const nodeConfig = this.nodeTypes[type];
+                if (!nodeConfig) return;
+
+                const id = `node_${this.nodeIdCounter++}`;
+                const posX = x || 100 + (this.nodes.length % 3) * 220;
+                const posY = y || 100 + Math.floor(this.nodes.length / 3) * 150;
+
+                const node = {
+                    id,
+                    type,
+                    x: posX,
+                    y: posY,
+                    config: nodeConfig,
+                    values: {},
+                    element: null
+                };
+
+                // Set default values
+                nodeConfig.fields.forEach(field => {
+                    node.values[field.name] = field.default || '';
+                });
+
+                this.nodes.push(node);
+                this.renderNode(node);
+                this.updateHint();
+            }
+
+            renderNode(node) {
+                const div = document.createElement('div');
+                div.className = 'workflow-node';
+                div.dataset.id = node.id;
+                div.style.left = node.x + 'px';
+                div.style.top = node.y + 'px';
+
+                // Header
+                const header = document.createElement('div');
+                header.className = 'node-header';
+                header.innerHTML = `
+                    <div class="node-header-icon" style="background: ${node.config.color}">${node.config.icon}</div>
+                    <span class="node-header-title">${node.config.title}</span>
+                    <button class="node-delete">×</button>
+                `;
+                div.appendChild(header);
+
+                // Body with fields
+                if (node.config.fields.length > 0) {
+                    const body = document.createElement('div');
+                    body.className = 'node-body';
+
+                    node.config.fields.forEach(field => {
+                        const fieldDiv = document.createElement('div');
+                        fieldDiv.className = 'node-field';
+
+                        const label = document.createElement('label');
+                        label.textContent = field.label;
+                        fieldDiv.appendChild(label);
+
+                        let input;
+                        if (field.type === 'select') {
+                            input = document.createElement('select');
+                            field.options.forEach(opt => {
+                                const option = document.createElement('option');
+                                option.value = opt;
+                                option.textContent = opt;
+                                input.appendChild(option);
+                            });
+                        } else {
+                            input = document.createElement('input');
+                            input.type = 'text';
+                            input.value = node.values[field.name] || '';
+                        }
+
+                        input.addEventListener('change', (e) => {
+                            node.values[field.name] = e.target.value;
+                        });
+                        input.addEventListener('mousedown', (e) => e.stopPropagation());
+
+                        fieldDiv.appendChild(input);
+                        body.appendChild(fieldDiv);
+                    });
+
+                    div.appendChild(body);
+                }
+
+                // Connection points
+                if (node.type !== 'start') {
+                    const inputPoint = document.createElement('div');
+                    inputPoint.className = 'connection-point input';
+                    inputPoint.dataset.nodeId = node.id;
+                    inputPoint.dataset.type = 'input';
+                    inputPoint.addEventListener('click', (e) => this.handleConnectionClick(e, node, 'input'));
+                    div.appendChild(inputPoint);
+                }
+
+                if (node.type !== 'end') {
+                    const outputPoint = document.createElement('div');
+                    outputPoint.className = 'connection-point output';
+                    outputPoint.dataset.nodeId = node.id;
+                    outputPoint.dataset.type = 'output';
+                    outputPoint.addEventListener('click', (e) => this.handleConnectionClick(e, node, 'output'));
+                    div.appendChild(outputPoint);
+                }
+
+                // Events
+                header.addEventListener('mousedown', (e) => {
+                    if (e.target.classList.contains('node-delete')) return;
+                    this.draggingNode = node;
+                    const rect = div.getBoundingClientRect();
+                    this.dragOffset = {
+                        x: e.clientX - rect.left,
+                        y: e.clientY - rect.top
+                    };
+                    this.selectNode(node);
+                });
+
+                header.querySelector('.node-delete').addEventListener('click', () => {
+                    this.deleteNode(node);
+                });
+
+                div.addEventListener('click', () => {
+                    this.selectNode(node);
+                });
+
+                node.element = div;
+                this.canvas.appendChild(div);
+            }
+
+            handleConnectionClick(e, node, pointType) {
+                e.stopPropagation();
+
+                if (!this.connectingFrom) {
+                    if (pointType === 'output') {
+                        this.connectingFrom = { node, type: 'output' };
+                        e.target.style.background = 'var(--accent-primary)';
+                    }
+                } else {
+                    if (pointType === 'input' && this.connectingFrom.node.id !== node.id) {
+                        // Create connection
+                        this.connections.push({
+                            from: this.connectingFrom.node.id,
+                            to: node.id
+                        });
+                        this.renderConnections();
+                    }
+                    // Reset
+                    document.querySelectorAll('.connection-point').forEach(p => {
+                        p.style.background = '';
+                    });
+                    this.connectingFrom = null;
+                }
+            }
+
+            renderConnections() {
+                this.connectionsSvg.innerHTML = '';
+
+                this.connections.forEach(conn => {
+                    const fromNode = this.nodes.find(n => n.id === conn.from);
+                    const toNode = this.nodes.find(n => n.id === conn.to);
+
+                    if (fromNode && toNode) {
+                        const fromX = fromNode.x + fromNode.element.offsetWidth;
+                        const fromY = fromNode.y + fromNode.element.offsetHeight / 2;
+                        const toX = toNode.x;
+                        const toY = toNode.y + toNode.element.offsetHeight / 2;
+
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        const midX = (fromX + toX) / 2;
+                        path.setAttribute('d', `M ${fromX} ${fromY} C ${midX} ${fromY}, ${midX} ${toY}, ${toX} ${toY}`);
+                        path.classList.add('connection-line');
+                        this.connectionsSvg.appendChild(path);
+                    }
+                });
+            }
+
+            selectNode(node) {
+                this.deselectAll();
+                node.element.classList.add('selected');
+                this.selectedNode = node;
+            }
+
+            deselectAll() {
+                document.querySelectorAll('.workflow-node').forEach(n => {
+                    n.classList.remove('selected');
+                });
+                this.selectedNode = null;
+            }
+
+            deleteNode(node) {
+                // Remove connections
+                this.connections = this.connections.filter(c => c.from !== node.id && c.to !== node.id);
+
+                // Remove element
+                node.element.remove();
+
+                // Remove from array
+                this.nodes = this.nodes.filter(n => n.id !== node.id);
+
+                this.renderConnections();
+                this.updateHint();
+            }
+
+            clearWorkflow() {
+                this.nodes.forEach(node => node.element.remove());
+                this.nodes = [];
+                this.connections = [];
+                this.connectionsSvg.innerHTML = '';
+                this.updateHint();
+                document.getElementById('workflowOutput').innerHTML = '<div class="placeholder">Run your workflow to see output</div>';
+                document.getElementById('executionLog').innerHTML = '<div class="placeholder">Execution steps will appear here</div>';
+            }
+
+            updateHint() {
+                this.canvasHint.classList.toggle('hidden', this.nodes.length > 0);
+            }
+
+            loadExample() {
+                this.clearWorkflow();
+
+                // Set problem description
+                document.getElementById('problemDescription').innerHTML = `
+                    <strong>Calculate Grade Status</strong><br><br>
+                    Build a workflow that:<br>
+                    1. Takes a score as input<br>
+                    2. Checks if score >= 70<br>
+                    3. Outputs "Pass" or "Fail"
+                `;
+
+                // Create example nodes
+                this.addNode('start', 50, 150);
+                this.addNode('input', 250, 150);
+                this.nodes[this.nodes.length - 1].values.value = '85';
+                this.addNode('condition', 450, 150);
+                this.nodes[this.nodes.length - 1].values.check = 'x >= 70';
+                this.addNode('display', 650, 80);
+                this.nodes[this.nodes.length - 1].values.label = 'Pass!';
+                this.addNode('display', 650, 220);
+                this.nodes[this.nodes.length - 1].values.label = 'Fail';
+                this.addNode('end', 850, 150);
+
+                // Update field displays
+                this.nodes.forEach(node => {
+                    if (node.element) {
+                        node.element.querySelectorAll('input').forEach(input => {
+                            const fieldName = input.closest('.node-field')?.querySelector('label')?.textContent;
+                            if (fieldName) {
+                                const field = node.config.fields.find(f => f.label === fieldName);
+                                if (field && node.values[field.name]) {
+                                    input.value = node.values[field.name];
+                                }
+                            }
+                        });
+                    }
+                });
+
+                // Create connections
+                setTimeout(() => {
+                    this.connections = [
+                        { from: 'node_0', to: 'node_1' },
+                        { from: 'node_1', to: 'node_2' },
+                        { from: 'node_2', to: 'node_3' },
+                        { from: 'node_2', to: 'node_4' },
+                        { from: 'node_3', to: 'node_5' },
+                        { from: 'node_4', to: 'node_5' }
+                    ];
+                    this.renderConnections();
+                }, 100);
+            }
+
+            async runWorkflow() {
+                const logDiv = document.getElementById('executionLog');
+                const outputDiv = document.getElementById('workflowOutput');
+                logDiv.innerHTML = '';
+                outputDiv.innerHTML = '';
+
+                // Find start node
+                const startNode = this.nodes.find(n => n.type === 'start');
+                if (!startNode) {
+                    logDiv.innerHTML = '<div class="log-entry"><span class="log-icon">❌</span><span class="log-message">No Start node found!</span></div>';
+                    return;
+                }
+
+                let currentValue = null;
+                let visited = new Set();
+                let queue = [startNode.id];
+
+                const addLog = (icon, nodeName, message) => {
+                    const entry = document.createElement('div');
+                    entry.className = 'log-entry';
+                    entry.innerHTML = `
+                        <span class="log-icon">${icon}</span>
+                        <div class="log-content">
+                            <div class="log-node">${nodeName}</div>
+                            <div class="log-message">${message}</div>
+                        </div>
+                    `;
+                    logDiv.appendChild(entry);
+                };
+
+                while (queue.length > 0) {
+                    const nodeId = queue.shift();
+                    if (visited.has(nodeId)) continue;
+                    visited.add(nodeId);
+
+                    const node = this.nodes.find(n => n.id === nodeId);
+                    if (!node) continue;
+
+                    // Animate
+                    node.element.classList.add('running');
+                    await new Promise(r => setTimeout(r, 500));
+                    node.element.classList.remove('running');
+                    node.element.classList.add('completed');
+
+                    // Process node
+                    switch (node.type) {
+                        case 'start':
+                            addLog('▶', 'Start', 'Workflow started');
+                            break;
+                        case 'input':
+                            currentValue = parseFloat(node.values.value) || node.values.value;
+                            addLog('📥', 'Input', `Value set to: ${currentValue}`);
+                            break;
+                        case 'transform':
+                            const op = node.values.operation;
+                            if (op === 'Double') currentValue = currentValue * 2;
+                            else if (op === 'Square') currentValue = currentValue * currentValue;
+                            else if (op === 'Uppercase') currentValue = String(currentValue).toUpperCase();
+                            else if (op === 'Lowercase') currentValue = String(currentValue).toLowerCase();
+                            addLog('🔄', 'Transform', `Applied ${op}: ${currentValue}`);
+                            break;
+                        case 'calculate':
+                            try {
+                                const expr = node.values.expression.replace(/x/g, currentValue);
+                                currentValue = eval(expr);
+                                addLog('🧮', 'Calculate', `Result: ${currentValue}`);
+                            } catch (e) {
+                                addLog('❌', 'Calculate', `Error: ${e.message}`);
+                            }
+                            break;
+                        case 'condition':
+                            try {
+                                const check = node.values.check.replace(/x/g, currentValue);
+                                const result = eval(check);
+                                addLog('🔀', 'Condition', `${node.values.check} = ${result}`);
+                            } catch (e) {
+                                addLog('❌', 'Condition', `Error: ${e.message}`);
+                            }
+                            break;
+                        case 'display':
+                            const displayText = `${node.values.label}: ${currentValue}`;
+                            addLog('📤', 'Display', displayText);
+                            outputDiv.innerHTML += `<div style="padding: 8px 0; border-bottom: 1px solid var(--border-color);">${displayText}</div>`;
+                            break;
+                        case 'end':
+                            addLog('⏹', 'End', 'Workflow completed');
+                            break;
+                    }
+
+                    // Find next nodes
+                    const nextConnections = this.connections.filter(c => c.from === nodeId);
+                    nextConnections.forEach(c => {
+                        if (!visited.has(c.to)) {
+                            queue.push(c.to);
+                        }
+                    });
+                }
+
+                // Reset completed states after delay
+                setTimeout(() => {
+                    this.nodes.forEach(n => n.element.classList.remove('completed'));
+                }, 2000);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            window.workflowBuilder = new WorkflowBuilder();
+        });
+    </script>
+</body>
+</html>
