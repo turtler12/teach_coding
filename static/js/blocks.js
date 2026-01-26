@@ -570,6 +570,68 @@ class TrustAIApp {
         document.getElementById('runBtn').addEventListener('click', () => this.runCode());
         document.getElementById('clearBtn').addEventListener('click', () => this.clearWorkspace());
         document.getElementById('clearOutput').addEventListener('click', () => this.clearOutput());
+        document.getElementById('loadExampleBtn').addEventListener('click', () => this.loadExample());
+    }
+
+    // Load example: Count to 5 using a loop
+    loadExample() {
+        // Clear existing blocks
+        this.clearWorkspace();
+
+        // Helper function to find and click a block template
+        const addBlock = (blockId, values = {}) => {
+            const template = document.querySelector(`[data-block-id="${blockId}"]`);
+            if (template) {
+                this.addBlockFromTemplate(template);
+                // Set values on the last added block
+                const lastBlock = this.blocks[this.blocks.length - 1];
+                if (lastBlock && values) {
+                    Object.entries(values).forEach(([key, value]) => {
+                        lastBlock.values[key] = value;
+                        // Update input display
+                        const el = lastBlock.element;
+                        if (el) {
+                            const input = el.querySelector(`[data-input="${key}"]`);
+                            if (input) input.value = value;
+                        }
+                    });
+                }
+                return lastBlock;
+            }
+            return null;
+        };
+
+        // Build the example: Count from 1 to 5
+        // 1. Create variable count = 0
+        addBlock('var_create', { name: 'count', value: '0' });
+
+        // 2. Repeat 5 times
+        const loopBlock = addBlock('repeat_times', { times: '5' });
+
+        // 3. Inside loop: increment count
+        if (loopBlock) {
+            // Select the loop's children container
+            const childContainer = loopBlock.element.querySelector('.block-children');
+            if (childContainer) {
+                this.selectContainer(childContainer, loopBlock.id);
+            }
+        }
+        addBlock('var_change', { name: 'count', value: '1' });
+
+        // 4. Inside loop: print count
+        addBlock('var_print', { name: 'count' });
+
+        // Clear container selection
+        this.clearContainerSelection();
+
+        // Refresh display
+        this.renderWorkspace();
+        this.updateCodeDisplay();
+
+        // Show success message
+        this.clearOutput();
+        this.appendOutput('Example loaded: Count from 1 to 5', 'success');
+        this.appendOutput('Click "Run Code" to see it work!', 'muted');
     }
 
     async runCode() {

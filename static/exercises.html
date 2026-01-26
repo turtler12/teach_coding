@@ -428,8 +428,8 @@ TEN!
                     <span class="exercise-title">Hello World - Solution</span>
                 </div>
                 <div class="expected-output">
-                    <div class="expected-label">Blocks needed:</div>
-1. Print block → value: "Hello, World!"
+                    <div class="expected-label">Python Code:</div>
+print("Hello, World!")
                 </div>
             </div>
 
@@ -439,9 +439,9 @@ TEN!
                     <span class="exercise-title">Create and Print a Variable - Solution</span>
                 </div>
                 <div class="expected-output">
-                    <div class="expected-label">Blocks needed:</div>
-1. Create variable → name: age, value: 12
-2. Print variable → variable: age
+                    <div class="expected-label">Python Code:</div>
+age = 12
+print(age)
                 </div>
             </div>
 
@@ -451,10 +451,10 @@ TEN!
                     <span class="exercise-title">Simple Math - Solution</span>
                 </div>
                 <div class="expected-output">
-                    <div class="expected-label">Blocks needed:</div>
-1. Create variable → name: score, value: 10
-2. Change by → variable: score, amount: 5
-3. Print variable → variable: score
+                    <div class="expected-label">Python Code:</div>
+score = 10
+score += 5
+print(score)
                 </div>
             </div>
 
@@ -464,9 +464,9 @@ TEN!
                     <span class="exercise-title">Repeat a Message - Solution</span>
                 </div>
                 <div class="expected-output">
-                    <div class="expected-label">Blocks needed:</div>
-1. Repeat times → times: 3
-   └─ 2. Print → value: "I love coding!"
+                    <div class="expected-label">Python Code:</div>
+for _ in range(3):
+    print("I love coding!")
                 </div>
             </div>
 
@@ -476,11 +476,11 @@ TEN!
                     <span class="exercise-title">Counting Up - Solution</span>
                 </div>
                 <div class="expected-output">
-                    <div class="expected-label">Blocks needed:</div>
-1. Create variable → name: count, value: 0
-2. Repeat times → times: 5
-   └─ 3. Change by → variable: count, amount: 1
-   └─ 4. Print variable → variable: count
+                    <div class="expected-label">Python Code:</div>
+count = 0
+for _ in range(5):
+    count += 1
+    print(count)
                 </div>
             </div>
 
@@ -490,10 +490,10 @@ TEN!
                     <span class="exercise-title">Making Decisions - Solution</span>
                 </div>
                 <div class="expected-output">
-                    <div class="expected-label">Blocks needed:</div>
-1. Create variable → name: temperature, value: 35
-2. If → condition: temperature > 30
-   └─ 3. Print → value: "It's hot outside!"
+                    <div class="expected-label">Python Code:</div>
+temperature = 35
+if temperature > 30:
+    print("It's hot outside!")
                 </div>
             </div>
 
@@ -503,13 +503,12 @@ TEN!
                     <span class="exercise-title">If-Else Choices - Solution</span>
                 </div>
                 <div class="expected-output">
-                    <div class="expected-label">Blocks needed:</div>
-1. Create variable → name: grade, value: 85
-2. If-Else → condition: grade >= 70
-   IF section:
-   └─ 3. Print → value: "You passed!"
-   ELSE section:
-   └─ 4. Print → value: "Keep trying!"
+                    <div class="expected-label">Python Code:</div>
+grade = 85
+if grade >= 70:
+    print("You passed!")
+else:
+    print("Keep trying!")
                 </div>
             </div>
 
@@ -519,13 +518,13 @@ TEN!
                     <span class="exercise-title">Multiplication Table - Solution</span>
                 </div>
                 <div class="expected-output">
-                    <div class="expected-label">Blocks needed:</div>
-1. Create variable → name: result, value: 0
-2. Create variable → name: multiplier, value: 0
-3. Repeat times → times: 5
-   └─ 4. Change by → variable: multiplier, amount: 1
-   └─ 5. Set variable → name: result, value: multiplier * 5
-   └─ 6. Print variable → variable: result
+                    <div class="expected-label">Python Code:</div>
+result = 0
+multiplier = 0
+for _ in range(5):
+    multiplier += 1
+    result = multiplier * 5
+    print(result)
                 </div>
             </div>
 
@@ -535,13 +534,13 @@ TEN!
                     <span class="exercise-title">Sum of Numbers - Solution</span>
                 </div>
                 <div class="expected-output">
-                    <div class="expected-label">Blocks needed:</div>
-1. Create variable → name: total, value: 0
-2. Create variable → name: number, value: 0
-3. Repeat times → times: 10
-   └─ 4. Change by → variable: number, amount: 1
-   └─ 5. Change by → variable: total, amount: number
-6. Print variable → variable: total
+                    <div class="expected-label">Python Code:</div>
+total = 0
+number = 0
+for _ in range(10):
+    number += 1
+    total += number
+print(total)
                 </div>
             </div>
 
@@ -551,19 +550,17 @@ TEN!
                     <span class="exercise-title">FizzBuzz (Simplified) - Solution</span>
                 </div>
                 <div class="expected-output">
-                    <div class="expected-label">Blocks needed:</div>
-1. Create variable → name: num, value: 0
-2. Repeat times → times: 10
-   └─ 3. Change by → variable: num, amount: 1
-   └─ 4. If-Else → condition: num == 5
-        IF section:
-        └─ 5. Print → value: "FIVE!"
-        ELSE section:
-        └─ 6. If-Else → condition: num == 10
-             IF section:
-             └─ 7. Print → value: "TEN!"
-             ELSE section:
-             └─ 8. Print variable → variable: num
+                    <div class="expected-label">Python Code:</div>
+num = 0
+for _ in range(10):
+    num += 1
+    if num == 5:
+        print("FIVE!")
+    else:
+        if num == 10:
+            print("TEN!")
+        else:
+            print(num)
                 </div>
             </div>
         </div>
