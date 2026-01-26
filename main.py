@@ -59,6 +59,10 @@ def workflows():
 def git():
     return render_template('git.html')
 
+@app.route('/ai-academy')
+def ai_academy():
+    return render_template('ai-academy.html')
+
 @app.route('/api/blocks')
 def get_blocks():
     return jsonify(BLOCK_CATEGORIES)

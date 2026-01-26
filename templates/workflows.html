@@ -400,6 +400,13 @@
             fill: none;
             stroke: var(--border-light);
             stroke-width: 2;
+            cursor: pointer;
+            pointer-events: stroke;
+        }
+
+        .connection-line:hover {
+            stroke: var(--accent-error);
+            stroke-width: 4;
         }
 
         .connection-line.active {
@@ -901,7 +908,7 @@
             renderConnections() {
                 this.connectionsSvg.innerHTML = '';
 
-                this.connections.forEach(conn => {
+                this.connections.forEach((conn, index) => {
                     const fromNode = this.nodes.find(n => n.id === conn.from);
                     const toNode = this.nodes.find(n => n.id === conn.to);
 
@@ -915,9 +922,21 @@
                         const midX = (fromX + toX) / 2;
                         path.setAttribute('d', `M ${fromX} ${fromY} C ${midX} ${fromY}, ${midX} ${toY}, ${toX} ${toY}`);
                         path.classList.add('connection-line');
+                        path.dataset.index = index;
+                        path.setAttribute('title', 'Click to delete connection');
+                        path.style.pointerEvents = 'stroke';
+                        path.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.deleteConnection(index);
+                        });
                         this.connectionsSvg.appendChild(path);
                     }
                 });
+            }
+
+            deleteConnection(index) {
+                this.connections.splice(index, 1);
+                this.renderConnections();
             }
 
             selectNode(node) {
@@ -951,6 +970,7 @@
                 this.nodes.forEach(node => node.element.remove());
                 this.nodes = [];
                 this.connections = [];
+                this.nodeIdCounter = 0; // Reset counter so IDs match when reloading
                 this.connectionsSvg.innerHTML = '';
                 this.updateHint();
                 document.getElementById('workflowOutput').innerHTML = '<div class="placeholder">Run your workflow to see output</div>';
@@ -1029,7 +1049,8 @@
 
                 let currentValue = null;
                 let visited = new Set();
-                let queue = [startNode.id];
+                // Queue now stores {nodeId, skipCondition} where skipCondition tells us which branch to skip
+                let queue = [{nodeId: startNode.id, conditionResult: null}];
 
                 const addLog = (icon, nodeName, message) => {
                     const entry = document.createElement('div');
@@ -1045,7 +1066,7 @@
                 };
 
                 while (queue.length > 0) {
-                    const nodeId = queue.shift();
+                    const {nodeId, conditionResult} = queue.shift();
                     if (visited.has(nodeId)) continue;
                     visited.add(nodeId);
 
@@ -1057,6 +1078,8 @@
                     await new Promise(r => setTimeout(r, 500));
                     node.element.classList.remove('running');
                     node.element.classList.add('completed');
+
+                    let branchResult = null; // Used for condition/filter nodes
 
                     // Process node
                     switch (node.type) {
@@ -1084,11 +1107,24 @@
                                 addLog('❌', 'Calculate', `Error: ${e.message}`);
                             }
                             break;
+                        case 'filter':
+                            try {
+                                const filterCond = node.values.condition.replace(/x/g, currentValue);
+                                branchResult = eval(filterCond);
+                                addLog('🔍', 'Filter', `${node.values.condition} = ${branchResult} (data ${branchResult ? 'passes' : 'filtered out'})`);
+                                if (!branchResult) {
+                                    // Data doesn't pass filter, skip all downstream nodes
+                                    continue;
+                                }
+                            } catch (e) {
+                                addLog('❌', 'Filter', `Error: ${e.message}`);
+                            }
+                            break;
                         case 'condition':
                             try {
                                 const check = node.values.check.replace(/x/g, currentValue);
-                                const result = eval(check);
-                                addLog('🔀', 'Condition', `${node.values.check} = ${result}`);
+                                branchResult = eval(check);
+                                addLog('🔀', 'Condition', `${node.values.check} = ${branchResult} (taking ${branchResult ? 'TRUE' : 'FALSE'} branch)`);
                             } catch (e) {
                                 addLog('❌', 'Condition', `Error: ${e.message}`);
                             }
@@ -1103,13 +1139,31 @@
                             break;
                     }
 
-                    // Find next nodes
+                    // Find next nodes - handle condition branching
                     const nextConnections = this.connections.filter(c => c.from === nodeId);
-                    nextConnections.forEach(c => {
-                        if (!visited.has(c.to)) {
-                            queue.push(c.to);
+
+                    if (node.type === 'condition' && nextConnections.length >= 2) {
+                        // For condition nodes with 2+ outputs, first connection is TRUE, second is FALSE
+                        // Sort connections by the Y position of target nodes (top = true, bottom = false)
+                        const sortedConnections = nextConnections.sort((a, b) => {
+                            const nodeA = this.nodes.find(n => n.id === a.to);
+                            const nodeB = this.nodes.find(n => n.id === b.to);
+                            return (nodeA?.y || 0) - (nodeB?.y || 0);
+                        });
+
+                        // Only follow the branch that matches the condition result
+                        const targetIndex = branchResult ? 0 : 1; // true = top (index 0), false = bottom (index 1)
+                        if (sortedConnections[targetIndex] && !visited.has(sortedConnections[targetIndex].to)) {
+                            queue.push({nodeId: sortedConnections[targetIndex].to, conditionResult: branchResult});
                         }
-                    });
+                    } else {
+                        // Normal flow - follow all connections
+                        nextConnections.forEach(c => {
+                            if (!visited.has(c.to)) {
+                                queue.push({nodeId: c.to, conditionResult: null});
+                            }
+                        });
+                    }
                 }
 
                 // Reset completed states after delay

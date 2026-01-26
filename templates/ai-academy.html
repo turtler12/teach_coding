@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAI - AI Academy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ai-academy.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="sidebar">
+        <a href="/" class="logo" style="text-decoration: none;">
+            <div class="logo-mark">&lt;/&gt;</div>
+            <span class="logo-text">TrustAI</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#intro" class="nav-link active" data-section="intro">
+                <span class="nav-number">01</span> Intro to AI
+            </a></li>
+            <li><a href="#dataset" class="nav-link" data-section="dataset">
+                <span class="nav-number">02</span> Datasets
+            </a></li>
+            <li><a href="#prompt" class="nav-link" data-section="prompt">
+                <span class="nav-number">03</span> Prompt Engineering
+            </a></li>
+            <li><a href="#algorithm" class="nav-link" data-section="algorithm">
+                <span class="nav-number">04</span> Algorithms
+            </a></li>
+            <li><a href="#git" class="nav-link" data-section="git">
+                <span class="nav-number">05</span> Git Basics
+            </a></li>
+            <li><a href="#agent" class="nav-link" data-section="agent">
+                <span class="nav-number">06</span> Building Agents
+            </a></li>
+        </ul>
+        <div class="progress-container">
+            <div class="progress-label">Your Progress</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text"><span id="progressPercent">0</span>% Complete</div>
+        </div>
+    </nav>
+
+    <main class="content">
+        <!-- INTRO TO AI SECTION -->
+        <section id="intro" class="section active">
+            <div class="section-header">
+                <span class="section-tag">Module 01</span>
+                <h1>Introduction to AI</h1>
+                <p class="section-subtitle">Learn how AI understands and processes text through tokenization</p>
+            </div>
+
+            <div class="hero-illustration">
+                <svg viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="20" y="40" width="60" height="40" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+                    <text x="50" y="65" text-anchor="middle" fill="#166534" font-size="12" font-weight="600">Hello</text>
+                    <path d="M90 60 L120 60" stroke="#166534" stroke-width="2" stroke-dasharray="4"/>
+                    <rect x="130" y="30" width="40" height="25" rx="6" fill="#166534"/>
+                    <text x="150" y="47" text-anchor="middle" fill="white" font-size="10">Hel</text>
+                    <rect x="130" y="60" width="40" height="25" rx="6" fill="#15803d"/>
+                    <text x="150" y="77" text-anchor="middle" fill="white" font-size="10">lo</text>
+                    <path d="M180 60 L210 60" stroke="#166534" stroke-width="2" stroke-dasharray="4"/>
+                    <circle cx="240" cy="60" r="30" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+                    <text x="240" y="55" text-anchor="middle" fill="#166534" font-size="10" font-weight="600">AI</text>
+                    <text x="240" y="70" text-anchor="middle" fill="#166534" font-size="8">Model</text>
+                    <path d="M280 60 L310 60" stroke="#166534" stroke-width="2" stroke-dasharray="4"/>
+                    <rect x="320" y="40" width="60" height="40" rx="8" fill="#166534"/>
+                    <text x="350" y="62" text-anchor="middle" fill="white" font-size="10" font-weight="500">Response</text>
+                </svg>
+            </div>
+
+            <div class="card">
+                <h2>What is Tokenization?</h2>
+                <p>Before AI can understand your text, it needs to break it down into smaller pieces called <strong>tokens</strong>. Think of tokens like LEGO blocks - AI builds understanding by combining these small pieces.</p>
+
+                <div class="info-box">
+                    <div class="info-icon-wrapper">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    </div>
+                    <p>Tokens can be whole words, parts of words, or even single characters. The AI learned which tokens work best from reading millions of texts.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Interactive Tokenizer</h2>
+                <p>Type any text below to see how AI breaks it into tokens:</p>
+
+                <div class="tokenizer-container">
+                    <textarea id="tokenInput" placeholder="Type something here... Try: 'Hello, how are you today?'" rows="3"></textarea>
+                    <button id="tokenizeBtn" class="btn btn-primary">Tokenize</button>
+                </div>
+
+                <div class="token-output" id="tokenOutput">
+                    <p class="placeholder-text">Your tokens will appear here...</p>
+                </div>
+
+                <div class="token-stats" id="tokenStats" style="display: none;">
+                    <div class="stat-item">
+                        <span class="stat-number" id="charCount">0</span>
+                        <span class="stat-label">Characters</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="tokenCount">0</span>
+                        <span class="stat-label">Tokens</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="ratio">0</span>
+                        <span class="stat-label">Chars/Token</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Byte Pair Encoding (BPE)</h2>
+                <p>How does AI decide which tokens to use? It uses a clever algorithm called <strong>Byte Pair Encoding</strong>.</p>
+
+                <div class="bpe-demo">
+                    <h3>Watch BPE in Action</h3>
+                    <div class="bpe-controls">
+                        <input type="text" id="bpeInput" value="aaabdaaabac" placeholder="Enter text for BPE">
+                        <button id="bpeStartBtn" class="btn btn-secondary">Start Demo</button>
+                        <button id="bpeResetBtn" class="btn btn-outline">Reset</button>
+                    </div>
+
+                    <div class="bpe-visualization">
+                        <div class="bpe-step" id="bpeSteps">
+                            <p class="placeholder-text">Click "Start Demo" to see how the algorithm works</p>
+                        </div>
+                    </div>
+
+                    <div class="bpe-vocabulary" id="bpeVocab" style="display: none;">
+                        <h4>Learned Vocabulary:</h4>
+                        <div class="vocab-tokens" id="vocabTokens"></div>
+                    </div>
+                </div>
+
+                <div class="info-box info-success">
+                    <div class="info-icon-wrapper">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <p><strong>Fun Fact:</strong> GPT-4 uses about 100,000 different tokens. Common words like "the" are single tokens, while rare words get split into pieces.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Token Challenge</h2>
+                <p>Can you guess how many tokens these sentences will have?</p>
+
+                <div class="quiz-container" id="tokenQuiz">
+                    <div class="quiz-question" data-answer="4">
+                        <p class="quiz-text">"I love AI"</p>
+                        <div class="quiz-options">
+                            <button class="quiz-btn" data-value="2">2 tokens</button>
+                            <button class="quiz-btn" data-value="3">3 tokens</button>
+                            <button class="quiz-btn" data-value="4">4 tokens</button>
+                            <button class="quiz-btn" data-value="5">5 tokens</button>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-complete" data-section="intro">Mark as Complete</button>
+        </section>
+
+        <!-- DATASET SECTION -->
+        <section id="dataset" class="section">
+            <div class="section-header">
+                <span class="section-tag">Module 02</span>
+                <h1>Understanding Datasets</h1>
+                <p class="section-subtitle">Explore how AI learns from data using the QuickDraw dataset</p>
+            </div>
+
+            <div class="card">
+                <h2>What is a Dataset?</h2>
+                <p>A dataset is a collection of information that AI uses to learn. Just like you learn from examples in school, AI learns from millions of examples in datasets.</p>
+
+                <div class="info-box">
+                    <div class="info-icon-wrapper">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    </div>
+                    <p><strong>QuickDraw</strong> is a dataset of 50 million drawings made by people around the world. Google used it to teach AI to recognize doodles.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>QuickDraw Explorer</h2>
+                <p>Draw something and see similar drawings from the QuickDraw dataset.</p>
+
+                <div class="quickdraw-container">
+                    <div class="drawing-area">
+                        <canvas id="drawCanvas" width="280" height="280"></canvas>
+                        <div class="canvas-controls">
+                            <button id="clearCanvas" class="btn btn-outline">Clear</button>
+                            <button id="recognizeDrawing" class="btn btn-primary">Recognize Drawing</button>
+                        </div>
+                    </div>
+
+                    <div class="recognition-result" id="recognitionResult">
+                        <p class="placeholder-text">Draw something and click "Recognize Drawing"</p>
+                    </div>
+                </div>
+
+                <div class="quickdraw-gallery" id="quickdrawGallery">
+                    <h3>Sample QuickDraw Drawings</h3>
+                    <div class="gallery-grid" id="galleryGrid">
+                        <!-- Filled by JS -->
+                    </div>
+                    <div class="category-selector">
+                        <label>Choose a category:</label>
+                        <select id="categorySelect">
+                            <option value="cat">Cat</option>
+                            <option value="dog">Dog</option>
+                            <option value="house">House</option>
+                            <option value="tree">Tree</option>
+                            <option value="car">Car</option>
+                            <option value="sun">Sun</option>
+                            <option value="flower">Flower</option>
+                            <option value="fish">Fish</option>
+                        </select>
+                        <button id="loadCategory" class="btn btn-secondary">Load Examples</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>K-Means Clustering</h2>
+                <p>AI groups similar data together using a technique called <strong>clustering</strong>. It's like sorting items into different categories based on similarity.</p>
+
+                <div class="clustering-demo">
+                    <div class="clustering-canvas-container">
+                        <canvas id="clusterCanvas" width="500" height="400"></canvas>
+                    </div>
+
+                    <div class="clustering-controls">
+                        <div class="control-group">
+                            <label>Number of Clusters (K):</label>
+                            <input type="range" id="kValue" min="2" max="6" value="3">
+                            <span id="kValueDisplay">3</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Number of Points:</label>
+                            <input type="range" id="pointCount" min="20" max="100" value="50">
+                            <span id="pointCountDisplay">50</span>
+                        </div>
+                        <div class="button-group">
+                            <button id="generatePoints" class="btn btn-secondary">Generate Points</button>
+                            <button id="runClustering" class="btn btn-primary">Run K-Means</button>
+                            <button id="stepClustering" class="btn btn-outline">Step by Step</button>
+                        </div>
+                    </div>
+
+                    <div class="clustering-explanation" id="clusterExplanation">
+                        <p>Click "Generate Points" to create random data, then "Run K-Means" to watch the algorithm group them.</p>
+                    </div>
+                </div>
+
+                <div class="info-box info-success">
+                    <div class="info-icon-wrapper">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <div>
+                        <p><strong>How K-Means Works:</strong></p>
+                        <ol class="info-list">
+                            <li>Pick K random center points</li>
+                            <li>Assign each point to its nearest center</li>
+                            <li>Move centers to the middle of their groups</li>
+                            <li>Repeat until centers stop moving</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-complete" data-section="dataset">Mark as Complete</button>
+        </section>
+
+        <!-- PROMPT ENGINEERING SECTION -->
+        <section id="prompt" class="section">
+            <div class="section-header">
+                <span class="section-tag">Module 03</span>
+                <h1>Prompt Engineering</h1>
+                <p class="section-subtitle">Learn how to communicate effectively with AI across different modalities</p>
+            </div>
+
+            <div class="card">
+                <h2>What is Prompt Engineering?</h2>
+                <p>Prompt engineering is the art of giving AI clear, specific instructions to get the best results. Think of it like giving directions - the better your directions, the better the destination.</p>
+
+                <div class="prompt-tips">
+                    <div class="tip-card">
+                        <div class="tip-number">1</div>
+                        <h4>Be Specific</h4>
+                        <p>Instead of "write a story", try "write a 200-word mystery story set in a haunted library"</p>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-number">2</div>
+                        <h4>Set the Role</h4>
+                        <p>Tell AI who to be: "You are a friendly science teacher explaining photosynthesis"</p>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-number">3</div>
+                        <h4>Give Examples</h4>
+                        <p>Show AI what you want with examples of good outputs</p>
+                    </div>
+                    <div class="tip-card">
+                        <div class="tip-number">4</div>
+                        <h4>Iterate</h4>
+                        <p>Refine your prompts based on the results you get</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modality-tabs">
+                <button class="tab-btn active" data-tab="text">Text</button>
+                <button class="tab-btn" data-tab="image">Image</button>
+                <button class="tab-btn" data-tab="video">Video</button>
+                <button class="tab-btn" data-tab="audio">Audio</button>
+            </div>
+
+            <!-- TEXT TAB -->
+            <div class="tab-content active" id="text-tab">
+                <div class="card">
+                    <h2>Text Prompt Builder</h2>
+                    <p>Build the perfect text prompt by specifying key parameters:</p>
+
+                    <div class="prompt-builder">
+                        <div class="builder-row">
+                            <label>Expertise Level:</label>
+                            <select id="textExpertise">
+                                <option value="beginner">Explain like I'm 5</option>
+                                <option value="student">Middle/High School Student</option>
+                                <option value="general">General Audience</option>
+                                <option value="expert">Expert Level</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Tone:</label>
+                            <select id="textTone">
+                                <option value="friendly">Friendly & Casual</option>
+                                <option value="professional">Professional</option>
+                                <option value="humorous">Humorous & Fun</option>
+                                <option value="serious">Serious & Formal</option>
+                                <option value="encouraging">Encouraging & Supportive</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Purpose:</label>
+                            <select id="textPurpose">
+                                <option value="explain">Explain a Concept</option>
+                                <option value="story">Write a Story</option>
+                                <option value="summarize">Summarize Information</option>
+                                <option value="persuade">Persuade/Argue</option>
+                                <option value="instruct">Give Instructions</option>
+                                <option value="brainstorm">Brainstorm Ideas</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Your Topic/Request:</label>
+                            <textarea id="textTopic" rows="2" placeholder="e.g., How do black holes work?"></textarea>
+                        </div>
+
+                        <button id="generateTextPrompt" class="btn btn-primary">Generate Prompt</button>
+                    </div>
+
+                    <div class="generated-prompt" id="textPromptOutput">
+                        <h4>Your Optimized Prompt:</h4>
+                        <div class="prompt-display" id="textPromptDisplay">
+                            <p class="placeholder-text">Fill in the options above and click "Generate Prompt"</p>
+                        </div>
+                        <button id="copyTextPrompt" class="btn btn-outline" style="display: none;">Copy to Clipboard</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IMAGE TAB -->
+            <div class="tab-content" id="image-tab">
+                <div class="card">
+                    <h2>Image Prompt Builder</h2>
+                    <p>Create prompts for AI image generators like DALL-E, Midjourney, or Stable Diffusion:</p>
+
+                    <div class="prompt-builder">
+                        <div class="builder-row">
+                            <label>Subject:</label>
+                            <input type="text" id="imageSubject" placeholder="e.g., a cat astronaut, a magical forest">
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Art Style:</label>
+                            <select id="imageStyle">
+                                <option value="photorealistic">Photorealistic</option>
+                                <option value="digital art">Digital Art</option>
+                                <option value="watercolor">Watercolor</option>
+                                <option value="anime">Anime Style</option>
+                                <option value="pixel art">Pixel Art</option>
+                                <option value="oil painting">Oil Painting</option>
+                                <option value="3d render">3D Render</option>
+                                <option value="sketch">Pencil Sketch</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Mood/Atmosphere:</label>
+                            <select id="imageMood">
+                                <option value="cheerful and bright">Cheerful & Bright</option>
+                                <option value="mysterious and dark">Mysterious & Dark</option>
+                                <option value="peaceful and calm">Peaceful & Calm</option>
+                                <option value="energetic and dynamic">Energetic & Dynamic</option>
+                                <option value="nostalgic and warm">Nostalgic & Warm</option>
+                                <option value="futuristic and sleek">Futuristic & Sleek</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Lighting:</label>
+                            <select id="imageLighting">
+                                <option value="natural daylight">Natural Daylight</option>
+                                <option value="golden hour">Golden Hour</option>
+                                <option value="dramatic shadows">Dramatic Shadows</option>
+                                <option value="neon lights">Neon Lights</option>
+                                <option value="soft studio lighting">Soft Studio Lighting</option>
+                                <option value="moonlight">Moonlight</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Additional Details:</label>
+                            <input type="text" id="imageDetails" placeholder="e.g., detailed background, cinematic composition">
+                        </div>
+
+                        <button id="generateImagePrompt" class="btn btn-primary">Generate Prompt</button>
+                    </div>
+
+                    <div class="generated-prompt" id="imagePromptOutput">
+                        <h4>Your Optimized Prompt:</h4>
+                        <div class="prompt-display" id="imagePromptDisplay">
+                            <p class="placeholder-text">Fill in the options above and click "Generate Prompt"</p>
+                        </div>
+                        <button id="copyImagePrompt" class="btn btn-outline" style="display: none;">Copy to Clipboard</button>
+                    </div>
+
+                    <div class="prompt-examples">
+                        <h4>Example Prompts:</h4>
+                        <div class="example-cards">
+                            <div class="example-card" onclick="loadImageExample(this)">
+                                <p>"A majestic dragon made of autumn leaves, digital art style, warm golden hour lighting, mysterious forest background, highly detailed"</p>
+                            </div>
+                            <div class="example-card" onclick="loadImageExample(this)">
+                                <p>"Cozy coffee shop interior, anime style, rainy day outside the window, warm lighting, peaceful atmosphere, detailed background"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO TAB -->
+            <div class="tab-content" id="video-tab">
+                <div class="card">
+                    <h2>Video Prompt Builder</h2>
+                    <p>Create prompts for AI video generators like Runway, Pika, or Sora:</p>
+
+                    <div class="prompt-builder">
+                        <div class="builder-row">
+                            <label>Subject:</label>
+                            <input type="text" id="videoSubject" placeholder="e.g., a robot walking through a city">
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Shot Type:</label>
+                            <select id="videoShot">
+                                <option value="wide shot">Wide Shot (shows whole scene)</option>
+                                <option value="medium shot">Medium Shot (waist up)</option>
+                                <option value="close-up">Close-up (face/details)</option>
+                                <option value="aerial shot">Aerial/Drone Shot</option>
+                                <option value="tracking shot">Tracking Shot (follows subject)</option>
+                                <option value="first person POV">First Person POV</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Camera Motion:</label>
+                            <select id="videoMotion">
+                                <option value="static camera">Static (no movement)</option>
+                                <option value="slow pan">Slow Pan (left/right)</option>
+                                <option value="tilt up">Tilt Up</option>
+                                <option value="dolly in">Dolly In (move closer)</option>
+                                <option value="orbit around">Orbit Around</option>
+                                <option value="handheld shake">Handheld Shake</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Subject Action:</label>
+                            <input type="text" id="videoAction" placeholder="e.g., walking slowly, dancing, looking around">
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Environment:</label>
+                            <input type="text" id="videoEnvironment" placeholder="e.g., rainy street at night, sunny beach">
+                        </div>
+
+                        <button id="generateVideoPrompt" class="btn btn-primary">Generate Prompt</button>
+                    </div>
+
+                    <div class="generated-prompt" id="videoPromptOutput">
+                        <h4>Your Optimized Prompt:</h4>
+                        <div class="prompt-display" id="videoPromptDisplay">
+                            <p class="placeholder-text">Fill in the options above and click "Generate Prompt"</p>
+                        </div>
+                        <button id="copyVideoPrompt" class="btn btn-outline" style="display: none;">Copy to Clipboard</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUDIO TAB -->
+            <div class="tab-content" id="audio-tab">
+                <div class="card">
+                    <h2>Audio/Music Prompt Builder</h2>
+                    <p>Create prompts for AI music generators like Suno, Udio, or similar tools:</p>
+
+                    <div class="prompt-builder">
+                        <div class="builder-row">
+                            <label>Genre:</label>
+                            <select id="audioGenre">
+                                <option value="pop">Pop</option>
+                                <option value="rock">Rock</option>
+                                <option value="hip hop">Hip Hop</option>
+                                <option value="electronic">Electronic</option>
+                                <option value="classical">Classical</option>
+                                <option value="jazz">Jazz</option>
+                                <option value="country">Country</option>
+                                <option value="lo-fi">Lo-Fi</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Tempo/Rhythm:</label>
+                            <select id="audioTempo">
+                                <option value="slow and relaxing">Slow & Relaxing</option>
+                                <option value="moderate groove">Moderate Groove</option>
+                                <option value="upbeat and energetic">Upbeat & Energetic</option>
+                                <option value="fast and intense">Fast & Intense</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Main Instruments:</label>
+                            <div class="checkbox-group" id="audioInstruments">
+                                <label><input type="checkbox" value="piano"> Piano</label>
+                                <label><input type="checkbox" value="guitar"> Guitar</label>
+                                <label><input type="checkbox" value="drums"> Drums</label>
+                                <label><input type="checkbox" value="synth"> Synth</label>
+                                <label><input type="checkbox" value="bass"> Bass</label>
+                                <label><input type="checkbox" value="strings"> Strings</label>
+                            </div>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Vocal Style:</label>
+                            <select id="audioVocal">
+                                <option value="no vocals">No Vocals (Instrumental)</option>
+                                <option value="male vocals">Male Vocals</option>
+                                <option value="female vocals">Female Vocals</option>
+                                <option value="duet">Duet</option>
+                                <option value="choir">Choir</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Mood/Expression:</label>
+                            <select id="audioMood">
+                                <option value="happy and uplifting">Happy & Uplifting</option>
+                                <option value="sad and emotional">Sad & Emotional</option>
+                                <option value="chill and relaxed">Chill & Relaxed</option>
+                                <option value="powerful and epic">Powerful & Epic</option>
+                                <option value="mysterious and dark">Mysterious & Dark</option>
+                                <option value="romantic">Romantic</option>
+                            </select>
+                        </div>
+
+                        <div class="builder-row">
+                            <label>Song Theme/Lyrics About:</label>
+                            <textarea id="audioLyrics" rows="2" placeholder="e.g., summer adventures with friends, overcoming challenges"></textarea>
+                        </div>
+
+                        <button id="generateAudioPrompt" class="btn btn-primary">Generate Prompt</button>
+                    </div>
+
+                    <div class="generated-prompt" id="audioPromptOutput">
+                        <h4>Your Optimized Prompt:</h4>
+                        <div class="prompt-display" id="audioPromptDisplay">
+                            <p class="placeholder-text">Fill in the options above and click "Generate Prompt"</p>
+                        </div>
+                        <button id="copyAudioPrompt" class="btn btn-outline" style="display: none;">Copy to Clipboard</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-complete" data-section="prompt">Mark as Complete</button>
+        </section>
+
+        <!-- ALGORITHM SECTION -->
+        <section id="algorithm" class="section">
+            <div class="section-header">
+                <span class="section-tag">Module 04</span>
+                <h1>Introduction to Algorithms</h1>
+                <p class="section-subtitle">Learn basic programming concepts with visual blocks</p>
+            </div>
+
+            <div class="card">
+                <h2>What is an Algorithm?</h2>
+                <p>An algorithm is a step-by-step set of instructions to solve a problem. It's like a recipe - follow the steps in order to get the result.</p>
+
+                <div class="concept-grid">
+                    <div class="concept-card" data-concept="variables">
+                        <div class="concept-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+                        </div>
+                        <h4>Variables</h4>
+                        <p>Boxes that store information</p>
+                    </div>
+                    <div class="concept-card" data-concept="datatypes">
+                        <div class="concept-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                        </div>
+                        <h4>Data Types</h4>
+                        <p>Different kinds of data</p>
+                    </div>
+                    <div class="concept-card" data-concept="loops">
+                        <div class="concept-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                        </div>
+                        <h4>Loops</h4>
+                        <p>Repeat actions multiple times</p>
+                    </div>
+                    <div class="concept-card" data-concept="conditions">
+                        <div class="concept-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
+                        <h4>Conditions</h4>
+                        <p>Make decisions based on rules</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Visual Code Builder</h2>
+                <p>Drag and arrange blocks to create algorithms. Watch your code run in real-time.</p>
+
+                <div class="scratch-container">
+                    <div class="block-palette">
+                        <h4>Blocks</h4>
+                        <div class="block-category">
+                            <h5>Variables</h5>
+                            <div class="block draggable" data-type="variable" data-code="let x = 0">
+                                <span class="block-color var"></span>
+                                Set x = 0
+                            </div>
+                            <div class="block draggable" data-type="variable" data-code="x = x + 1">
+                                <span class="block-color var"></span>
+                                Add 1 to x
+                            </div>
+                        </div>
+                        <div class="block-category">
+                            <h5>Output</h5>
+                            <div class="block draggable" data-type="output" data-code="print(x)">
+                                <span class="block-color output"></span>
+                                Show x
+                            </div>
+                            <div class="block draggable" data-type="output" data-code="print('Hello!')">
+                                <span class="block-color output"></span>
+                                Say "Hello!"
+                            </div>
+                        </div>
+                        <div class="block-category">
+                            <h5>Loops</h5>
+                            <div class="block draggable loop-block" data-type="loop" data-code="repeat 5 times">
+                                <span class="block-color loop"></span>
+                                Repeat 5 times
+                            </div>
+                            <div class="block draggable" data-type="endloop" data-code="end repeat">
+                                <span class="block-color loop"></span>
+                                End repeat
+                            </div>
+                        </div>
+                        <div class="block-category">
+                            <h5>Conditions</h5>
+                            <div class="block draggable" data-type="condition" data-code="if x > 3">
+                                <span class="block-color condition"></span>
+                                If x > 3
+                            </div>
+                            <div class="block draggable" data-type="else" data-code="else">
+                                <span class="block-color condition"></span>
+                                Else
+                            </div>
+                            <div class="block draggable" data-type="endif" data-code="end if">
+                                <span class="block-color condition"></span>
+                                End if
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-workspace">
+                        <h4>Your Code</h4>
+                        <div class="workspace-area" id="workspaceArea">
+                            <p class="workspace-hint">Drag blocks here to build your algorithm</p>
+                        </div>
+                        <div class="workspace-controls">
+                            <button id="runCode" class="btn btn-primary">Run Code</button>
+                            <button id="clearWorkspace" class="btn btn-outline">Clear All</button>
+                        </div>
+                    </div>
+
+                    <div class="code-output">
+                        <h4>Output</h4>
+                        <div class="output-area" id="outputArea">
+                            <p class="output-hint">Run your code to see the output here</p>
+                        </div>
+                        <div class="code-preview">
+                            <h5>Generated Code:</h5>
+                            <pre id="codePreview">// Your code will appear here</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Algorithm Challenges</h2>
+                <p>Test your skills with these coding challenges:</p>
+
+                <div class="challenges-container">
+                    <div class="challenge" data-challenge="1">
+                        <div class="challenge-info">
+                            <h4>Challenge 1: Count to 5</h4>
+                            <p>Create a program that shows the numbers 1, 2, 3, 4, 5</p>
+                        </div>
+                        <span class="challenge-status">Not started</span>
+                    </div>
+                    <div class="challenge" data-challenge="2">
+                        <div class="challenge-info">
+                            <h4>Challenge 2: Even or Odd</h4>
+                            <p>Check if a number is greater than 3 and show a message</p>
+                        </div>
+                        <span class="challenge-status">Not started</span>
+                    </div>
+                    <div class="challenge" data-challenge="3">
+                        <div class="challenge-info">
+                            <h4>Challenge 3: Loop Counter</h4>
+                            <p>Use a loop to add 1 to x five times, then show the result</p>
+                        </div>
+                        <span class="challenge-status">Not started</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-complete" data-section="algorithm">Mark as Complete</button>
+        </section>
+
+        <!-- GIT SECTION -->
+        <section id="git" class="section">
+            <div class="section-header">
+                <span class="section-tag">Module 05</span>
+                <h1>Understanding Git</h1>
+                <p class="section-subtitle">Learn version control - how developers save and share their work</p>
+            </div>
+
+            <div class="card">
+                <h2>What is Git?</h2>
+                <p>Git is like a time machine for your code. It saves snapshots of your work, lets you go back in time, and helps teams work together without overwriting each other's changes.</p>
+
+                <div class="git-concepts">
+                    <div class="git-concept">
+                        <div class="git-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v7m0 6v7"/></svg>
+                        </div>
+                        <h4>Commit</h4>
+                        <p>A snapshot of your code at a moment in time</p>
+                    </div>
+                    <div class="git-concept">
+                        <div class="git-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+                        </div>
+                        <h4>Branch</h4>
+                        <p>A separate line of development</p>
+                    </div>
+                    <div class="git-concept">
+                        <div class="git-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>
+                        </div>
+                        <h4>Merge</h4>
+                        <p>Combining changes from different branches</p>
+                    </div>
+                    <div class="git-concept">
+                        <div class="git-icon-wrapper">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                        </div>
+                        <h4>Revert</h4>
+                        <p>Going back to a previous version</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Interactive Git Visualization</h2>
+                <p>Build your own Git history. Add commits, create branches, and see how Git works.</p>
+
+                <div class="git-simulator">
+                    <div class="git-controls">
+                        <div class="git-control-group">
+                            <input type="text" id="commitMessage" placeholder="Enter commit message...">
+                            <button id="addCommit" class="btn btn-primary">Add Commit</button>
+                        </div>
+                        <div class="git-control-group">
+                            <input type="text" id="branchName" placeholder="New branch name...">
+                            <button id="createBranch" class="btn btn-secondary">Create Branch</button>
+                        </div>
+                        <div class="git-control-group">
+                            <select id="branchSelect">
+                                <option value="main">main</option>
+                            </select>
+                            <button id="switchBranch" class="btn btn-outline">Switch Branch</button>
+                            <button id="mergeBranch" class="btn btn-outline">Merge to Main</button>
+                        </div>
+                        <button id="resetGit" class="btn btn-danger">Reset All</button>
+                    </div>
+
+                    <div class="git-visualization" id="gitVisualization">
+                        <svg id="gitGraph" width="100%" height="400"></svg>
+                    </div>
+
+                    <div class="git-info">
+                        <div class="current-branch">
+                            Current Branch: <span id="currentBranchDisplay">main</span>
+                        </div>
+                        <div class="commit-count">
+                            Total Commits: <span id="commitCount">1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Git Commands Cheat Sheet</h2>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>git init</code>
+                        <p>Start a new Git repository</p>
+                    </div>
+                    <div class="command-item">
+                        <code>git add .</code>
+                        <p>Stage all changes for commit</p>
+                    </div>
+                    <div class="command-item">
+                        <code>git commit -m "message"</code>
+                        <p>Save a snapshot with a description</p>
+                    </div>
+                    <div class="command-item">
+                        <code>git branch name</code>
+                        <p>Create a new branch</p>
+                    </div>
+                    <div class="command-item">
+                        <code>git checkout branch</code>
+                        <p>Switch to a different branch</p>
+                    </div>
+                    <div class="command-item">
+                        <code>git merge branch</code>
+                        <p>Combine changes from another branch</p>
+                    </div>
+                    <div class="command-item">
+                        <code>git push</code>
+                        <p>Upload commits to a remote server</p>
+                    </div>
+                    <div class="command-item">
+                        <code>git pull</code>
+                        <p>Download changes from a remote server</p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-complete" data-section="git">Mark as Complete</button>
+        </section>
+
+        <!-- AGENT SECTION -->
+        <section id="agent" class="section">
+            <div class="section-header">
+                <span class="section-tag">Module 06</span>
+                <h1>Building AI Agents</h1>
+                <p class="section-subtitle">Learn the workflow for creating your own AI-powered applications</p>
+            </div>
+
+            <div class="card">
+                <h2>What is an AI Agent?</h2>
+                <p>An AI agent is a program that can understand instructions, make decisions, and take actions to complete tasks. Think of it as a helpful assistant that can do things for you.</p>
+
+                <div class="info-box">
+                    <div class="info-icon-wrapper">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    </div>
+                    <p>Examples of AI agents: Siri, Alexa, ChatGPT, and even game characters that make their own decisions.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>The Agent Development Workflow</h2>
+                <p>Follow these steps to build your own AI agent:</p>
+
+                <div class="workflow-container">
+                    <div class="workflow-step" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Define the Goal</h4>
+                            <p>What should your agent do? Be specific.</p>
+                            <div class="step-example">
+                                <strong>Example:</strong> "An agent that helps students with homework questions"
+                            </div>
+                            <textarea class="workflow-input" id="agentGoal" placeholder="My agent will..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="workflow-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+
+                    <div class="workflow-step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Design Inputs</h4>
+                            <p>What information does your agent need to receive?</p>
+                            <div class="step-example">
+                                <strong>Example:</strong> "The student's question, subject area, grade level"
+                            </div>
+                            <textarea class="workflow-input" id="agentInputs" placeholder="My agent needs to receive..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="workflow-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+
+                    <div class="workflow-step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Create the System Prompt</h4>
+                            <p>Write instructions that tell the AI how to behave.</p>
+                            <div class="step-example">
+                                <strong>Example:</strong> "You are a friendly tutor. Explain concepts simply. Ask follow-up questions to check understanding."
+                            </div>
+                            <textarea class="workflow-input" id="agentPrompt" rows="4" placeholder="You are a..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="workflow-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+
+                    <div class="workflow-step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Add Tools (Optional)</h4>
+                            <p>What actions can your agent take?</p>
+                            <div class="tools-checklist">
+                                <label><input type="checkbox" id="toolSearch"> Search the web</label>
+                                <label><input type="checkbox" id="toolCalculate"> Do calculations</label>
+                                <label><input type="checkbox" id="toolImage"> Generate images</label>
+                                <label><input type="checkbox" id="toolCode"> Write/run code</label>
+                                <label><input type="checkbox" id="toolMemory"> Remember past conversations</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+
+                    <div class="workflow-step" data-step="5">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h4>Define Outputs</h4>
+                            <p>What should your agent return?</p>
+                            <div class="step-example">
+                                <strong>Example:</strong> "A clear explanation, step-by-step solution, practice problem"
+                            </div>
+                            <textarea class="workflow-input" id="agentOutputs" placeholder="My agent should output..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="workflow-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+
+                    <div class="workflow-step" data-step="6">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <h4>Test & Iterate</h4>
+                            <p>Try your agent, find problems, and improve.</p>
+                            <div class="test-checklist">
+                                <label><input type="checkbox"> Does it understand different types of questions?</label>
+                                <label><input type="checkbox"> Does it handle edge cases?</label>
+                                <label><input type="checkbox"> Is the output helpful and accurate?</label>
+                                <label><input type="checkbox"> Is it safe and appropriate?</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="generateAgentSpec" class="btn btn-primary">Generate Agent Specification</button>
+
+                <div class="agent-spec" id="agentSpec" style="display: none;">
+                    <h3>Your Agent Specification:</h3>
+                    <pre id="agentSpecContent"></pre>
+                    <button id="copyAgentSpec" class="btn btn-outline">Copy to Clipboard</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Agent Examples</h2>
+                <p>Check out these example agents for inspiration:</p>
+
+                <div class="agent-examples">
+                    <div class="agent-example-card">
+                        <h4>Study Buddy</h4>
+                        <p>Helps create flashcards and quizzes from notes</p>
+                        <button class="btn btn-outline load-example" data-agent="study">Load Example</button>
+                    </div>
+                    <div class="agent-example-card">
+                        <h4>Art Director</h4>
+                        <p>Helps brainstorm and refine creative ideas</p>
+                        <button class="btn btn-outline load-example" data-agent="art">Load Example</button>
+                    </div>
+                    <div class="agent-example-card">
+                        <h4>Code Helper</h4>
+                        <p>Explains code and helps debug problems</p>
+                        <button class="btn btn-outline load-example" data-agent="code">Load Example</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Real-World Agent Architecture</h2>
+                <div class="architecture-diagram">
+                    <div class="arch-layer">
+                        <div class="arch-box user">User Input</div>
+                    </div>
+                    <div class="arch-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="arch-box interface">Interface Layer</div>
+                    </div>
+                    <div class="arch-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="arch-box agent">Agent Core (LLM + System Prompt)</div>
+                    </div>
+                    <div class="arch-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+                    <div class="arch-layer tools-layer">
+                        <div class="arch-box tool">Search</div>
+                        <div class="arch-box tool">Memory</div>
+                        <div class="arch-box tool">Tools</div>
+                        <div class="arch-box tool">APIs</div>
+                    </div>
+                    <div class="arch-arrow">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="arch-box output">Output to User</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-complete" data-section="agent">Mark as Complete</button>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/ai-academy.js') }}"></script>
+</body>
+</html>

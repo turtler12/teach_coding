@@ -300,7 +300,7 @@
         /* Course Cards */
         .courses-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 24px;
         }
 
@@ -341,6 +341,7 @@
         .course-card.coding { --card-gradient: var(--gradient-1); }
         .course-card.workflow { --card-gradient: var(--gradient-2); }
         .course-card.git { --card-gradient: var(--gradient-3); }
+        .course-card.academy { --card-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); }
 
         .course-icon {
             width: 56px;
@@ -357,6 +358,7 @@
         .course-card.coding .course-icon { background: rgba(99, 102, 241, 0.15); }
         .course-card.workflow .course-icon { background: rgba(245, 158, 11, 0.15); }
         .course-card.git .course-icon { background: rgba(16, 185, 129, 0.15); }
+        .course-card.academy .course-icon { background: rgba(236, 72, 153, 0.15); }
 
         .course-title {
             font-size: 1.5rem;
@@ -451,6 +453,133 @@
             line-height: 1.5;
         }
 
+        /* Pricing Section */
+        .pricing-section {
+            padding: 100px 60px;
+            background: var(--bg-primary);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px 32px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'Most Popular';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-primary);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-8px);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-8px);
+        }
+
+        .pricing-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .pricing-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .pricing-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .pricing-features {
+            text-align: left;
+            margin-bottom: 32px;
+        }
+
+        .pricing-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .pricing-feature::before {
+            content: '✓';
+            color: var(--accent-success);
+            font-weight: bold;
+        }
+
+        .pricing-btn {
+            display: block;
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .pricing-btn.primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .pricing-btn.primary:hover {
+            background: #5558e8;
+        }
+
+        .pricing-btn.secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .pricing-btn.secondary:hover {
+            background: var(--bg-elevated);
+        }
+
         /* Footer */
         .footer {
             padding: 40px 60px;
@@ -476,13 +605,22 @@
             .features-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            .pricing-card.featured {
+                transform: none;
+            }
+            .pricing-card.featured:hover {
+                transform: translateY(-8px);
+            }
             .hero h1 {
                 font-size: 3rem;
             }
             .nav {
                 padding: 20px 24px;
             }
-            .hero, .courses-section {
+            .hero, .courses-section, .pricing-section {
                 padding-left: 24px;
                 padding-right: 24px;
             }
@@ -522,6 +660,7 @@
                 <a href="/coding" class="nav-link">Block Coding</a>
                 <a href="/workflows" class="nav-link">Workflows</a>
                 <a href="/git" class="nav-link">Git</a>
+                <a href="/ai-academy" class="nav-link">AI Academy</a>
             </div>
             <a href="/coding" class="nav-cta">Start Learning</a>
         </nav>
@@ -530,7 +669,7 @@
         <section class="hero">
             <div class="hero-badge">
                 <span></span>
-                Interactive Learning Platform
+                Backed by Y Combinator
             </div>
             <h1>Learn to Code<br><span class="highlight">The Visual Way</span></h1>
             <p class="hero-subtitle">
@@ -551,7 +690,7 @@
 
             <div class="stats">
                 <div class="stat">
-                    <div class="stat-value">3</div>
+                    <div class="stat-value">4</div>
                     <div class="stat-label">Interactive Courses</div>
                 </div>
                 <div class="stat">
@@ -615,6 +754,20 @@
                         <span class="course-arrow">→</span>
                     </div>
                 </a>
+
+                <a href="/ai-academy" class="course-card academy">
+                    <div class="course-icon">🤖</div>
+                    <h3 class="course-title">AI Academy</h3>
+                    <p class="course-description">
+                        Master AI fundamentals: tokenization, datasets, prompt engineering,
+                        algorithms, and building your own AI agents.
+                    </p>
+                    <div class="course-meta">
+                        <span class="course-tag">🧠 6 Modules</span>
+                        <span class="course-tag">🎯 Hands-on</span>
+                        <span class="course-arrow">→</span>
+                    </div>
+                </a>
             </div>
         </section>
 
@@ -640,6 +793,58 @@
                     <div class="feature-icon">📱</div>
                     <h4 class="feature-title">Works Everywhere</h4>
                     <p class="feature-description">Learn on any device with a responsive, modern interface.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section class="pricing-section" id="pricing">
+            <div class="section-header">
+                <div class="section-label">Pricing</div>
+                <h2 class="section-title">Simple, Transparent Pricing</h2>
+                <p class="section-subtitle">Start learning for free, upgrade when you need more.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-name">Free</div>
+                    <div class="pricing-price">$0<span>/month</span></div>
+                    <div class="pricing-description">Perfect for getting started</div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature">Access to Block Coding</div>
+                        <div class="pricing-feature">5 exercises per course</div>
+                        <div class="pricing-feature">Basic Git visualizer</div>
+                        <div class="pricing-feature">Community support</div>
+                    </div>
+                    <a href="/coding" class="pricing-btn secondary">Get Started</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="pricing-name">Pro</div>
+                    <div class="pricing-price">$12<span>/month</span></div>
+                    <div class="pricing-description">For serious learners</div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature">All Free features</div>
+                        <div class="pricing-feature">Unlimited exercises</div>
+                        <div class="pricing-feature">Workflow Builder access</div>
+                        <div class="pricing-feature">Progress tracking</div>
+                        <div class="pricing-feature">Certificate of completion</div>
+                    </div>
+                    <a href="/coding" class="pricing-btn primary">Start Pro Trial</a>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-name">Team</div>
+                    <div class="pricing-price">$29<span>/month</span></div>
+                    <div class="pricing-description">For classrooms & teams</div>
+                    <div class="pricing-features">
+                        <div class="pricing-feature">All Pro features</div>
+                        <div class="pricing-feature">Up to 30 users</div>
+                        <div class="pricing-feature">Admin dashboard</div>
+                        <div class="pricing-feature">Custom exercises</div>
+                        <div class="pricing-feature">Priority support</div>
+                    </div>
+                    <a href="/coding" class="pricing-btn secondary">Contact Sales</a>
                 </div>
             </div>
         </section>

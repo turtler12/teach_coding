@@ -415,5 +415,174 @@ TEN!
         </ul>
     </div>
 
+    <div style="margin-top: 40px;">
+        <h2 style="text-align: center; color: #6366f1; margin-bottom: 24px;">Answer Key</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 32px;">Below are the solutions for each exercise. Try to solve them yourself first!</p>
+
+        <button id="toggleAnswers" style="display: block; margin: 0 auto 24px; padding: 12px 24px; background: #6366f1; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600;">Show Answer Key</button>
+
+        <div id="answerKey" style="display: none;">
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">1</span>
+                    <span class="exercise-title">Hello World - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Blocks needed:</div>
+1. Print block → value: "Hello, World!"
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">2</span>
+                    <span class="exercise-title">Create and Print a Variable - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Blocks needed:</div>
+1. Create variable → name: age, value: 12
+2. Print variable → variable: age
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">3</span>
+                    <span class="exercise-title">Simple Math - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Blocks needed:</div>
+1. Create variable → name: score, value: 10
+2. Change by → variable: score, amount: 5
+3. Print variable → variable: score
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">4</span>
+                    <span class="exercise-title">Repeat a Message - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Blocks needed:</div>
+1. Repeat times → times: 3
+   └─ 2. Print → value: "I love coding!"
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">5</span>
+                    <span class="exercise-title">Counting Up - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Blocks needed:</div>
+1. Create variable → name: count, value: 0
+2. Repeat times → times: 5
+   └─ 3. Change by → variable: count, amount: 1
+   └─ 4. Print variable → variable: count
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">6</span>
+                    <span class="exercise-title">Making Decisions - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Blocks needed:</div>
+1. Create variable → name: temperature, value: 35
+2. If → condition: temperature > 30
+   └─ 3. Print → value: "It's hot outside!"
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">7</span>
+                    <span class="exercise-title">If-Else Choices - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Blocks needed:</div>
+1. Create variable → name: grade, value: 85
+2. If-Else → condition: grade >= 70
+   IF section:
+   └─ 3. Print → value: "You passed!"
+   ELSE section:
+   └─ 4. Print → value: "Keep trying!"
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">8</span>
+                    <span class="exercise-title">Multiplication Table - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Blocks needed:</div>
+1. Create variable → name: result, value: 0
+2. Create variable → name: multiplier, value: 0
+3. Repeat times → times: 5
+   └─ 4. Change by → variable: multiplier, amount: 1
+   └─ 5. Set variable → name: result, value: multiplier * 5
+   └─ 6. Print variable → variable: result
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">9</span>
+                    <span class="exercise-title">Sum of Numbers - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Blocks needed:</div>
+1. Create variable → name: total, value: 0
+2. Create variable → name: number, value: 0
+3. Repeat times → times: 10
+   └─ 4. Change by → variable: number, amount: 1
+   └─ 5. Change by → variable: total, amount: number
+6. Print variable → variable: total
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">10</span>
+                    <span class="exercise-title">FizzBuzz (Simplified) - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Blocks needed:</div>
+1. Create variable → name: num, value: 0
+2. Repeat times → times: 10
+   └─ 3. Change by → variable: num, amount: 1
+   └─ 4. If-Else → condition: num == 5
+        IF section:
+        └─ 5. Print → value: "FIVE!"
+        ELSE section:
+        └─ 6. If-Else → condition: num == 10
+             IF section:
+             └─ 7. Print → value: "TEN!"
+             ELSE section:
+             └─ 8. Print variable → variable: num
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('toggleAnswers').addEventListener('click', function() {
+            const answerKey = document.getElementById('answerKey');
+            if (answerKey.style.display === 'none') {
+                answerKey.style.display = 'block';
+                this.textContent = 'Hide Answer Key';
+                this.style.background = '#ef4444';
+            } else {
+                answerKey.style.display = 'none';
+                this.textContent = 'Show Answer Key';
+                this.style.background = '#6366f1';
+            }
+        });
+    </script>
+
 </body>
 </html>
