@@ -712,8 +712,7 @@ class TrustAIApp {
             {
                 action: () => {
                     if (this.currentLoopBlock) {
-                        const container = this.currentLoopBlock.element.querySelector('.block-children');
-                        if (container) this.selectContainer(container, this.currentLoopBlock.id);
+                        this.selectContainer(this.currentLoopBlock.id, false);
                     }
                     return this.addBlockById('var_change', { name: 'attempts', value: '1' });
                 },
@@ -747,8 +746,7 @@ class TrustAIApp {
             {
                 action: () => {
                     if (this.currentIfBlock) {
-                        const container = this.currentIfBlock.element.querySelector('.block-children');
-                        if (container) this.selectContainer(container, this.currentIfBlock.id);
+                        this.selectContainer(this.currentIfBlock.id, false);
                     }
                     return this.addBlockById('print_msg', { message: '"🎉 Correct! You win!"' });
                 },
@@ -758,8 +756,7 @@ class TrustAIApp {
             {
                 action: () => {
                     if (this.currentIfBlock) {
-                        const container = this.currentIfBlock.element.querySelector('.block-else');
-                        if (container) this.selectContainer(container, this.currentIfBlock.id);
+                        this.selectContainer(this.currentIfBlock.id, true); // true = else section
                     }
                     const block = this.addBlockById('if_else_block', { condition: 'guess < secret' });
                     this.currentElseIfBlock = block;
@@ -771,8 +768,7 @@ class TrustAIApp {
             {
                 action: () => {
                     if (this.currentElseIfBlock) {
-                        const container = this.currentElseIfBlock.element.querySelector('.block-children');
-                        if (container) this.selectContainer(container, this.currentElseIfBlock.id);
+                        this.selectContainer(this.currentElseIfBlock.id, false);
                     }
                     return this.addBlockById('print_msg', { message: '"Too low! Try higher."' });
                 },
@@ -782,8 +778,7 @@ class TrustAIApp {
             {
                 action: () => {
                     if (this.currentElseIfBlock) {
-                        const container = this.currentElseIfBlock.element.querySelector('.block-else');
-                        if (container) this.selectContainer(container, this.currentElseIfBlock.id);
+                        this.selectContainer(this.currentElseIfBlock.id, true); // true = else section
                     }
                     return this.addBlockById('print_msg', { message: '"Too high! Try lower."' });
                 },
@@ -802,20 +797,23 @@ class TrustAIApp {
         for (let i = 0; i < steps.length; i++) {
             const step = steps[i];
 
-            // Show step message
+            // Show step message first
             this.appendOutput('', 'muted');
             this.appendOutput(step.message, 'success');
             this.appendOutput(`   ${step.detail}`, 'muted');
 
-            // Execute the action
-            step.action();
+            // Wait a moment so user can read the message
+            await new Promise(r => setTimeout(r, 400));
 
-            // Update display
-            this.renderWorkspace();
-            this.updateCodeDisplay();
+            // Execute the action
+            try {
+                step.action();
+            } catch (e) {
+                console.error('Tutorial step error:', e);
+            }
 
             // Wait for user to see the change
-            await new Promise(r => setTimeout(r, 800));
+            await new Promise(r => setTimeout(r, 600));
         }
 
         // Clear container selection
@@ -842,15 +840,14 @@ class TrustAIApp {
             this.addBlockFromTemplate(template);
             const lastBlock = this.blocks[this.blocks.length - 1];
             if (lastBlock && values) {
+                // Set values in the data model
                 Object.entries(values).forEach(([key, value]) => {
                     lastBlock.values[key] = value;
-                    const el = lastBlock.element;
-                    if (el) {
-                        const input = el.querySelector(`[data-input="${key}"]`);
-                        if (input) input.value = value;
-                    }
                 });
             }
+            // Re-render to create/update elements with new values
+            this.renderWorkspace();
+            this.updateCodeDisplay();
             return lastBlock;
         }
         return null;
@@ -869,8 +866,7 @@ class TrustAIApp {
         const loopBlock = this.addBlockById('repeat_times', { times: '3' });
 
         if (loopBlock) {
-            const loopContainer = loopBlock.element.querySelector('.block-children');
-            if (loopContainer) this.selectContainer(loopContainer, loopBlock.id);
+            this.selectContainer(loopBlock.id, false);
         }
 
         this.addBlockById('var_change', { name: 'attempts', value: '1' });
@@ -881,29 +877,25 @@ class TrustAIApp {
         const ifBlock = this.addBlockById('if_else_block', { condition: 'guess == secret' });
 
         if (ifBlock) {
-            const ifContainer = ifBlock.element.querySelector('.block-children');
-            if (ifContainer) this.selectContainer(ifContainer, ifBlock.id);
+            this.selectContainer(ifBlock.id, false);
         }
 
         this.addBlockById('print_msg', { message: '"🎉 Correct! You win!"' });
 
         if (ifBlock) {
-            const elseContainer = ifBlock.element.querySelector('.block-else');
-            if (elseContainer) this.selectContainer(elseContainer, ifBlock.id);
+            this.selectContainer(ifBlock.id, true); // else section
         }
 
         const elseIfBlock = this.addBlockById('if_else_block', { condition: 'guess < secret' });
 
         if (elseIfBlock) {
-            const innerIfContainer = elseIfBlock.element.querySelector('.block-children');
-            if (innerIfContainer) this.selectContainer(innerIfContainer, elseIfBlock.id);
+            this.selectContainer(elseIfBlock.id, false);
         }
 
         this.addBlockById('print_msg', { message: '"Too low! Try higher."' });
 
         if (elseIfBlock) {
-            const innerElseContainer = elseIfBlock.element.querySelector('.block-else');
-            if (innerElseContainer) this.selectContainer(innerElseContainer, elseIfBlock.id);
+            this.selectContainer(elseIfBlock.id, true); // else section
         }
 
         this.addBlockById('print_msg', { message: '"Too high! Try lower."' });
@@ -995,6 +987,7 @@ class TrustAIApp {
         const line = document.createElement('div');
         line.className = `console-line${type === 'error' ? ' console-error' : ''}`;
         if (type === 'muted') line.style.color = 'var(--text-muted)';
+        if (type === 'success') line.style.color = '#10b981';
         line.textContent = text;
         this.consoleOutput.appendChild(line);
         this.consoleOutput.scrollTop = this.consoleOutput.scrollHeight;
