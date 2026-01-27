@@ -573,65 +573,348 @@ class TrustAIApp {
         document.getElementById('loadExampleBtn').addEventListener('click', () => this.loadExample());
     }
 
-    // Load example: Count to 5 using a loop
+    // Load example with interactive tutorial
     loadExample() {
         // Clear existing blocks
         this.clearWorkspace();
+        this.clearOutput();
 
-        // Helper function to find and click a block template
-        const addBlock = (blockId, values = {}) => {
-            const template = document.querySelector(`[data-block-id="${blockId}"]`);
-            if (template) {
-                this.addBlockFromTemplate(template);
-                // Set values on the last added block
-                const lastBlock = this.blocks[this.blocks.length - 1];
-                if (lastBlock && values) {
-                    Object.entries(values).forEach(([key, value]) => {
-                        lastBlock.values[key] = value;
-                        // Update input display
-                        const el = lastBlock.element;
-                        if (el) {
-                            const input = el.querySelector(`[data-input="${key}"]`);
-                            if (input) input.value = value;
-                        }
-                    });
-                }
-                return lastBlock;
-            }
-            return null;
+        // Show tutorial modal
+        this.showTutorial();
+    }
+
+    showTutorial() {
+        // Create tutorial overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'tutorialOverlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        `;
+
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #333;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        `;
+
+        modal.innerHTML = `
+            <h2 style="color: #38bdf8; margin-bottom: 8px; font-size: 1.5em;">🎓 Interactive Tutorial</h2>
+            <p style="color: #888; margin-bottom: 24px;">Learn to build a "Guess the Number" game!</p>
+
+            <div style="background: #252540; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                <h3 style="color: #10b981; margin-bottom: 12px; font-size: 1.1em;">What you'll learn:</h3>
+                <ul style="color: #ccc; margin-left: 20px; line-height: 1.8;">
+                    <li>Creating and using <strong style="color: #8b5cf6;">variables</strong></li>
+                    <li>Using <strong style="color: #f59e0b;">loops</strong> to repeat actions</li>
+                    <li>Making decisions with <strong style="color: #f59e0b;">if-else</strong></li>
+                    <li>Using <strong style="color: #ec4899;">comparison operators</strong></li>
+                    <li>Displaying output with <strong style="color: #10b981;">print</strong></li>
+                </ul>
+            </div>
+
+            <div style="background: #252540; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                <h3 style="color: #f59e0b; margin-bottom: 12px; font-size: 1.1em;">The Program:</h3>
+                <p style="color: #ccc; line-height: 1.6;">
+                    We'll create a number guessing game that:
+                </p>
+                <ol style="color: #ccc; margin-left: 20px; margin-top: 12px; line-height: 1.8;">
+                    <li>Sets a secret number (7)</li>
+                    <li>Lets you guess 3 times</li>
+                    <li>Tells you if you're too high, too low, or correct!</li>
+                </ol>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button id="tutorialSkip" style="
+                    padding: 12px 24px;
+                    background: #333;
+                    color: #ccc;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 1em;
+                ">Skip Tutorial</button>
+                <button id="tutorialStart" style="
+                    padding: 12px 24px;
+                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 1em;
+                    font-weight: 600;
+                ">Start Tutorial →</button>
+            </div>
+        `;
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        // Button handlers
+        document.getElementById('tutorialSkip').onclick = () => {
+            overlay.remove();
+            this.loadExampleDirect();
         };
 
-        // Build the example: Count from 1 to 5
-        // 1. Create variable count = 0
-        addBlock('var_create', { name: 'count', value: '0' });
+        document.getElementById('tutorialStart').onclick = () => {
+            overlay.remove();
+            this.runTutorialSteps();
+        };
+    }
 
-        // 2. Repeat 5 times
-        const loopBlock = addBlock('repeat_times', { times: '5' });
-
-        // 3. Inside loop: increment count
-        if (loopBlock) {
-            // Select the loop's children container
-            const childContainer = loopBlock.element.querySelector('.block-children');
-            if (childContainer) {
-                this.selectContainer(childContainer, loopBlock.id);
+    async runTutorialSteps() {
+        const steps = [
+            {
+                action: () => this.addBlockById('var_create', { name: 'secret', value: '7' }),
+                message: '📦 Step 1: Create the secret number (7)',
+                detail: 'This stores our secret number in a variable called "secret"'
+            },
+            {
+                action: () => this.addBlockById('var_create', { name: 'guess', value: '0' }),
+                message: '📦 Step 2: Create a variable for the player\'s guess',
+                detail: 'We\'ll update this variable each round'
+            },
+            {
+                action: () => this.addBlockById('var_create', { name: 'attempts', value: '0' }),
+                message: '📦 Step 3: Create a counter for attempts',
+                detail: 'This tracks how many guesses the player has made'
+            },
+            {
+                action: () => this.addBlockById('print_msg', { message: '"Guess a number between 1-10!"' }),
+                message: '💬 Step 4: Print instructions to the player',
+                detail: 'Always tell users what to do!'
+            },
+            {
+                action: () => {
+                    const block = this.addBlockById('repeat_times', { times: '3' });
+                    this.currentLoopBlock = block;
+                    return block;
+                },
+                message: '🔄 Step 5: Create a loop for 3 guesses',
+                detail: 'The player gets 3 chances to guess correctly'
+            },
+            {
+                action: () => {
+                    if (this.currentLoopBlock) {
+                        const container = this.currentLoopBlock.element.querySelector('.block-children');
+                        if (container) this.selectContainer(container, this.currentLoopBlock.id);
+                    }
+                    return this.addBlockById('var_change', { name: 'attempts', value: '1' });
+                },
+                message: '    ↳ Step 6: Inside loop - count the attempt',
+                detail: 'Each time through the loop, add 1 to attempts'
+            },
+            {
+                action: () => this.addBlockById('var_set', { name: 'guess', value: 'attempts + 4' }),
+                message: '    ↳ Step 7: Simulate a guess (attempts + 4)',
+                detail: 'This creates guesses of 5, 6, 7 - the 3rd guess wins!'
+            },
+            {
+                action: () => this.addBlockById('print_msg', { message: '"Guessing:"' }),
+                message: '    ↳ Step 8: Print "Guessing:"',
+                detail: 'Show the player we\'re making a guess'
+            },
+            {
+                action: () => this.addBlockById('var_print', { name: 'guess' }),
+                message: '    ↳ Step 9: Print the guess value',
+                detail: 'Display what number was guessed'
+            },
+            {
+                action: () => {
+                    const block = this.addBlockById('if_else_block', { condition: 'guess == secret' });
+                    this.currentIfBlock = block;
+                    return block;
+                },
+                message: '    ↳ Step 10: Check if guess equals secret',
+                detail: 'This is where the magic happens - did they guess right?'
+            },
+            {
+                action: () => {
+                    if (this.currentIfBlock) {
+                        const container = this.currentIfBlock.element.querySelector('.block-children');
+                        if (container) this.selectContainer(container, this.currentIfBlock.id);
+                    }
+                    return this.addBlockById('print_msg', { message: '"🎉 Correct! You win!"' });
+                },
+                message: '        ↳ Step 11: If correct - celebrate!',
+                detail: 'Print a winning message when they guess right'
+            },
+            {
+                action: () => {
+                    if (this.currentIfBlock) {
+                        const container = this.currentIfBlock.element.querySelector('.block-else');
+                        if (container) this.selectContainer(container, this.currentIfBlock.id);
+                    }
+                    const block = this.addBlockById('if_else_block', { condition: 'guess < secret' });
+                    this.currentElseIfBlock = block;
+                    return block;
+                },
+                message: '        ↳ Step 12: Else - check if guess is too low',
+                detail: 'If not correct, give them a hint'
+            },
+            {
+                action: () => {
+                    if (this.currentElseIfBlock) {
+                        const container = this.currentElseIfBlock.element.querySelector('.block-children');
+                        if (container) this.selectContainer(container, this.currentElseIfBlock.id);
+                    }
+                    return this.addBlockById('print_msg', { message: '"Too low! Try higher."' });
+                },
+                message: '            ↳ Step 13: Print "Too low"',
+                detail: 'Help them know to guess higher'
+            },
+            {
+                action: () => {
+                    if (this.currentElseIfBlock) {
+                        const container = this.currentElseIfBlock.element.querySelector('.block-else');
+                        if (container) this.selectContainer(container, this.currentElseIfBlock.id);
+                    }
+                    return this.addBlockById('print_msg', { message: '"Too high! Try lower."' });
+                },
+                message: '            ↳ Step 14: Else print "Too high"',
+                detail: 'If not too low, it must be too high!'
             }
-        }
-        addBlock('var_change', { name: 'count', value: '1' });
+        ];
 
-        // 4. Inside loop: print count
-        addBlock('var_print', { name: 'count' });
+        // Clear and show tutorial progress
+        this.clearOutput();
+        this.appendOutput('🎓 TUTORIAL MODE', 'success');
+        this.appendOutput('Watch as we build the program step by step...', 'muted');
+        this.appendOutput('─'.repeat(40), 'muted');
+
+        // Run steps with animation
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+
+            // Show step message
+            this.appendOutput('', 'muted');
+            this.appendOutput(step.message, 'success');
+            this.appendOutput(`   ${step.detail}`, 'muted');
+
+            // Execute the action
+            step.action();
+
+            // Update display
+            this.renderWorkspace();
+            this.updateCodeDisplay();
+
+            // Wait for user to see the change
+            await new Promise(r => setTimeout(r, 800));
+        }
 
         // Clear container selection
         this.clearContainerSelection();
-
-        // Refresh display
         this.renderWorkspace();
         this.updateCodeDisplay();
 
-        // Show success message
+        // Final message
+        this.appendOutput('', 'muted');
+        this.appendOutput('─'.repeat(40), 'muted');
+        this.appendOutput('✅ Tutorial complete!', 'success');
+        this.appendOutput('Click "▶ Run Code" to play the game!', 'muted');
+        this.appendOutput('', 'muted');
+        this.appendOutput('💡 Try modifying the code:', 'muted');
+        this.appendOutput('   • Change the secret number', 'muted');
+        this.appendOutput('   • Add more guesses', 'muted');
+        this.appendOutput('   • Change the messages', 'muted');
+    }
+
+    // Helper to add block by ID with values
+    addBlockById(blockId, values = {}) {
+        const template = document.querySelector(`[data-block-id="${blockId}"]`);
+        if (template) {
+            this.addBlockFromTemplate(template);
+            const lastBlock = this.blocks[this.blocks.length - 1];
+            if (lastBlock && values) {
+                Object.entries(values).forEach(([key, value]) => {
+                    lastBlock.values[key] = value;
+                    const el = lastBlock.element;
+                    if (el) {
+                        const input = el.querySelector(`[data-input="${key}"]`);
+                        if (input) input.value = value;
+                    }
+                });
+            }
+            return lastBlock;
+        }
+        return null;
+    }
+
+    // Load example directly without tutorial
+    loadExampleDirect() {
+        this.clearWorkspace();
+
+        // Build the guessing game
+        this.addBlockById('var_create', { name: 'secret', value: '7' });
+        this.addBlockById('var_create', { name: 'guess', value: '0' });
+        this.addBlockById('var_create', { name: 'attempts', value: '0' });
+        this.addBlockById('print_msg', { message: '"Guess a number between 1-10!"' });
+
+        const loopBlock = this.addBlockById('repeat_times', { times: '3' });
+
+        if (loopBlock) {
+            const loopContainer = loopBlock.element.querySelector('.block-children');
+            if (loopContainer) this.selectContainer(loopContainer, loopBlock.id);
+        }
+
+        this.addBlockById('var_change', { name: 'attempts', value: '1' });
+        this.addBlockById('var_set', { name: 'guess', value: 'attempts + 4' });
+        this.addBlockById('print_msg', { message: '"Guessing:"' });
+        this.addBlockById('var_print', { name: 'guess' });
+
+        const ifBlock = this.addBlockById('if_else_block', { condition: 'guess == secret' });
+
+        if (ifBlock) {
+            const ifContainer = ifBlock.element.querySelector('.block-children');
+            if (ifContainer) this.selectContainer(ifContainer, ifBlock.id);
+        }
+
+        this.addBlockById('print_msg', { message: '"🎉 Correct! You win!"' });
+
+        if (ifBlock) {
+            const elseContainer = ifBlock.element.querySelector('.block-else');
+            if (elseContainer) this.selectContainer(elseContainer, ifBlock.id);
+        }
+
+        const elseIfBlock = this.addBlockById('if_else_block', { condition: 'guess < secret' });
+
+        if (elseIfBlock) {
+            const innerIfContainer = elseIfBlock.element.querySelector('.block-children');
+            if (innerIfContainer) this.selectContainer(innerIfContainer, elseIfBlock.id);
+        }
+
+        this.addBlockById('print_msg', { message: '"Too low! Try higher."' });
+
+        if (elseIfBlock) {
+            const innerElseContainer = elseIfBlock.element.querySelector('.block-else');
+            if (innerElseContainer) this.selectContainer(innerElseContainer, elseIfBlock.id);
+        }
+
+        this.addBlockById('print_msg', { message: '"Too high! Try lower."' });
+
+        this.clearContainerSelection();
+        this.renderWorkspace();
+        this.updateCodeDisplay();
+
         this.clearOutput();
-        this.appendOutput('Example loaded: Count from 1 to 5', 'success');
-        this.appendOutput('Click "Run Code" to see it work!', 'muted');
+        this.appendOutput('📦 Example loaded: Number Guessing Game', 'success');
+        this.appendOutput('Click "▶ Run Code" to play!', 'muted');
     }
 
     async runCode() {
