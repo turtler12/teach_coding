@@ -14,6 +14,8 @@ BLOCK_CATEGORIES = {
             {"id": "var_set", "label": "Set variable", "template": "{name} = {value}", "inputs": ["name", "value"]},
             {"id": "var_change", "label": "Change by", "template": "{name} += {value}", "inputs": ["name", "value"]},
             {"id": "var_print", "label": "Print variable", "template": "print({name})", "inputs": ["name"]},
+            {"id": "var_multiply", "label": "Multiply by", "template": "{name} *= {value}", "inputs": ["name", "value"]},
+            {"id": "var_divide", "label": "Divide by", "template": "{name} /= {value}", "inputs": ["name", "value"]},
         ]
     },
     "control": {
@@ -23,7 +25,10 @@ BLOCK_CATEGORIES = {
             {"id": "if_block", "label": "If", "template": "if {condition}:", "inputs": ["condition"], "accepts_children": True},
             {"id": "if_else_block", "label": "If-Else", "template": "if {condition}:", "inputs": ["condition"], "accepts_children": True, "has_else": True},
             {"id": "repeat_times", "label": "Repeat times", "template": "for _ in range({times}):", "inputs": ["times"], "accepts_children": True},
+            {"id": "for_range", "label": "For i in range", "template": "for {var} in range({start}, {end}):", "inputs": ["var", "start", "end"], "accepts_children": True},
             {"id": "while_block", "label": "While", "template": "while {condition}:", "inputs": ["condition"], "accepts_children": True},
+            {"id": "break_block", "label": "Break", "template": "break", "inputs": []},
+            {"id": "continue_block", "label": "Continue", "template": "continue", "inputs": []},
         ]
     },
     "output": {
@@ -31,7 +36,9 @@ BLOCK_CATEGORIES = {
         "icon": "⎙",
         "blocks": [
             {"id": "print_msg", "label": "Print", "template": "print({message})", "inputs": ["message"]},
+            {"id": "print_multiple", "label": "Print multiple", "template": "print({item1}, {item2})", "inputs": ["item1", "item2"]},
             {"id": "print_input", "label": "Input", "template": "{name} = input({prompt})", "inputs": ["name", "prompt"]},
+            {"id": "print_fstring", "label": "Print formatted", "template": "print(f\"{text}{{name}}\")", "inputs": ["text", "name"]},
         ]
     },
     "operators": {
@@ -39,6 +46,50 @@ BLOCK_CATEGORIES = {
         "icon": "+",
         "blocks": [
             {"id": "compare", "label": "Compare", "template": "{a} {op} {b}", "inputs": ["a", "op", "b"], "is_expression": True},
+            {"id": "math_add", "label": "Add", "template": "{a} + {b}", "inputs": ["a", "b"], "is_expression": True},
+            {"id": "math_subtract", "label": "Subtract", "template": "{a} - {b}", "inputs": ["a", "b"], "is_expression": True},
+            {"id": "math_multiply", "label": "Multiply", "template": "{a} * {b}", "inputs": ["a", "b"], "is_expression": True},
+            {"id": "math_divide", "label": "Divide", "template": "{a} / {b}", "inputs": ["a", "b"], "is_expression": True},
+            {"id": "math_modulo", "label": "Remainder (mod)", "template": "{a} % {b}", "inputs": ["a", "b"], "is_expression": True},
+            {"id": "math_power", "label": "Power", "template": "{a} ** {b}", "inputs": ["a", "b"], "is_expression": True},
+        ]
+    },
+    "logic": {
+        "color": "#ec4899",
+        "icon": "◇",
+        "blocks": [
+            {"id": "logic_and", "label": "And", "template": "{a} and {b}", "inputs": ["a", "b"], "is_expression": True},
+            {"id": "logic_or", "label": "Or", "template": "{a} or {b}", "inputs": ["a", "b"], "is_expression": True},
+            {"id": "logic_not", "label": "Not", "template": "not {a}", "inputs": ["a"], "is_expression": True},
+            {"id": "logic_true", "label": "True", "template": "True", "inputs": [], "is_expression": True},
+            {"id": "logic_false", "label": "False", "template": "False", "inputs": [], "is_expression": True},
+        ]
+    },
+    "lists": {
+        "color": "#06b6d4",
+        "icon": "[]",
+        "blocks": [
+            {"id": "list_create", "label": "Create list", "template": "{name} = []", "inputs": ["name"]},
+            {"id": "list_create_items", "label": "Create list with", "template": "{name} = [{items}]", "inputs": ["name", "items"]},
+            {"id": "list_append", "label": "Add to list", "template": "{name}.append({value})", "inputs": ["name", "value"]},
+            {"id": "list_get", "label": "Get item at", "template": "{name}[{index}]", "inputs": ["name", "index"], "is_expression": True},
+            {"id": "list_set", "label": "Set item at", "template": "{name}[{index}] = {value}", "inputs": ["name", "index", "value"]},
+            {"id": "list_length", "label": "Length of list", "template": "len({name})", "inputs": ["name"], "is_expression": True},
+            {"id": "list_for", "label": "For each in list", "template": "for {item} in {list}:", "inputs": ["item", "list"], "accepts_children": True},
+            {"id": "list_remove", "label": "Remove from list", "template": "{name}.remove({value})", "inputs": ["name", "value"]},
+        ]
+    },
+    "functions": {
+        "color": "#f97316",
+        "icon": "fn",
+        "blocks": [
+            {"id": "func_abs", "label": "Absolute value", "template": "abs({value})", "inputs": ["value"], "is_expression": True},
+            {"id": "func_max", "label": "Maximum", "template": "max({a}, {b})", "inputs": ["a", "b"], "is_expression": True},
+            {"id": "func_min", "label": "Minimum", "template": "min({a}, {b})", "inputs": ["a", "b"], "is_expression": True},
+            {"id": "func_round", "label": "Round", "template": "round({value})", "inputs": ["value"], "is_expression": True},
+            {"id": "func_int", "label": "Convert to int", "template": "int({value})", "inputs": ["value"], "is_expression": True},
+            {"id": "func_str", "label": "Convert to string", "template": "str({value})", "inputs": ["value"], "is_expression": True},
+            {"id": "func_sum", "label": "Sum of list", "template": "sum({list})", "inputs": ["list"], "is_expression": True},
         ]
     }
 }

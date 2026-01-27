@@ -70,6 +70,25 @@
             font-weight: 600;
         }
 
+        .difficulty {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: auto;
+        }
+
+        .difficulty.hard {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .difficulty.expert {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
         .goal {
             background: #e8f4f8;
             padding: 10px 14px;
@@ -402,6 +421,293 @@ TEN!
         </div>
     </div>
 
+    <!-- ADVANCED EXERCISES -->
+    <h2 style="margin-top: 60px; text-align: center; color: #f97316;">Advanced Exercises</h2>
+    <p style="text-align: center; color: #666; margin-bottom: 32px;">These exercises use lists, functions, and more complex logic!</p>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">11</span>
+            <span class="exercise-title">Find the Maximum</span>
+            <span class="difficulty hard">Hard</span>
+        </div>
+        <div class="exercise-description">
+            <p>Create a list of numbers and find the maximum value without using the <code>max()</code> function.</p>
+            <p><strong>Goal:</strong> Store the numbers [3, 7, 2, 9, 4] in a list, then loop through to find the biggest number.</p>
+        </div>
+        <div class="exercise-steps">
+            <ol>
+                <li>Create a list <code>numbers</code> with items <code>3, 7, 2, 9, 4</code></li>
+                <li>Create variable <code>biggest</code> with value <code>0</code></li>
+                <li>Use <strong>For each in list</strong> with <code>num</code> in <code>numbers</code>:</li>
+                <li style="margin-left: 20px;">Use <strong>If</strong> with condition <code>num > biggest</code>:</li>
+                <li style="margin-left: 40px;">Set <code>biggest</code> to <code>num</code></li>
+                <li>Print variable <code>biggest</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+9
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">12</span>
+            <span class="exercise-title">Even Numbers Only</span>
+            <span class="difficulty hard">Hard</span>
+        </div>
+        <div class="exercise-description">
+            <p>Print only the even numbers from 1 to 10 using the modulo (remainder) operator.</p>
+            <p><strong>Hint:</strong> A number is even if <code>num % 2 == 0</code></p>
+        </div>
+        <div class="exercise-steps">
+            <ol>
+                <li>Create variable <code>num</code> with value <code>0</code></li>
+                <li><strong>Repeat times</strong> 10 times:</li>
+                <li style="margin-left: 20px;">Change <code>num</code> by <code>1</code></li>
+                <li style="margin-left: 20px;">Use <strong>If</strong> with condition <code>num % 2 == 0</code>:</li>
+                <li style="margin-left: 40px;">Print variable <code>num</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+2
+4
+6
+8
+10
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">13</span>
+            <span class="exercise-title">Build a List</span>
+            <span class="difficulty hard">Hard</span>
+        </div>
+        <div class="exercise-description">
+            <p>Create an empty list and add the squares of numbers 1-5 to it (1, 4, 9, 16, 25).</p>
+        </div>
+        <div class="exercise-steps">
+            <ol>
+                <li>Create an empty list called <code>squares</code></li>
+                <li>Create variable <code>i</code> with value <code>0</code></li>
+                <li><strong>Repeat times</strong> 5 times:</li>
+                <li style="margin-left: 20px;">Change <code>i</code> by <code>1</code></li>
+                <li style="margin-left: 20px;">Create variable <code>square</code> with value <code>i * i</code></li>
+                <li style="margin-left: 20px;">Add <code>square</code> to list <code>squares</code></li>
+                <li>Print variable <code>squares</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+[1, 4, 9, 16, 25]
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">14</span>
+            <span class="exercise-title">Factorial Calculator</span>
+            <span class="difficulty hard">Hard</span>
+        </div>
+        <div class="exercise-description">
+            <p>Calculate the factorial of 5 (5! = 5 × 4 × 3 × 2 × 1 = 120).</p>
+        </div>
+        <div class="exercise-steps">
+            <ol>
+                <li>Create variable <code>result</code> with value <code>1</code></li>
+                <li>Create variable <code>n</code> with value <code>5</code></li>
+                <li><strong>While</strong> <code>n > 0</code>:</li>
+                <li style="margin-left: 20px;">Multiply <code>result</code> by <code>n</code></li>
+                <li style="margin-left: 20px;">Change <code>n</code> by <code>-1</code></li>
+                <li>Print variable <code>result</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+120
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">15</span>
+            <span class="exercise-title">Prime Number Check</span>
+            <span class="difficulty expert">Expert</span>
+        </div>
+        <div class="exercise-description">
+            <p>Check if the number 7 is prime. A prime number is only divisible by 1 and itself.</p>
+            <p><strong>Hint:</strong> Loop from 2 to n-1 and check if any number divides evenly.</p>
+        </div>
+        <div class="exercise-steps">
+            <ol>
+                <li>Create variable <code>n</code> with value <code>7</code></li>
+                <li>Create variable <code>is_prime</code> with value <code>True</code></li>
+                <li>Create variable <code>i</code> with value <code>1</code></li>
+                <li><strong>Repeat times</strong> 5 times (checks 2 through 6):</li>
+                <li style="margin-left: 20px;">Change <code>i</code> by <code>1</code></li>
+                <li style="margin-left: 20px;">Use <strong>If</strong> with condition <code>n % i == 0</code>:</li>
+                <li style="margin-left: 40px;">Set <code>is_prime</code> to <code>False</code></li>
+                <li>Use <strong>If-Else</strong> with condition <code>is_prime</code>:</li>
+                <li style="margin-left: 20px;">If true: Print <code>"Prime!"</code></li>
+                <li style="margin-left: 20px;">Else: Print <code>"Not prime"</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+Prime!
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">16</span>
+            <span class="exercise-title">Fibonacci Sequence</span>
+            <span class="difficulty expert">Expert</span>
+        </div>
+        <div class="exercise-description">
+            <p>Generate the first 10 numbers of the Fibonacci sequence (each number is the sum of the two before it).</p>
+            <p>Sequence: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34</p>
+        </div>
+        <div class="exercise-steps">
+            <ol>
+                <li>Create variable <code>a</code> with value <code>0</code></li>
+                <li>Create variable <code>b</code> with value <code>1</code></li>
+                <li>Create variable <code>count</code> with value <code>0</code></li>
+                <li><strong>Repeat times</strong> 10 times:</li>
+                <li style="margin-left: 20px;">Print variable <code>a</code></li>
+                <li style="margin-left: 20px;">Create variable <code>temp</code> with value <code>a + b</code></li>
+                <li style="margin-left: 20px;">Set <code>a</code> to <code>b</code></li>
+                <li style="margin-left: 20px;">Set <code>b</code> to <code>temp</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">17</span>
+            <span class="exercise-title">Sum of List</span>
+            <span class="difficulty hard">Hard</span>
+        </div>
+        <div class="exercise-description">
+            <p>Calculate the sum of all numbers in a list [10, 20, 30, 40, 50] without using the <code>sum()</code> function.</p>
+        </div>
+        <div class="exercise-steps">
+            <ol>
+                <li>Create list <code>numbers</code> with items <code>10, 20, 30, 40, 50</code></li>
+                <li>Create variable <code>total</code> with value <code>0</code></li>
+                <li>Use <strong>For each in list</strong> with <code>num</code> in <code>numbers</code>:</li>
+                <li style="margin-left: 20px;">Change <code>total</code> by <code>num</code></li>
+                <li>Print variable <code>total</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+150
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">18</span>
+            <span class="exercise-title">Countdown with Break</span>
+            <span class="difficulty hard">Hard</span>
+        </div>
+        <div class="exercise-description">
+            <p>Count down from 10 to 1, but stop early if you reach 5 using the <code>break</code> command.</p>
+        </div>
+        <div class="exercise-steps">
+            <ol>
+                <li>Create variable <code>num</code> with value <code>11</code></li>
+                <li><strong>Repeat times</strong> 10 times:</li>
+                <li style="margin-left: 20px;">Change <code>num</code> by <code>-1</code></li>
+                <li style="margin-left: 20px;">Print variable <code>num</code></li>
+                <li style="margin-left: 20px;">Use <strong>If</strong> with condition <code>num == 5</code>:</li>
+                <li style="margin-left: 40px;"><strong>Break</strong></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+10
+9
+8
+7
+6
+5
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">19</span>
+            <span class="exercise-title">Skip Odd Numbers</span>
+            <span class="difficulty hard">Hard</span>
+        </div>
+        <div class="exercise-description">
+            <p>Print numbers 1-10 but skip the odd numbers using <code>continue</code>.</p>
+        </div>
+        <div class="exercise-steps">
+            <ol>
+                <li>Create variable <code>num</code> with value <code>0</code></li>
+                <li><strong>Repeat times</strong> 10 times:</li>
+                <li style="margin-left: 20px;">Change <code>num</code> by <code>1</code></li>
+                <li style="margin-left: 20px;">Use <strong>If</strong> with condition <code>num % 2 == 1</code>:</li>
+                <li style="margin-left: 40px;"><strong>Continue</strong></li>
+                <li style="margin-left: 20px;">Print variable <code>num</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+2
+4
+6
+8
+10
+        </div>
+    </div>
+
+    <div class="exercise">
+        <div class="exercise-header">
+            <span class="exercise-number">20</span>
+            <span class="exercise-title">Reverse a List</span>
+            <span class="difficulty expert">Expert</span>
+        </div>
+        <div class="exercise-description">
+            <p>Create a list [1, 2, 3, 4, 5] and build a new reversed list [5, 4, 3, 2, 1].</p>
+        </div>
+        <div class="exercise-steps">
+            <ol>
+                <li>Create list <code>original</code> with items <code>1, 2, 3, 4, 5</code></li>
+                <li>Create empty list <code>reversed</code></li>
+                <li>Create variable <code>i</code> with value <code>5</code></li>
+                <li><strong>Repeat times</strong> 5 times:</li>
+                <li style="margin-left: 20px;">Change <code>i</code> by <code>-1</code></li>
+                <li style="margin-left: 20px;">Use <strong>Get item at</strong> index <code>i</code> from <code>original</code>, store in <code>item</code></li>
+                <li style="margin-left: 20px;">Add <code>item</code> to list <code>reversed</code></li>
+                <li>Print variable <code>reversed</code></li>
+            </ol>
+        </div>
+        <div class="expected-output">
+            <div class="expected-label">Expected Output:</div>
+[5, 4, 3, 2, 1]
+        </div>
+    </div>
+
     <div class="tips-section">
         <h2>Tips for Success</h2>
         <ul>
@@ -561,6 +867,177 @@ for _ in range(10):
             print("TEN!")
         else:
             print(num)
+                </div>
+            </div>
+
+            <!-- ADVANCED EXERCISE SOLUTIONS -->
+            <h3 style="margin-top: 32px; color: #f97316; border-bottom: 2px solid #f97316; padding-bottom: 8px;">Advanced Exercise Solutions</h3>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">11</span>
+                    <span class="exercise-title">Find the Maximum - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Python Code:</div>
+numbers = [3, 7, 2, 9, 4]
+biggest = 0
+for num in numbers:
+    if num > biggest:
+        biggest = num
+print(biggest)
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">12</span>
+                    <span class="exercise-title">Even Numbers Only - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Python Code:</div>
+num = 0
+for _ in range(10):
+    num += 1
+    if num % 2 == 0:
+        print(num)
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">13</span>
+                    <span class="exercise-title">Build a List - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Python Code:</div>
+squares = []
+i = 0
+for _ in range(5):
+    i += 1
+    square = i * i
+    squares.append(square)
+print(squares)
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">14</span>
+                    <span class="exercise-title">Factorial Calculator - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Python Code:</div>
+result = 1
+n = 5
+while n > 0:
+    result *= n
+    n += -1
+print(result)
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">15</span>
+                    <span class="exercise-title">Prime Number Check - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Python Code:</div>
+n = 7
+is_prime = True
+i = 1
+for _ in range(5):
+    i += 1
+    if n % i == 0:
+        is_prime = False
+if is_prime:
+    print("Prime!")
+else:
+    print("Not prime")
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">16</span>
+                    <span class="exercise-title">Fibonacci Sequence - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Python Code:</div>
+a = 0
+b = 1
+count = 0
+for _ in range(10):
+    print(a)
+    temp = a + b
+    a = b
+    b = temp
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">17</span>
+                    <span class="exercise-title">Sum of List - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Python Code:</div>
+numbers = [10, 20, 30, 40, 50]
+total = 0
+for num in numbers:
+    total += num
+print(total)
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">18</span>
+                    <span class="exercise-title">Countdown with Break - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Python Code:</div>
+num = 11
+for _ in range(10):
+    num += -1
+    print(num)
+    if num == 5:
+        break
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">19</span>
+                    <span class="exercise-title">Skip Odd Numbers - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Python Code:</div>
+num = 0
+for _ in range(10):
+    num += 1
+    if num % 2 == 1:
+        continue
+    print(num)
+                </div>
+            </div>
+
+            <div class="exercise">
+                <div class="exercise-header">
+                    <span class="exercise-number">20</span>
+                    <span class="exercise-title">Reverse a List - Solution</span>
+                </div>
+                <div class="expected-output">
+                    <div class="expected-label">Python Code:</div>
+original = [1, 2, 3, 4, 5]
+reversed = []
+i = 5
+for _ in range(5):
+    i += -1
+    item = original[i]
+    reversed.append(item)
+print(reversed)
                 </div>
             </div>
         </div>
