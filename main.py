@@ -10,7 +10,24 @@ from io import StringIO
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'trustai-secret-key-change-in-production')
 
-# User database file
+# Vercel KV (Redis) connection
+redis_client = None
+KV_REST_API_URL = os.environ.get('KV_REST_API_URL')
+KV_REST_API_TOKEN = os.environ.get('KV_REST_API_TOKEN')
+
+if KV_REST_API_URL and KV_REST_API_TOKEN:
+    try:
+        import redis
+        redis_client = redis.from_url(
+            KV_REST_API_URL,
+            token=KV_REST_API_TOKEN,
+            decode_responses=True
+        )
+    except Exception as e:
+        print(f"Redis connection failed: {e}")
+        redis_client = None
+
+# User database file (fallback for local development)
 USERS_FILE = 'users.json'
 
 # Admin credentials (preset)
@@ -18,14 +35,32 @@ ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD_HASH = hashlib.sha256('TrustAI2024!'.encode()).hexdigest()
 
 def load_users():
-    """Load users from JSON file"""
+    """Load users from Redis (Vercel KV) or JSON file"""
+    if redis_client:
+        try:
+            users_data = redis_client.get('trustai_users')
+            if users_data:
+                return json.loads(users_data)
+            return {}
+        except Exception as e:
+            print(f"Redis load error: {e}")
+
+    # Fallback to file
     if os.path.exists(USERS_FILE):
         with open(USERS_FILE, 'r') as f:
             return json.load(f)
     return {}
 
 def save_users(users):
-    """Save users to JSON file"""
+    """Save users to Redis (Vercel KV) or JSON file"""
+    if redis_client:
+        try:
+            redis_client.set('trustai_users', json.dumps(users))
+            return
+        except Exception as e:
+            print(f"Redis save error: {e}")
+
+    # Fallback to file
     with open(USERS_FILE, 'w') as f:
         json.dump(users, f)
 
