@@ -1,8 +1,55 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session, flash
+from functools import wraps
 import sys
+import os
+import json
+import hashlib
 from io import StringIO
 
 app = Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY', 'trustai-secret-key-change-in-production')
+
+# User database file
+USERS_FILE = 'users.json'
+
+# Admin credentials (preset)
+ADMIN_USERNAME = 'admin'
+ADMIN_PASSWORD_HASH = hashlib.sha256('TrustAI2024!'.encode()).hexdigest()
+
+def load_users():
+    """Load users from JSON file"""
+    if os.path.exists(USERS_FILE):
+        with open(USERS_FILE, 'r') as f:
+            return json.load(f)
+    return {}
+
+def save_users(users):
+    """Save users to JSON file"""
+    with open(USERS_FILE, 'w') as f:
+        json.dump(users, f)
+
+def hash_password(password):
+    """Hash a password using SHA-256"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def login_required(f):
+    """Decorator to require login for routes"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def admin_required(f):
+    """Decorator to require admin login for routes"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session or not session.get('is_admin'):
+            flash('Admin access required', 'error')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Block definitions for the palette
 BLOCK_CATEGORIES = {
@@ -94,27 +141,114 @@ BLOCK_CATEGORIES = {
     }
 }
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip().lower()
+        password = request.form.get('password', '')
+
+        # Check admin credentials
+        if username == ADMIN_USERNAME and hash_password(password) == ADMIN_PASSWORD_HASH:
+            session['user'] = username
+            session['is_admin'] = True
+            flash('Welcome, Admin!', 'success')
+            return redirect(url_for('home'))
+
+        # Check regular users
+        users = load_users()
+        if username in users and users[username]['password'] == hash_password(password):
+            session['user'] = username
+            session['is_admin'] = False
+            flash(f'Welcome back, {username}!', 'success')
+            return redirect(url_for('home'))
+
+        flash('Invalid username or password', 'error')
+
+    return render_template('login.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip().lower()
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+
+        # Validation
+        if len(username) < 3:
+            flash('Username must be at least 3 characters', 'error')
+            return render_template('signup.html')
+
+        if len(password) < 6:
+            flash('Password must be at least 6 characters', 'error')
+            return render_template('signup.html')
+
+        if password != confirm_password:
+            flash('Passwords do not match', 'error')
+            return render_template('signup.html')
+
+        if username == ADMIN_USERNAME:
+            flash('This username is reserved', 'error')
+            return render_template('signup.html')
+
+        users = load_users()
+        if username in users:
+            flash('Username already exists', 'error')
+            return render_template('signup.html')
+
+        # Create user
+        users[username] = {
+            'password': hash_password(password),
+            'created_at': str(__import__('datetime').datetime.now())
+        }
+        save_users(users)
+
+        # Auto login after signup
+        session['user'] = username
+        session['is_admin'] = False
+        flash('Account created successfully!', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('signup.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out', 'success')
+    return redirect(url_for('login'))
+
 @app.route('/')
+@login_required
 def home():
     return render_template('home.html')
 
 @app.route('/coding')
+@login_required
 def coding():
     return render_template('index.html', categories=BLOCK_CATEGORIES)
 
 @app.route('/workflows')
+@login_required
 def workflows():
     return render_template('workflows.html')
 
 @app.route('/git')
+@login_required
 def git():
     return render_template('git.html')
 
 @app.route('/ai-academy')
+@login_required
 def ai_academy():
     return render_template('ai-academy.html')
 
+@app.route('/admin')
+@admin_required
+def admin_dashboard():
+    users = load_users()
+    return render_template('admin.html', users=users)
+
 @app.route('/api/blocks')
+@login_required
 def get_blocks():
     return jsonify(BLOCK_CATEGORIES)
 

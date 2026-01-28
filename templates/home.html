@@ -127,6 +127,27 @@
             box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
         }
 
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-greeting {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background: var(--bg-tertiary) !important;
+            border: 1px solid var(--border-color);
+        }
+
+        .logout-btn:hover {
+            background: var(--bg-elevated) !important;
+            box-shadow: none;
+        }
+
         /* Hero Section */
         .hero {
             text-align: center;
@@ -662,7 +683,13 @@
                 <a href="/git" class="nav-link">Git</a>
                 <a href="/ai-academy" class="nav-link">AI Academy</a>
             </div>
-            <a href="/coding" class="nav-cta">Start Learning</a>
+            <div class="nav-user">
+                {% if session.get('is_admin') %}
+                <a href="/admin" class="nav-link" style="color: #ef4444;">Admin</a>
+                {% endif %}
+                <span class="user-greeting">Hi, {{ session.get('user', 'User') }}</span>
+                <a href="/logout" class="nav-cta logout-btn">Logout</a>
+            </div>
         </nav>
 
         <!-- Hero -->
