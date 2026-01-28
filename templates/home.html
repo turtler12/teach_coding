@@ -618,6 +618,38 @@
             color: white;
         }
 
+        /* YC Badge - Fixed Bottom Right */
+        .yc-badge {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            color: #1a1a24;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .yc-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 255, 255, 0.3);
+        }
+
+        .yc-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: #f97316;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .courses-grid {
@@ -684,20 +716,21 @@
                 <a href="/ai-academy" class="nav-link">AI Academy</a>
             </div>
             <div class="nav-user">
-                {% if session.get('is_admin') %}
-                <a href="/admin" class="nav-link" style="color: #ef4444;">Admin</a>
+                {% if session.get('user') %}
+                    {% if session.get('is_admin') %}
+                    <a href="/admin" class="nav-link" style="color: #ef4444;">Admin</a>
+                    {% endif %}
+                    <span class="user-greeting">Hi, {{ session.get('user') }}</span>
+                    <a href="/logout" class="nav-cta logout-btn">Logout</a>
+                {% else %}
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/signup" class="nav-cta">Sign Up</a>
                 {% endif %}
-                <span class="user-greeting">Hi, {{ session.get('user', 'User') }}</span>
-                <a href="/logout" class="nav-cta logout-btn">Logout</a>
             </div>
         </nav>
 
         <!-- Hero -->
         <section class="hero">
-            <div class="hero-badge">
-                <span></span>
-                Backed by Y Combinator
-            </div>
             <h1>Learn to Code<br><span class="highlight">The Visual Way</span></h1>
             <p class="hero-subtitle">
                 Master programming, workflow automation, and version control through
@@ -880,6 +913,12 @@
         <footer class="footer">
             <p>Built with TrustAI — Empowering the next generation of developers</p>
         </footer>
+    </div>
+
+    <!-- YC Badge - Fixed Bottom Right -->
+    <div class="yc-badge">
+        <span class="yc-badge-dot"></span>
+        Backed by Y Combinator
     </div>
 </body>
 </html>
