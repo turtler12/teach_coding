@@ -4,6 +4,7 @@ import sys
 import os
 import json
 import hashlib
+import datetime
 from io import StringIO
 
 app = Flask(__name__)
@@ -198,7 +199,7 @@ def signup():
         # Create user
         users[username] = {
             'password': hash_password(password),
-            'created_at': str(__import__('datetime').datetime.now())
+            'created_at': str(datetime.datetime.now())
         }
         save_users(users)
 
