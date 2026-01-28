@@ -10,19 +10,14 @@ from io import StringIO
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'trustai-secret-key-change-in-production')
 
-# Vercel KV (Redis) connection
+# Upstash Redis connection
 redis_client = None
-KV_REST_API_URL = os.environ.get('KV_REST_API_URL')
-KV_REST_API_TOKEN = os.environ.get('KV_REST_API_TOKEN')
+REDIS_URL = os.environ.get('REDIS_URL') or os.environ.get('KV_URL')
 
-if KV_REST_API_URL and KV_REST_API_TOKEN:
+if REDIS_URL:
     try:
         import redis
-        redis_client = redis.from_url(
-            KV_REST_API_URL,
-            token=KV_REST_API_TOKEN,
-            decode_responses=True
-        )
+        redis_client = redis.from_url(REDIS_URL, decode_responses=True)
     except Exception as e:
         print(f"Redis connection failed: {e}")
         redis_client = None
