@@ -3,66 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrustAI - Build a Website Using AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>Build Your First Website with AI - TrustAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-primary: #09090b;
             --bg-secondary: #18181b;
             --bg-tertiary: #27272a;
-            --bg-elevated: #3f3f46;
             --border-color: #27272a;
             --border-light: #3f3f46;
             --text-primary: #fafafa;
             --text-secondary: #a1a1aa;
             --text-muted: #71717a;
             --accent-primary: #6366f1;
-            --accent-hover: #818cf8;
-            --accent-success: #10b981;
             --accent-warning: #f59e0b;
-            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
-            min-height: 100vh;
             line-height: 1.7;
         }
 
-        .bg-gradient {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background:
-                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
         .container {
-            position: relative;
-            z-index: 1;
-            max-width: 800px;
+            max-width: 720px;
             margin: 0 auto;
-            padding: 0 24px 60px;
+            padding: 0 24px 80px;
         }
 
-        /* Navigation */
         .nav {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
             padding: 20px 0;
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 40px;
@@ -71,436 +46,336 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
         }
 
         .logo-icon {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 16px;
             color: var(--accent-primary);
             background: rgba(99, 102, 241, 0.15);
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-        }
-
-        .logo-text {
-            font-size: 24px;
-            font-weight: 700;
-            color: white;
+            padding: 6px 10px;
+            border-radius: 8px;
         }
 
         .back-link {
-            color: var(--text-secondary);
+            color: var(--text-muted);
             text-decoration: none;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: color 0.2s;
         }
+        .back-link:hover { color: white; }
 
-        .back-link:hover {
-            color: white;
-        }
-
-        /* WIP Banner */
-        .wip-banner {
-            background: rgba(245, 158, 11, 0.15);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: var(--accent-warning);
-            padding: 16px 20px;
-            border-radius: 12px;
+        .wip-notice {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 8px;
+            padding: 14px 18px;
             margin-bottom: 32px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .wip-banner-icon {
-            font-size: 24px;
-        }
-
-        .wip-banner-text strong {
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .wip-banner-text span {
             font-size: 14px;
-            opacity: 0.9;
+            color: #d97706;
         }
 
-        /* Tutorial Header */
-        .tutorial-header {
-            margin-bottom: 40px;
+        .header {
+            margin-bottom: 48px;
         }
 
-        .tutorial-meta {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .tutorial-tag {
-            background: var(--bg-tertiary);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .tutorial-title {
-            font-size: 2.5rem;
+        .header h1 {
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             line-height: 1.2;
         }
 
-        .tutorial-description {
-            font-size: 1.1rem;
+        .header p {
             color: var(--text-secondary);
+            font-size: 1.05rem;
         }
 
-        /* Content */
-        .content h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-top: 48px;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .content h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-top: 32px;
-            margin-bottom: 16px;
-            color: var(--accent-primary);
-        }
-
-        .content p {
-            margin-bottom: 16px;
-            color: var(--text-secondary);
-        }
-
-        .content ul, .content ol {
-            margin-bottom: 20px;
-            padding-left: 24px;
-        }
-
-        .content li {
-            margin-bottom: 10px;
-            color: var(--text-secondary);
-        }
-
-        .content strong {
-            color: var(--text-primary);
-        }
-
-        /* Step Card */
-        .step-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .step-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            background: var(--gradient-1);
-            border-radius: 50%;
-            font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
-
-        .step-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .step-content {
-            color: var(--text-secondary);
-        }
-
-        /* Code Block */
-        .code-block {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            overflow-x: auto;
-        }
-
-        .code-block code {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-
-        /* Tip Box */
-        .tip-box {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin: 24px 0;
-        }
-
-        .tip-box-title {
+        .meta {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: var(--accent-primary);
-            margin-bottom: 10px;
-        }
-
-        .tip-box p {
-            color: var(--text-secondary);
-            margin: 0;
-        }
-
-        /* Tools List */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin: 24px 0;
-        }
-
-        .tool-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .tool-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-        }
-
-        .tool-name {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .tool-description {
+            gap: 20px;
+            margin-top: 16px;
             font-size: 13px;
             color: var(--text-muted);
         }
 
-        /* Responsive */
-        @media (max-width: 640px) {
-            .tutorial-title {
-                font-size: 1.75rem;
-            }
-            .tutorial-meta {
-                gap: 8px;
-            }
+        h2 {
+            font-size: 1.3rem;
+            margin: 48px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: var(--accent-primary);
+            margin: 32px 0 14px;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+
+        ul, ol {
+            margin: 0 0 20px 20px;
+            color: var(--text-secondary);
+        }
+
+        li { margin-bottom: 8px; }
+
+        strong { color: var(--text-primary); }
+
+        .tools {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .tool {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .tool-icon { font-size: 24px; margin-bottom: 8px; }
+        .tool-name { font-weight: 600; font-size: 14px; }
+        .tool-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        .step {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .step p, .step ul, .step ol {
+            margin-bottom: 0;
+        }
+
+        .step ul, .step ol { margin-top: 10px; }
+
+        .code {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+
+        .tip {
+            background: rgba(99, 102, 241, 0.08);
+            border-left: 3px solid var(--accent-primary);
+            border-radius: 0 8px 8px 0;
+            padding: 14px 16px;
+            margin: 20px 0;
+        }
+
+        .tip-label {
+            font-weight: 600;
+            color: var(--accent-primary);
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .tip p { margin: 0; font-size: 14px; }
+
+        .coming-soon {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .tools { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.6rem; }
+            .meta { flex-direction: column; gap: 6px; }
         }
     </style>
 </head>
 <body>
-    <div class="bg-gradient"></div>
-
     <div class="container">
-        <!-- Navigation -->
         <nav class="nav">
             <a href="/" class="logo">
                 <span class="logo-icon">&lt;/&gt;</span>
-                <span class="logo-text">TrustAI</span>
+                TrustAI
             </a>
-            <a href="/projects" class="back-link">
-                <span>←</span> Back to Projects
-            </a>
+            <a href="/projects" class="back-link">← Back to Projects</a>
         </nav>
 
-        <!-- WIP Banner -->
-        <div class="wip-banner">
-            <span class="wip-banner-icon">🚧</span>
-            <div class="wip-banner-text">
-                <strong>Work in Progress</strong>
-                <span>This tutorial is still being developed. More sections will be added soon!</span>
+        <div class="wip-notice">
+            This tutorial is still being written. More sections coming soon.
+        </div>
+
+        <div class="header">
+            <h1>Build Your First Website with AI</h1>
+            <p>Use Claude or ChatGPT to create and deploy a real website. No coding experience required.</p>
+            <div class="meta">
+                <span>Beginner</span>
+                <span>~2 hours</span>
             </div>
         </div>
 
-        <!-- Tutorial Header -->
-        <div class="tutorial-header">
-            <div class="tutorial-meta">
-                <span class="tutorial-tag">📚 Beginner</span>
-                <span class="tutorial-tag">⏱️ ~2 hours</span>
-                <span class="tutorial-tag">🤖 AI-Powered</span>
+        <h2>What you'll learn</h2>
+        <ul>
+            <li>How to write prompts that get AI to generate good code</li>
+            <li>Basic HTML and CSS concepts (enough to understand what AI gives you)</li>
+            <li>How to test your website locally</li>
+            <li>How to deploy for free so anyone can visit it</li>
+        </ul>
+
+        <h2>What you'll need</h2>
+        <div class="tools">
+            <div class="tool">
+                <div class="tool-icon">💬</div>
+                <div class="tool-name">Claude or ChatGPT</div>
+                <div class="tool-desc">For generating code</div>
             </div>
-            <h1 class="tutorial-title">Build a Website Using AI</h1>
-            <p class="tutorial-description">
-                Learn how to create a complete website from scratch using AI tools.
-                No prior coding experience required - AI will help you every step of the way!
-            </p>
+            <div class="tool">
+                <div class="tool-icon">📝</div>
+                <div class="tool-name">Text editor</div>
+                <div class="tool-desc">VS Code, Notepad, etc.</div>
+            </div>
+            <div class="tool">
+                <div class="tool-icon">🌐</div>
+                <div class="tool-name">Browser</div>
+                <div class="tool-desc">Chrome, Firefox, Safari</div>
+            </div>
+            <div class="tool">
+                <div class="tool-icon">🚀</div>
+                <div class="tool-name">Vercel or Netlify</div>
+                <div class="tool-desc">Free hosting</div>
+            </div>
         </div>
 
-        <!-- Content -->
-        <div class="content">
-            <h2>What You'll Learn</h2>
+        <h2>Part 1: Planning</h2>
+
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-title">Pick something to build</div>
+            <p>Start simple. Good first projects:</p>
             <ul>
-                <li>How to use AI tools (like Claude or ChatGPT) to write code</li>
-                <li>Basic understanding of HTML, CSS, and how websites work</li>
-                <li>How to plan and design a website before building it</li>
-                <li>How to deploy your website so anyone can see it</li>
+                <li><strong>Personal site</strong> - about you, your interests, links to social media</li>
+                <li><strong>Portfolio</strong> - showcase work or projects</li>
+                <li><strong>Landing page</strong> - promote an idea or product</li>
             </ul>
+        </div>
 
-            <h2>Tools You'll Need</h2>
-            <div class="tools-grid">
-                <div class="tool-card">
-                    <div class="tool-icon">🤖</div>
-                    <div class="tool-name">Claude or ChatGPT</div>
-                    <div class="tool-description">AI assistant to help write code</div>
-                </div>
-                <div class="tool-card">
-                    <div class="tool-icon">💻</div>
-                    <div class="tool-name">Text Editor</div>
-                    <div class="tool-description">VS Code or any code editor</div>
-                </div>
-                <div class="tool-card">
-                    <div class="tool-icon">🌐</div>
-                    <div class="tool-name">Web Browser</div>
-                    <div class="tool-description">Chrome, Firefox, or Safari</div>
-                </div>
-                <div class="tool-card">
-                    <div class="tool-icon">🚀</div>
-                    <div class="tool-name">Vercel or Netlify</div>
-                    <div class="tool-description">Free hosting for your site</div>
-                </div>
-            </div>
-
-            <h2>Part 1: Planning Your Website</h2>
-
-            <div class="step-card">
-                <div class="step-number">1</div>
-                <div class="step-title">Decide What to Build</div>
-                <div class="step-content">
-                    <p>Before writing any code, think about what you want your website to do. Here are some beginner-friendly ideas:</p>
-                    <ul>
-                        <li><strong>Personal Portfolio</strong> - Showcase your work and skills</li>
-                        <li><strong>About Me Page</strong> - Tell visitors about yourself</li>
-                        <li><strong>Simple Blog</strong> - Share your thoughts and ideas</li>
-                        <li><strong>Landing Page</strong> - Promote a project or idea</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="step-card">
-                <div class="step-number">2</div>
-                <div class="step-title">Sketch Your Design</div>
-                <div class="step-content">
-                    <p>Draw a simple sketch of how you want your website to look. Include:</p>
-                    <ul>
-                        <li>Header with your logo/name</li>
-                        <li>Navigation menu</li>
-                        <li>Main content area</li>
-                        <li>Footer with contact info</li>
-                    </ul>
-                    <p>This doesn't need to be pretty - just a rough layout to guide the AI!</p>
-                </div>
-            </div>
-
-            <div class="tip-box">
-                <div class="tip-box-title">💡 Pro Tip</div>
-                <p>The more specific you are with AI, the better results you'll get. Instead of "make me a website", try "create a personal portfolio website with a dark theme, hero section, about section, and contact form".</p>
-            </div>
-
-            <h2>Part 2: Writing Your First Prompt</h2>
-
-            <div class="step-card">
-                <div class="step-number">3</div>
-                <div class="step-title">Craft Your AI Prompt</div>
-                <div class="step-content">
-                    <p>Here's an example prompt you can customize:</p>
-                </div>
-            </div>
-
-            <div class="code-block">
-                <code>Create a simple personal portfolio website with:<br><br>
-- A header with my name "Your Name" and navigation links<br>
-- A hero section with a welcome message<br>
-- An "About Me" section with a brief bio<br>
-- A "Projects" section with 3 placeholder project cards<br>
-- A footer with social media links<br><br>
-Use a modern dark theme with purple accents.<br>
-Make it responsive for mobile devices.<br>
-Put all the code in a single HTML file with embedded CSS.</code>
-            </div>
-
-            <h3>Understanding the Response</h3>
-            <p>The AI will generate HTML and CSS code for you. Don't worry if you don't understand every line - that's normal! Here's what the main parts mean:</p>
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-title">Sketch it out</div>
+            <p>Grab paper and draw a rough layout. Nothing fancy - just boxes showing where things go:</p>
             <ul>
-                <li><strong>HTML</strong> - The structure and content of your page (text, images, links)</li>
-                <li><strong>CSS</strong> - The styling (colors, fonts, spacing, layouts)</li>
-                <li><strong>&lt;head&gt;</strong> - Contains page title and styling</li>
-                <li><strong>&lt;body&gt;</strong> - Contains everything you see on the page</li>
+                <li>Header (your name/logo)</li>
+                <li>Main content sections</li>
+                <li>Footer</li>
             </ul>
+            <p>This gives you something concrete to describe to the AI.</p>
+        </div>
 
-            <h2>Part 3: Testing Your Website</h2>
+        <h2>Part 2: Writing the prompt</h2>
 
-            <div class="step-card">
-                <div class="step-number">4</div>
-                <div class="step-title">Save and Open Your File</div>
-                <div class="step-content">
-                    <ol>
-                        <li>Copy the code from the AI response</li>
-                        <li>Open a text editor (VS Code, Notepad, etc.)</li>
-                        <li>Paste the code</li>
-                        <li>Save the file as <code>index.html</code></li>
-                        <li>Double-click the file to open it in your browser</li>
-                    </ol>
-                </div>
-            </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-title">Be specific</div>
+            <p>Vague prompts get vague results. Instead of "make me a website", describe exactly what you want:</p>
+        </div>
 
-            <div class="step-card">
-                <div class="step-number">5</div>
-                <div class="step-title">Make Changes with AI</div>
-                <div class="step-content">
-                    <p>Want to change something? Just ask the AI! Example prompts:</p>
-                    <ul>
-                        <li>"Change the background color to dark blue"</li>
-                        <li>"Make the font bigger"</li>
-                        <li>"Add a contact form"</li>
-                        <li>"Make the project cards side by side"</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="code">Create a personal portfolio website with:
 
-            <h2>Part 4: Deploying Your Website</h2>
-            <p><em>Coming soon! This section will cover how to put your website online using free hosting services like Vercel or Netlify.</em></p>
+- Header with my name "Alex Chen" and nav links
+- Hero section with a short intro
+- About section with a few paragraphs
+- Projects section with 3 cards (use placeholders)
+- Footer with email and social links
 
-            <h2>Next Steps</h2>
-            <p>Congratulations on building your first website with AI! Here's what you can do next:</p>
+Dark theme, purple accents. Single HTML file with CSS included. Make it work on mobile.</div>
+
+        <div class="tip">
+            <div class="tip-label">Why this works</div>
+            <p>You've told AI exactly what sections to include, what color scheme to use, and the technical constraints. Less guessing = better output.</p>
+        </div>
+
+        <h3>Understanding what you get back</h3>
+        <p>AI will give you HTML and CSS code. Quick overview:</p>
+        <ul>
+            <li><strong>HTML</strong> - the structure (text, links, images)</li>
+            <li><strong>CSS</strong> - the styling (colors, fonts, layout)</li>
+            <li><strong>&lt;head&gt;</strong> - page settings and styles</li>
+            <li><strong>&lt;body&gt;</strong> - everything visible on the page</li>
+        </ul>
+        <p>You don't need to understand every line. You just need to know enough to make tweaks.</p>
+
+        <h2>Part 3: Testing</h2>
+
+        <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-title">Save and open</div>
+            <ol>
+                <li>Copy the code AI gave you</li>
+                <li>Paste into a text editor</li>
+                <li>Save as <code>index.html</code></li>
+                <li>Double-click the file to open in browser</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-title">Make changes</div>
+            <p>Something look off? Ask AI to fix it:</p>
             <ul>
-                <li>Customize the colors and fonts to match your style</li>
-                <li>Add real content and images</li>
-                <li>Learn more about HTML and CSS to understand the code better</li>
-                <li>Try building a more complex website with multiple pages</li>
+                <li>"Make the header sticky"</li>
+                <li>"Change the purple to blue"</li>
+                <li>"Add more space between sections"</li>
+                <li>"Make the font bigger on mobile"</li>
             </ul>
+            <p>Copy the updated code, save, refresh your browser.</p>
+        </div>
 
-            <div class="tip-box">
-                <div class="tip-box-title">🎯 Practice Exercise</div>
-                <p>Try modifying your website to add a new section. Ask AI: "Add a Skills section with icons for HTML, CSS, JavaScript, and Python". See how the code changes!</p>
-            </div>
+        <h2>Part 4: Deploying</h2>
+        <p class="coming-soon">Coming soon - we'll cover getting your site online with Vercel or Netlify.</p>
+
+        <h2>What's next</h2>
+        <ul>
+            <li>Replace placeholder text with your real content</li>
+            <li>Add images</li>
+            <li>Try adding a contact form</li>
+            <li>Learn some CSS to make your own tweaks</li>
+        </ul>
+
+        <div class="tip">
+            <div class="tip-label">Practice</div>
+            <p>Try this: ask AI to "add a skills section with icons for HTML, CSS, JavaScript, and Python." See how the code changes and what gets added.</p>
         </div>
     </div>
 </body>
