@@ -39,11 +39,16 @@ def load_users():
             return {}
         except Exception as e:
             print(f"Redis load error: {e}")
+            # Fall through to file fallback
 
     # Fallback to file
-    if os.path.exists(USERS_FILE):
-        with open(USERS_FILE, 'r') as f:
-            return json.load(f)
+    try:
+        if os.path.exists(USERS_FILE):
+            with open(USERS_FILE, 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"File load error: {e}")
+
     return {}
 
 def save_users(users):
@@ -54,10 +59,14 @@ def save_users(users):
             return
         except Exception as e:
             print(f"Redis save error: {e}")
+            # Fall through to file fallback
 
     # Fallback to file
-    with open(USERS_FILE, 'w') as f:
-        json.dump(users, f)
+    try:
+        with open(USERS_FILE, 'w') as f:
+            json.dump(users, f)
+    except Exception as e:
+        print(f"File save error: {e}")
 
 def hash_password(password):
     """Hash a password using SHA-256"""
@@ -200,44 +209,52 @@ def login():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form.get('username', '').strip().lower()
-        password = request.form.get('password', '')
-        confirm_password = request.form.get('confirm_password', '')
+        try:
+            username = request.form.get('username', '').strip().lower()
+            password = request.form.get('password', '')
+            confirm_password = request.form.get('confirm_password', '')
 
-        # Validation
-        if len(username) < 3:
-            flash('Username must be at least 3 characters', 'error')
+            # Validation
+            if len(username) < 3:
+                flash('Username must be at least 3 characters', 'error')
+                return render_template('signup.html')
+
+            if len(password) < 6:
+                flash('Password must be at least 6 characters', 'error')
+                return render_template('signup.html')
+
+            if password != confirm_password:
+                flash('Passwords do not match', 'error')
+                return render_template('signup.html')
+
+            if username == ADMIN_USERNAME:
+                flash('This username is reserved', 'error')
+                return render_template('signup.html')
+
+            users = load_users()
+            if users is None:
+                users = {}
+
+            if username in users:
+                flash('Username already exists', 'error')
+                return render_template('signup.html')
+
+            # Create user
+            users[username] = {
+                'password': hash_password(password),
+                'created_at': str(datetime.datetime.now())
+            }
+            save_users(users)
+
+            # Auto login after signup
+            session['user'] = username
+            session['is_admin'] = False
+            flash('Account created successfully!', 'success')
+            return redirect(url_for('home'))
+        except Exception as e:
+            print(f"Signup error: {e}")
+            flash('An error occurred. Please try again.', 'error')
             return render_template('signup.html')
-
-        if len(password) < 6:
-            flash('Password must be at least 6 characters', 'error')
-            return render_template('signup.html')
-
-        if password != confirm_password:
-            flash('Passwords do not match', 'error')
-            return render_template('signup.html')
-
-        if username == ADMIN_USERNAME:
-            flash('This username is reserved', 'error')
-            return render_template('signup.html')
-
-        users = load_users()
-        if username in users:
-            flash('Username already exists', 'error')
-            return render_template('signup.html')
-
-        # Create user
-        users[username] = {
-            'password': hash_password(password),
-            'created_at': str(datetime.datetime.now())
-        }
-        save_users(users)
-
-        # Auto login after signup
-        session['user'] = username
-        session['is_admin'] = False
-        flash('Account created successfully!', 'success')
-        return redirect(url_for('home'))
 
     return render_template('signup.html')
 
