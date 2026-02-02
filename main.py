@@ -313,9 +313,10 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username', '').strip().lower()
         password = request.form.get('password', '')
+        password_hash = hash_password(password)
 
         # Check admin credentials
-        if username == ADMIN_USERNAME and hash_password(password) == ADMIN_PASSWORD_HASH:
+        if username == ADMIN_USERNAME and password_hash == ADMIN_PASSWORD_HASH:
             session['user'] = username
             session['is_admin'] = True
             flash('Welcome, Admin!', 'success')
@@ -323,11 +324,13 @@ def login():
 
         # Check regular users
         users = load_users()
-        if username in users and users[username]['password'] == hash_password(password):
-            session['user'] = username
-            session['is_admin'] = False
-            flash(f'Welcome back, {username}!', 'success')
-            return redirect(url_for('home'))
+        if users and username in users:
+            stored_password = users[username].get('password', '')
+            if stored_password == password_hash:
+                session['user'] = username
+                session['is_admin'] = False
+                flash(f'Welcome back, {username}!', 'success')
+                return redirect(url_for('home'))
 
         flash('Invalid username or password', 'error')
 
