@@ -720,6 +720,7 @@
                     {% if session.get('is_admin') %}
                     <a href="/admin" class="nav-link" style="color: #ef4444;">Admin</a>
                     {% endif %}
+                    <a href="/dashboard" class="nav-link">My Dashboard</a>
                     <span class="user-greeting">Hi, {{ session.get('user') }}</span>
                     <a href="/logout" class="nav-cta logout-btn">Logout</a>
                 {% else %}

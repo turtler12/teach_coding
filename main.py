@@ -91,6 +91,133 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def get_user_progress(username):
+    """Get or initialize user progress data"""
+    users = load_users()
+    if username not in users:
+        return get_default_progress()
+
+    user_data = users[username]
+    if 'progress' not in user_data:
+        user_data['progress'] = get_default_progress()
+        save_users(users)
+
+    return user_data['progress']
+
+def get_default_progress():
+    """Return default progress structure"""
+    return {
+        'courses_started': 0,
+        'exercises_completed': 0,
+        'streak_days': 0,
+        'total_time': 0,
+        'coding_progress': 0,
+        'coding_exercises': 0,
+        'workflow_progress': 0,
+        'workflow_exercises': 0,
+        'git_progress': 0,
+        'git_exercises': 0,
+        'academy_progress': 0,
+        'academy_modules': 0,
+        'last_activity': None,
+        'activities': []
+    }
+
+def update_user_progress(username, course, action):
+    """Update user progress for a specific action"""
+    users = load_users()
+    if username not in users:
+        return
+
+    if 'progress' not in users[username]:
+        users[username]['progress'] = get_default_progress()
+
+    progress = users[username]['progress']
+    now = datetime.datetime.now()
+
+    # Update last activity and streak
+    if progress['last_activity']:
+        try:
+            last = datetime.datetime.fromisoformat(progress['last_activity'])
+            days_diff = (now.date() - last.date()).days
+            if days_diff == 1:
+                progress['streak_days'] += 1
+            elif days_diff > 1:
+                progress['streak_days'] = 1
+        except:
+            progress['streak_days'] = 1
+    else:
+        progress['streak_days'] = 1
+
+    progress['last_activity'] = now.isoformat()
+
+    # Track course visit
+    if action == 'visit':
+        if course == 'coding' and progress['coding_progress'] == 0:
+            progress['courses_started'] += 1
+            progress['coding_progress'] = 5
+        elif course == 'workflow' and progress['workflow_progress'] == 0:
+            progress['courses_started'] += 1
+            progress['workflow_progress'] = 5
+        elif course == 'git' and progress['git_progress'] == 0:
+            progress['courses_started'] += 1
+            progress['git_progress'] = 5
+        elif course == 'academy' and progress['academy_progress'] == 0:
+            progress['courses_started'] += 1
+            progress['academy_progress'] = 5
+
+    # Track exercise completion
+    elif action == 'exercise':
+        progress['exercises_completed'] += 1
+        if course == 'coding':
+            progress['coding_exercises'] += 1
+            progress['coding_progress'] = min(100, int((progress['coding_exercises'] / 20) * 100))
+        elif course == 'workflow':
+            progress['workflow_exercises'] += 1
+            progress['workflow_progress'] = min(100, int((progress['workflow_exercises'] / 10) * 100))
+        elif course == 'git':
+            progress['git_exercises'] += 1
+            progress['git_progress'] = min(100, int((progress['git_exercises'] / 8) * 100))
+        elif course == 'academy':
+            progress['academy_modules'] += 1
+            progress['academy_progress'] = min(100, int((progress['academy_modules'] / 6) * 100))
+
+    # Add activity log
+    activity = {
+        'icon': get_activity_icon(course, action),
+        'text': get_activity_text(course, action),
+        'time': now.strftime('%b %d, %Y at %I:%M %p')
+    }
+    progress['activities'].insert(0, activity)
+    progress['activities'] = progress['activities'][:10]  # Keep last 10 activities
+
+    # Update time spent (estimate 5 minutes per action)
+    progress['total_time'] += 5
+
+    save_users(users)
+
+def get_activity_icon(course, action):
+    icons = {
+        'coding': '🧩',
+        'workflow': '🔀',
+        'git': '📦',
+        'academy': '🤖'
+    }
+    return icons.get(course, '📚')
+
+def get_activity_text(course, action):
+    course_names = {
+        'coding': 'Block Coding',
+        'workflow': 'Workflow Builder',
+        'git': 'Git Visualizer',
+        'academy': 'AI Academy'
+    }
+    if action == 'visit':
+        return f"Started learning {course_names.get(course, course)}"
+    elif action == 'exercise':
+        return f"Completed an exercise in {course_names.get(course, course)}"
+    return f"Activity in {course_names.get(course, course)}"
+
 # Block definitions for the palette
 BLOCK_CATEGORIES = {
     "variables": {
@@ -268,25 +395,74 @@ def logout():
 def home():
     return render_template('home.html')
 
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    username = session.get('user')
+    users = load_users()
+
+    # Get member since date
+    member_since = 'Recently'
+    if username in users and 'created_at' in users[username]:
+        try:
+            created = datetime.datetime.fromisoformat(users[username]['created_at'].split('.')[0])
+            member_since = created.strftime('%B %d, %Y')
+        except:
+            pass
+
+    # Get progress data
+    progress = get_user_progress(username)
+
+    # Get recent activities
+    activities = progress.get('activities', [])
+
+    return render_template('dashboard.html',
+                         username=username,
+                         member_since=member_since,
+                         progress=progress,
+                         activities=activities)
+
 @app.route('/coding')
 @login_required
 def coding():
+    if session.get('user'):
+        update_user_progress(session['user'], 'coding', 'visit')
     return render_template('index.html', categories=BLOCK_CATEGORIES)
 
 @app.route('/workflows')
 @login_required
 def workflows():
+    if session.get('user'):
+        update_user_progress(session['user'], 'workflow', 'visit')
     return render_template('workflows.html')
 
 @app.route('/git')
 @login_required
 def git():
+    if session.get('user'):
+        update_user_progress(session['user'], 'git', 'visit')
     return render_template('git.html')
 
 @app.route('/ai-academy')
 @login_required
 def ai_academy():
+    if session.get('user'):
+        update_user_progress(session['user'], 'academy', 'visit')
     return render_template('ai-academy.html')
+
+@app.route('/api/track-progress', methods=['POST'])
+@login_required
+def track_progress():
+    """API endpoint to track exercise completion"""
+    data = request.json
+    course = data.get('course')
+    action = data.get('action', 'exercise')
+
+    if session.get('user') and course:
+        update_user_progress(session['user'], course, action)
+        return jsonify({'success': True})
+
+    return jsonify({'success': False}), 400
 
 @app.route('/admin')
 @admin_required
