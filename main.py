@@ -10,17 +10,46 @@ from io import StringIO
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'trustai-secret-key-change-in-production')
 
-# Upstash Redis connection
-redis_client = None
-REDIS_URL = os.environ.get('REDIS_URL') or os.environ.get('KV_URL')
+# Upstash Redis connection via REST API
+UPSTASH_URL = os.environ.get('KV_REST_API_URL')
+UPSTASH_TOKEN = os.environ.get('KV_REST_API_TOKEN')
 
-if REDIS_URL:
+def redis_get(key):
+    """Get value from Upstash Redis via REST API"""
+    if not UPSTASH_URL or not UPSTASH_TOKEN:
+        return None
     try:
-        import redis
-        redis_client = redis.from_url(REDIS_URL, decode_responses=True)
+        import urllib.request
+        import urllib.error
+        req = urllib.request.Request(
+            f"{UPSTASH_URL}/get/{key}",
+            headers={"Authorization": f"Bearer {UPSTASH_TOKEN}"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode())
+            return data.get('result')
     except Exception as e:
-        print(f"Redis connection failed: {e}")
-        redis_client = None
+        print(f"Redis GET error: {e}")
+        return None
+
+def redis_set(key, value):
+    """Set value in Upstash Redis via REST API"""
+    if not UPSTASH_URL or not UPSTASH_TOKEN:
+        return False
+    try:
+        import urllib.request
+        import urllib.error
+        import urllib.parse
+        encoded_value = urllib.parse.quote(value, safe='')
+        req = urllib.request.Request(
+            f"{UPSTASH_URL}/set/{key}/{encoded_value}",
+            headers={"Authorization": f"Bearer {UPSTASH_TOKEN}"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            return True
+    except Exception as e:
+        print(f"Redis SET error: {e}")
+        return False
 
 # User database file (fallback for local development)
 USERS_FILE = 'users.json'
@@ -30,10 +59,11 @@ ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD_HASH = hashlib.sha256('TrustAI2024!'.encode()).hexdigest()
 
 def load_users():
-    """Load users from Redis (Vercel KV) or JSON file"""
-    if redis_client:
+    """Load users from Upstash Redis or JSON file"""
+    # Try Upstash REST API first
+    if UPSTASH_URL and UPSTASH_TOKEN:
         try:
-            users_data = redis_client.get('trustai_users')
+            users_data = redis_get('trustai_users')
             if users_data:
                 return json.loads(users_data)
             return {}
@@ -52,11 +82,12 @@ def load_users():
     return {}
 
 def save_users(users):
-    """Save users to Redis (Vercel KV) or JSON file"""
-    if redis_client:
+    """Save users to Upstash Redis or JSON file"""
+    # Try Upstash REST API first
+    if UPSTASH_URL and UPSTASH_TOKEN:
         try:
-            redis_client.set('trustai_users', json.dumps(users))
-            return
+            if redis_set('trustai_users', json.dumps(users)):
+                return
         except Exception as e:
             print(f"Redis save error: {e}")
             # Fall through to file fallback
