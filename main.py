@@ -504,6 +504,91 @@ def admin_dashboard():
     users = load_users()
     return render_template('admin.html', users=users)
 
+# Projects routes
+@app.route('/projects')
+def projects():
+    return render_template('projects.html')
+
+@app.route('/projects/website-tutorial')
+def website_tutorial():
+    return render_template('website-tutorial.html')
+
+@app.route('/projects/submit-idea', methods=['POST'])
+def submit_idea():
+    try:
+        name = request.form.get('name', 'Anonymous').strip() or 'Anonymous'
+        idea = request.form.get('idea', '').strip()
+        skill_level = request.form.get('skill_level', 'beginner')
+
+        if not idea:
+            flash('Please enter a project idea.', 'error')
+            return redirect(url_for('projects'))
+
+        # Load existing ideas
+        ideas = load_project_ideas()
+
+        # Add new idea
+        ideas.append({
+            'name': name,
+            'idea': idea,
+            'skill_level': skill_level,
+            'submitted_at': str(datetime.datetime.now()),
+            'user': session.get('user', 'guest')
+        })
+
+        # Save ideas
+        save_project_ideas(ideas)
+
+        flash('Thank you! Your idea has been submitted.', 'success')
+        return redirect(url_for('projects'))
+    except Exception as e:
+        print(f"Submit idea error: {e}")
+        flash('An error occurred. Please try again.', 'error')
+        return redirect(url_for('projects'))
+
+@app.route('/admin/ideas')
+@admin_required
+def admin_ideas():
+    ideas = load_project_ideas()
+    return render_template('admin-ideas.html', ideas=ideas)
+
+def load_project_ideas():
+    """Load project ideas from Upstash Redis or file"""
+    if UPSTASH_URL and UPSTASH_TOKEN:
+        try:
+            ideas_data = redis_get('trustai_project_ideas')
+            if ideas_data:
+                return json.loads(ideas_data)
+            return []
+        except Exception as e:
+            print(f"Redis load ideas error: {e}")
+
+    # Fallback to file
+    try:
+        if os.path.exists('project_ideas.json'):
+            with open('project_ideas.json', 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"File load ideas error: {e}")
+
+    return []
+
+def save_project_ideas(ideas):
+    """Save project ideas to Upstash Redis or file"""
+    if UPSTASH_URL and UPSTASH_TOKEN:
+        try:
+            if redis_set('trustai_project_ideas', json.dumps(ideas)):
+                return
+        except Exception as e:
+            print(f"Redis save ideas error: {e}")
+
+    # Fallback to file
+    try:
+        with open('project_ideas.json', 'w') as f:
+            json.dump(ideas, f)
+    except Exception as e:
+        print(f"File save ideas error: {e}")
+
 @app.route('/api/blocks')
 @login_required
 def get_blocks():

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAI - Projects</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --bg-elevated: #3f3f46;
+            --border-color: #27272a;
+            --border-light: #3f3f46;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-primary: #6366f1;
+            --accent-hover: #818cf8;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.15);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: white;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Project Card */
+        .project-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        .project-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--accent-warning);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .project-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .project-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .project-arrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-primary);
+            font-weight: 500;
+            margin-top: 20px;
+        }
+
+        /* Ideas Form */
+        .ideas-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--accent-success);
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash {
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .flash.success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--accent-success);
+        }
+
+        .flash.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .nav-links {
+                display: none;
+            }
+            .page-title {
+                font-size: 2rem;
+            }
+            .project-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav">
+            <a href="/" class="logo">
+                <span class="logo-icon">&lt;/&gt;</span>
+                <span class="logo-text">TrustAI</span>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/coding" class="nav-link">Block Coding</a>
+                <a href="/ai-academy" class="nav-link">AI Academy</a>
+                <a href="/projects" class="nav-link" style="color: var(--accent-primary);">Projects</a>
+            </div>
+        </nav>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Projects</h1>
+            <p class="page-subtitle">Apply what you've learned by building real projects. Start with guided tutorials or suggest your own ideas!</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Featured Project -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-icon">🚀</span>
+                Featured Project
+            </h2>
+            <a href="/projects/website-tutorial" class="project-card">
+                <div class="project-badge">
+                    <span>🔨</span> Hands-on Tutorial
+                </div>
+                <h3 class="project-title">Build a Website Using AI</h3>
+                <p class="project-description">
+                    Learn how to create a complete website from scratch using AI tools like Claude and ChatGPT.
+                    This step-by-step tutorial will guide you through planning, designing, and deploying your first website.
+                </p>
+                <div class="project-meta">
+                    <div class="project-meta-item">
+                        <span>📚</span> Beginner Friendly
+                    </div>
+                    <div class="project-meta-item">
+                        <span>⏱️</span> ~2 hours
+                    </div>
+                    <div class="project-meta-item">
+                        <span>🤖</span> Uses AI Tools
+                    </div>
+                </div>
+                <div class="project-arrow">
+                    Start Tutorial <span>→</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Submit Ideas -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="section-icon">💡</span>
+                Suggest a Project Idea
+            </h2>
+            <div class="ideas-card">
+                <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                    Have an idea for a project you'd like to see? Tell us about it! We review all submissions and may create tutorials for popular ideas.
+                </p>
+
+                <div class="success-message" id="successMessage">
+                    <span>✓</span> Thank you! Your idea has been submitted.
+                </div>
+
+                <form action="/projects/submit-idea" method="POST" id="ideaForm">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Your Name (optional)</label>
+                        <input type="text" class="form-input" id="name" name="name" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="idea">Project Idea *</label>
+                        <textarea class="form-input form-textarea" id="idea" name="idea" placeholder="Describe the project you'd like to learn how to build..." required></textarea>
+                        <p class="form-hint">Be as detailed as you'd like! What would the project do? What would you learn from it?</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="skill_level">Your Skill Level</label>
+                        <select class="form-input" id="skill_level" name="skill_level">
+                            <option value="beginner">Beginner - Just starting out</option>
+                            <option value="intermediate">Intermediate - Know some coding basics</option>
+                            <option value="advanced">Advanced - Comfortable with programming</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Submit Idea</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ideaForm').addEventListener('submit', function(e) {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+        });
+    </script>
+</body>
+</html>

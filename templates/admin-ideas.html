@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAI Admin - Project Ideas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --border-color: #27272a;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-primary: #6366f1;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+
+        .stats {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .ideas-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .idea-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .idea-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .idea-meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .idea-name {
+            font-weight: 600;
+        }
+
+        .idea-badge {
+            background: var(--bg-tertiary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .idea-badge.beginner { color: var(--accent-success); }
+        .idea-badge.intermediate { color: var(--accent-warning); }
+        .idea-badge.advanced { color: #ef4444; }
+
+        .idea-time {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .idea-content {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .idea-user {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Project Ideas Submissions</h1>
+            <a href="/admin" class="back-link">← Back to Admin</a>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value">{{ ideas|length }}</div>
+                <div class="stat-label">Total Ideas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ ideas|selectattr('skill_level', 'equalto', 'beginner')|list|length }}</div>
+                <div class="stat-label">Beginner Level</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ ideas|selectattr('skill_level', 'equalto', 'intermediate')|list|length }}</div>
+                <div class="stat-label">Intermediate Level</div>
+            </div>
+        </div>
+
+        {% if ideas %}
+        <div class="ideas-list">
+            {% for idea in ideas|reverse %}
+            <div class="idea-card">
+                <div class="idea-header">
+                    <div class="idea-meta">
+                        <span class="idea-name">{{ idea.name }}</span>
+                        <span class="idea-badge {{ idea.skill_level }}">{{ idea.skill_level|title }}</span>
+                    </div>
+                    <span class="idea-time">{{ idea.submitted_at }}</span>
+                </div>
+                <div class="idea-content">{{ idea.idea }}</div>
+                {% if idea.user and idea.user != 'guest' %}
+                <div class="idea-user">Submitted by user: {{ idea.user }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">💡</div>
+            <p>No project ideas submitted yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
