@@ -252,18 +252,22 @@ def home():
     return render_template('home.html')
 
 @app.route('/coding')
+@login_required
 def coding():
     return render_template('index.html', categories=BLOCK_CATEGORIES)
 
 @app.route('/workflows')
+@login_required
 def workflows():
     return render_template('workflows.html')
 
 @app.route('/git')
+@login_required
 def git():
     return render_template('git.html')
 
 @app.route('/ai-academy')
+@login_required
 def ai_academy():
     return render_template('ai-academy.html')
 
