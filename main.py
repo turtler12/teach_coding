@@ -504,6 +504,10 @@ def admin_dashboard():
     users = load_users()
     return render_template('admin.html', users=users)
 
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
 # Projects routes
 @app.route('/projects')
 def projects():

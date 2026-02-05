@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data Privacy - TrustAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --border-color: #27272a;
+            --border-light: #3f3f46;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-primary: #6366f1;
+            --accent-success: #10b981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .logo-icon {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.15);
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .nav-link:hover { color: white; }
+
+        .header {
+            margin-bottom: 48px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        .updated {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin: 44px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h3 {
+            font-size: 1.05rem;
+            margin: 28px 0 10px;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+            font-size: 15px;
+        }
+
+        ul {
+            margin: 0 0 20px 20px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        strong { color: var(--text-primary); }
+
+        .highlight-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .highlight-box h3 {
+            margin-top: 0;
+            margin-bottom: 14px;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+        }
+
+        .check-item .check {
+            color: var(--accent-success);
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .check-item p {
+            margin: 0;
+        }
+
+        .contact-box {
+            background: rgba(99, 102, 241, 0.08);
+            border-left: 3px solid var(--accent-primary);
+            border-radius: 0 8px 8px 0;
+            padding: 20px;
+            margin: 32px 0;
+        }
+
+        .contact-box p {
+            margin: 0;
+        }
+
+        .footer-note {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+            .header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="/" class="logo">
+                <span class="logo-icon">&lt;/&gt;</span>
+                TrustAI
+            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/coding" class="nav-link">Courses</a>
+                <a href="/projects" class="nav-link">Projects</a>
+                <a href="/privacy" class="nav-link" style="color: var(--accent-primary);">Privacy</a>
+            </div>
+        </nav>
+
+        <div class="header">
+            <h1>Student Data Privacy</h1>
+            <p>How we handle your data, what we collect, and what we don't.</p>
+            <div class="updated">Last updated: February 2026</div>
+        </div>
+
+        <h2>The short version</h2>
+
+        <div class="highlight-box">
+            <div class="check-item">
+                <span class="check">&#10003;</span>
+                <p>We don't sell your data to anyone. Not advertisers, not data brokers, not other companies.</p>
+            </div>
+            <div class="check-item">
+                <span class="check">&#10003;</span>
+                <p>We only collect what we need to make the platform work: your username, a hashed password, and your course progress.</p>
+            </div>
+            <div class="check-item">
+                <span class="check">&#10003;</span>
+                <p>Your code runs in your browser. We don't see it, store it, or send it anywhere.</p>
+            </div>
+            <div class="check-item">
+                <span class="check">&#10003;</span>
+                <p>No third-party trackers. No analytics scripts watching what you do. No ads.</p>
+            </div>
+            <div class="check-item">
+                <span class="check">&#10003;</span>
+                <p>You can request deletion of your account and all associated data at any time.</p>
+            </div>
+        </div>
+
+        <h2>What we collect</h2>
+
+        <h3>Account information</h3>
+        <p>When you sign up, we store:</p>
+        <ul>
+            <li><strong>Username</strong> - the name you choose when creating your account</li>
+            <li><strong>Password</strong> - stored as a one-way hash (SHA-256). We never store your actual password and cannot recover it.</li>
+            <li><strong>Account creation date</strong></li>
+        </ul>
+
+        <h3>Learning progress</h3>
+        <p>As you use the platform, we track:</p>
+        <ul>
+            <li>Which courses you've started</li>
+            <li>Number of exercises completed</li>
+            <li>Your streak (consecutive days of activity)</li>
+            <li>Course completion percentages</li>
+        </ul>
+        <p>This data powers your dashboard so you can see your own progress. We don't use it for any other purpose.</p>
+
+        <h3>Project idea submissions</h3>
+        <p>If you submit a project idea through the Projects page, we store the idea text, your name (if provided), and skill level. This is only used to review suggestions for new tutorials.</p>
+
+        <h2>What we don't collect</h2>
+        <ul>
+            <li><strong>Email addresses</strong> - we don't ask for one</li>
+            <li><strong>Real names</strong> - your username can be anything</li>
+            <li><strong>Location data</strong> - we don't track where you are</li>
+            <li><strong>Device fingerprints</strong> - we don't identify your device</li>
+            <li><strong>Your code</strong> - all exercises run locally in your browser and are never sent to our servers</li>
+            <li><strong>Browsing behavior</strong> - no page view tracking, no click tracking, no heatmaps</li>
+        </ul>
+
+        <h2>How your code stays private</h2>
+        <p>When you use the Block Coding editor, Workflow Builder, or Git Visualizer, everything runs directly in your browser. The code you write is processed on your machine, not our servers. We have no way to see what you're building or experimenting with.</p>
+        <p>The only exception is the code execution API for the Block Coding section, which runs submitted code in a sandboxed environment to show you the output. This code is processed in memory, never saved to disk, and discarded immediately after execution.</p>
+
+        <h2>Third-party services</h2>
+        <p>We use a minimal set of external services:</p>
+        <ul>
+            <li><strong>Vercel</strong> - hosts the website. Vercel's infrastructure handles incoming web requests. See <a href="https://vercel.com/legal/privacy-policy" style="color: var(--accent-primary);">Vercel's privacy policy</a>.</li>
+            <li><strong>Upstash Redis</strong> - stores account data (usernames, hashed passwords, progress). Data is encrypted at rest. See <a href="https://upstash.com/trust/privacy" style="color: var(--accent-primary);">Upstash's privacy policy</a>.</li>
+            <li><strong>Google Fonts</strong> - loads the Inter and JetBrains Mono fonts. Google may log font requests. See <a href="https://policies.google.com/privacy" style="color: var(--accent-primary);">Google's privacy policy</a>.</li>
+        </ul>
+        <p>We do not use Google Analytics, Facebook Pixel, Mixpanel, Hotjar, or any other analytics or advertising service.</p>
+
+        <h2>Cookies</h2>
+        <p>We use a single session cookie to keep you logged in. It contains a session identifier - not your username, password, or any personal information. It expires when you log out or close your browser. We don't use cookies for tracking or advertising.</p>
+
+        <h2>Data for students under 13 (COPPA)</h2>
+        <p>We do not knowingly collect personal information from children under 13. Since we don't require email addresses, real names, or other personally identifiable information to create an account, the data we hold is minimal. If a parent or guardian believes their child has provided personal information, contact us and we will delete it.</p>
+
+        <h2>Data for students in the EU (GDPR)</h2>
+        <p>If you're in the EU, you have the right to:</p>
+        <ul>
+            <li>Access the data we have about you</li>
+            <li>Correct any inaccurate data</li>
+            <li>Request deletion of your data</li>
+            <li>Export your data in a readable format</li>
+        </ul>
+        <p>Contact us to exercise any of these rights.</p>
+
+        <h2>School and classroom use</h2>
+        <p>If you're a teacher using TrustAI in a classroom setting:</p>
+        <ul>
+            <li>Student accounts only require a username and password - no email or real name needed</li>
+            <li>Students can use pseudonyms</li>
+            <li>We don't build advertising profiles on students</li>
+            <li>We don't share student data with third parties for non-educational purposes</li>
+            <li>We can delete all student accounts for a class on request</li>
+        </ul>
+
+        <h2>Data security</h2>
+        <p>Passwords are hashed with SHA-256 before storage - we never store plaintext passwords. Data in our database is encrypted at rest. All connections to the site use HTTPS encryption. We don't store more data than we need, which limits what could be exposed in the unlikely event of a breach.</p>
+
+        <h2>Data deletion</h2>
+        <p>You can request complete deletion of your account and all associated data by contacting us. We will remove your username, hashed password, progress data, and any project idea submissions tied to your account.</p>
+
+        <div class="contact-box">
+            <p><strong>Questions?</strong> If you have any questions about how we handle your data, reach out to us and we'll be happy to explain.</p>
+        </div>
+
+        <div class="footer-note">
+            <p>This policy may be updated from time to time. We'll note the date of the last update at the top of the page.</p>
+        </div>
+    </div>
+</body>
+</html>
