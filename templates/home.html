@@ -601,6 +601,64 @@
             background: var(--bg-elevated);
         }
 
+        /* Privacy Section */
+        .privacy-section {
+            padding: 80px 60px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .privacy-header {
+            margin-bottom: 40px;
+        }
+
+        .privacy-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .privacy-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .privacy-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .privacy-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .privacy-item h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .privacy-item p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media (max-width: 640px) {
+            .privacy-grid {
+                grid-template-columns: 1fr;
+            }
+            .privacy-section {
+                padding: 60px 24px;
+            }
+        }
+
         /* Footer */
         .footer {
             padding: 40px 60px;
@@ -907,6 +965,32 @@
                         <div class="pricing-feature">Priority support</div>
                     </div>
                     <a href="/coding" class="pricing-btn secondary">Contact Sales</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Student Data Privacy -->
+        <section class="privacy-section">
+            <div class="privacy-header">
+                <h2>Student Data Privacy</h2>
+                <p>We take your privacy seriously. Here's how we handle your data.</p>
+            </div>
+            <div class="privacy-grid">
+                <div class="privacy-item">
+                    <h4>No data sold. Ever.</h4>
+                    <p>We don't sell, share, or give your information to advertisers or third parties. Your data stays with us.</p>
+                </div>
+                <div class="privacy-item">
+                    <h4>Minimal data collection</h4>
+                    <p>We only store what's needed to run your account: username, hashed password, and course progress. Nothing else.</p>
+                </div>
+                <div class="privacy-item">
+                    <h4>No tracking across sites</h4>
+                    <p>We don't use third-party analytics, tracking pixels, or cookies that follow you around the internet.</p>
+                </div>
+                <div class="privacy-item">
+                    <h4>Code runs in your browser</h4>
+                    <p>Your code exercises run locally in your browser. We don't log, store, or monitor what you write.</p>
                 </div>
             </div>
         </section>
