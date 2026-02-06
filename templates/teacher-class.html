@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ cls.name }} - TrustAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --border-color: #2a2a3a;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --accent-primary: #6366f1;
+            --accent-teal: #14b8a6;
+            --accent-success: #10b981;
+            --accent-error: #ef4444;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+        .header {
+            background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-teal), #0d9488); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: white; }
+        .logo-text { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; font-family: inherit; }
+        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background: var(--border-color); }
+        .btn-teal { background: var(--accent-teal); color: white; }
+        .btn-teal:hover { background: #0d9488; }
+        .btn-sm { padding: 6px 14px; font-size: 13px; }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--accent-error); border: 1px solid rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+        .container { max-width: 1100px; margin: 0 auto; padding: 32px; }
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .class-code-display { font-size: 16px; color: var(--accent-teal); font-weight: 600; margin-bottom: 4px; }
+        .page-subtitle { color: var(--text-muted); font-size: 14px; }
+        .flash-messages { margin-bottom: 24px; }
+        .flash { padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 8px; }
+        .flash.success { background: rgba(20, 184, 166, 0.1); border: 1px solid rgba(20, 184, 166, 0.3); color: var(--accent-teal); }
+        .flash.error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; }
+        .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border-color); margin-bottom: 24px; }
+        .tab { padding: 12px 20px; font-size: 14px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; color: var(--text-muted); transition: all 0.2s; }
+        .tab.active { color: var(--accent-teal); border-bottom-color: var(--accent-teal); }
+        .tab:hover { color: var(--text-primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .section { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .inline-form { display: flex; gap: 10px; margin-bottom: 20px; }
+        .inline-form input, .inline-form textarea { flex: 1; padding: 10px 14px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: inherit; }
+        .inline-form input:focus, .inline-form textarea:focus { outline: none; border-color: var(--accent-teal); }
+        .inline-form input::placeholder, .inline-form textarea::placeholder { color: var(--text-muted); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--bg-tertiary); }
+        .progress-bar { width: 60px; height: 6px; background: var(--bg-primary); border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 6px; }
+        .progress-fill { height: 100%; border-radius: 3px; }
+        .progress-fill.coding { background: var(--accent-primary); }
+        .progress-fill.workflow { background: #f59e0b; }
+        .progress-fill.git { background: var(--accent-success); }
+        .progress-fill.academy { background: #ec4899; }
+        .user-avatar { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent-primary), #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .material-card { background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+        .material-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .material-title { font-weight: 600; font-size: 15px; }
+        .material-preview { color: var(--text-muted); font-size: 13px; line-height: 1.5; max-height: 60px; overflow: hidden; }
+        .material-form textarea { min-height: 120px; resize: vertical; width: 100%; margin-bottom: 10px; padding: 10px 14px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: inherit; }
+        .material-form textarea:focus { outline: none; border-color: var(--accent-teal); }
+        .material-form input { width: 100%; margin-bottom: 10px; padding: 10px 14px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: inherit; }
+        .material-form input:focus { outline: none; border-color: var(--accent-teal); }
+        .material-form input::placeholder, .material-form textarea::placeholder { color: var(--text-muted); }
+        .empty-state { text-align: center; padding: 32px; color: var(--text-muted); font-size: 14px; }
+        .chat-link { color: var(--accent-teal); text-decoration: none; font-size: 14px; }
+        .chat-link:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            .header { padding: 16px; }
+            .container { padding: 16px; }
+            .inline-form { flex-direction: column; }
+            table { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">
+            <div class="logo-icon">&lt;/&gt;</div>
+            <span class="logo-text">TrustAI</span>
+        </a>
+        <div class="header-actions">
+            <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-secondary">My Classes</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">{{ cls.name }}</h1>
+            <div class="class-code-display">Class code: {{ code }}</div>
+            <p class="page-subtitle">Share this code with students so they can join.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('students')">Students ({{ students|length }})</div>
+            <div class="tab" onclick="showTab('materials')">Materials ({{ cls.materials|length }})</div>
+            <div class="tab" onclick="showTab('chatlogs')">Chat Logs</div>
+        </div>
+
+        <!-- Students Tab -->
+        <div id="tab-students" class="tab-content active">
+            <div class="section">
+                <h3 class="section-title">Add Student</h3>
+                <form action="{{ url_for('add_student_to_class', code=code) }}" method="POST" class="inline-form">
+                    <input type="text" name="username" placeholder="Enter student username" required>
+                    <button type="submit" class="btn btn-teal btn-sm">Add</button>
+                </form>
+
+                {% if students %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Block Coding</th>
+                            <th>Workflows</th>
+                            <th>Git</th>
+                            <th>AI Academy</th>
+                            <th>Exercises</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in students %}
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="user-avatar">{{ s.username[0].upper() }}</div>
+                                    <span>{{ s.username }}</span>
+                                </div>
+                            </td>
+                            <td><div class="progress-bar"><div class="progress-fill coding" style="width: {{ s.coding }}%"></div></div>{{ s.coding }}%</td>
+                            <td><div class="progress-bar"><div class="progress-fill workflow" style="width: {{ s.workflow }}%"></div></div>{{ s.workflow }}%</td>
+                            <td><div class="progress-bar"><div class="progress-fill git" style="width: {{ s.git }}%"></div></div>{{ s.git }}%</td>
+                            <td><div class="progress-bar"><div class="progress-fill academy" style="width: {{ s.academy }}%"></div></div>{{ s.academy }}%</td>
+                            <td>{{ s.exercises }}</td>
+                            <td>
+                                <form action="{{ url_for('remove_student_from_class', code=code) }}" method="POST" style="display:inline;">
+                                    <input type="hidden" name="username" value="{{ s.username }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">No students yet. Add students by username or share the class code.</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Materials Tab -->
+        <div id="tab-materials" class="tab-content">
+            <div class="section">
+                <h3 class="section-title">Add Material</h3>
+                <form action="{{ url_for('add_material', code=code) }}" method="POST" class="material-form">
+                    <input type="text" name="title" placeholder="Material title (e.g. Week 1: Variables)" required>
+                    <textarea name="content" placeholder="Paste your class material here. This will be used as context for the AI assistant that students can chat with." required></textarea>
+                    <button type="submit" class="btn btn-teal">Add Material</button>
+                </form>
+            </div>
+
+            {% if cls.materials %}
+            <div class="section">
+                <h3 class="section-title">Current Materials</h3>
+                {% for mat in cls.materials %}
+                <div class="material-card">
+                    <div class="material-header">
+                        <span class="material-title">{{ mat.title }}</span>
+                        <form action="{{ url_for('delete_material', code=code, mat_id=mat.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
+                    <div class="material-preview">{{ mat.content[:200] }}{% if mat.content|length > 200 %}...{% endif %}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Chat Logs Tab -->
+        <div id="tab-chatlogs" class="tab-content">
+            <div class="section">
+                <h3 class="section-title">Student Chat Logs</h3>
+                {% if students_with_chats %}
+                <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 14px;">Students who have used the AI chat:</p>
+                {% for s in students_with_chats %}
+                <div style="margin-bottom: 8px;">
+                    <a href="{{ url_for('teacher_chat_logs', code=code, student=s) }}" class="chat-link">View {{ s }}'s conversation →</a>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="empty-state">No chat activity yet. Students can chat once you add materials.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(name) {
+            document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+            document.querySelectorAll('.tab').forEach(function(el) { el.classList.remove('active'); });
+            document.getElementById('tab-' + name).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

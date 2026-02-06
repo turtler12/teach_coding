@@ -282,6 +282,11 @@
                     <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required autocomplete="new-password">
                 </div>
 
+                <div class="form-group">
+                    <label for="class_code">Class Code <span style="color: var(--text-muted); font-weight: 400;">(optional)</span></label>
+                    <input type="text" id="class_code" name="class_code" placeholder="Enter code to join a class" style="text-transform: uppercase;" maxlength="6">
+                </div>
+
                 <button type="submit" class="btn-primary">Create Account</button>
             </form>
 
@@ -301,6 +306,9 @@
 
             <p class="login-link">
                 Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+            </p>
+            <p class="login-link" style="margin-top: 8px;">
+                Teacher? <a href="{{ url_for('teacher_signup') }}">Create a teacher account</a>
             </p>
         </div>
     </div>

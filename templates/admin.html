@@ -221,6 +221,38 @@
             color: var(--accent-success);
         }
 
+        .role-student {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-primary);
+        }
+
+        .role-teacher {
+            background: rgba(20, 184, 166, 0.1);
+            color: #14b8a6;
+        }
+
+        .promote-btn {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #14b8a6;
+            color: #14b8a6;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .promote-btn:hover {
+            background: rgba(20, 184, 166, 0.1);
+        }
+
+        .flash-messages { margin-bottom: 20px; }
+        .flash { padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 8px; }
+        .flash.error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--accent-error); }
+        .flash.success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--accent-success); }
+
         .empty-state {
             text-align: center;
             padding: 48px 24px;
@@ -264,18 +296,28 @@
         <h1 class="page-title">Admin Dashboard</h1>
         <p class="page-subtitle">Manage users and monitor platform activity</p>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value">{{ users|length }}</div>
                 <div class="stat-label">Total Users</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">4</div>
-                <div class="stat-label">Active Courses</div>
+                <div class="stat-value">{{ classes|length }}</div>
+                <div class="stat-label">Classes Created</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">20</div>
-                <div class="stat-label">Exercises Available</div>
+                <div class="stat-value">4</div>
+                <div class="stat-label">Active Courses</div>
             </div>
         </div>
 
@@ -289,12 +331,14 @@
                     <thead>
                         <tr>
                             <th>User</th>
+                            <th>Role</th>
                             <th>Created</th>
-                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for username, data in users.items() %}
+                        {% set role = data.get('role', 'student') %}
                         <tr>
                             <td>
                                 <div class="user-info">
@@ -302,8 +346,20 @@
                                     <span>{{ username }}</span>
                                 </div>
                             </td>
+                            <td>
+                                <span class="status-badge role-{{ role }}">{{ role }}</span>
+                            </td>
                             <td>{{ data.created_at[:10] if data.created_at else 'N/A' }}</td>
-                            <td><span class="status-badge status-active">Active</span></td>
+                            <td>
+                                {% if role != 'teacher' %}
+                                <form method="POST" action="{{ url_for('promote_teacher') }}" style="display: inline;">
+                                    <input type="hidden" name="username" value="{{ username }}">
+                                    <button type="submit" class="promote-btn">Make Teacher</button>
+                                </form>
+                                {% else %}
+                                <span style="color: var(--text-muted); font-size: 12px;">Teacher</span>
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

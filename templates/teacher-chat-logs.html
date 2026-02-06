@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Logs - {{ cls.name }} - TrustAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --border-color: #2a2a3a;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --accent-primary: #6366f1;
+            --accent-teal: #14b8a6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+        .header {
+            background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .back-link { color: var(--text-muted); text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: white; }
+        .class-name { font-weight: 600; font-size: 18px; }
+        .page-label { color: var(--text-muted); font-size: 14px; }
+        .container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+        .student-selector {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 20px; margin-bottom: 24px;
+        }
+        .student-selector h3 { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
+        .student-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .student-link {
+            padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500;
+            text-decoration: none; color: var(--text-secondary);
+            background: var(--bg-tertiary); border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+        .student-link:hover { border-color: var(--accent-teal); color: white; }
+        .student-link.active { background: var(--accent-teal); color: white; border-color: var(--accent-teal); }
+        .no-chats { text-align: center; color: var(--text-muted); padding: 48px 24px; font-size: 14px; }
+        .conversation-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .conversation-header h2 { font-size: 18px; font-weight: 600; }
+        .msg-count { font-size: 13px; color: var(--text-muted); }
+        .conversation { display: flex; flex-direction: column; gap: 12px; }
+        .message { max-width: 80%; display: flex; flex-direction: column; }
+        .message.user { align-self: flex-end; }
+        .message.assistant { align-self: flex-start; }
+        .message-bubble { padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; }
+        .message.user .message-bubble {
+            background: var(--accent-primary); color: white; border-bottom-right-radius: 4px;
+        }
+        .message.assistant .message-bubble {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            color: var(--text-secondary); border-bottom-left-radius: 4px;
+        }
+        .message-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; padding: 0 4px; }
+        .message.user .message-meta { text-align: right; }
+        .message-role { font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+        .message.user .message-role { color: rgba(255,255,255,0.7); }
+        .message.assistant .message-role { color: var(--accent-teal); }
+        @media (max-width: 640px) {
+            .message { max-width: 95%; }
+            .header { padding: 16px; }
+            .container { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="{{ url_for('teacher_class', code=code) }}" class="back-link">← Back to Class</a>
+            <span class="class-name">{{ cls.name }}</span>
+            <span class="page-label">/ Chat Logs</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="student-selector">
+            <h3>Select a student to view their conversation</h3>
+            {% if students_with_chats %}
+            <div class="student-list">
+                {% for s in students_with_chats %}
+                <a href="{{ url_for('teacher_chat_logs', code=code, student=s) }}"
+                   class="student-link {{ 'active' if s == selected_student else '' }}">{{ s }}</a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: var(--text-muted); font-size: 14px;">No students have used the chat yet.</p>
+            {% endif %}
+        </div>
+
+        {% if selected_student %}
+        <div class="conversation-header">
+            <h2>{{ selected_student }}'s conversation</h2>
+            <span class="msg-count">{{ conversation|length }} messages</span>
+        </div>
+
+        {% if conversation %}
+        <div class="conversation">
+            {% for msg in conversation %}
+            <div class="message {{ msg.role }}">
+                <div class="message-bubble">{{ msg.content }}</div>
+                <div class="message-meta">
+                    <span class="message-role">{{ msg.role }}</span>
+                    {% if msg.timestamp %} · {{ msg.timestamp[:16] }}{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-chats">
+            <p>No messages found for this student.</p>
+        </div>
+        {% endif %}
+
+        {% elif not students_with_chats %}
+        <div class="no-chats">
+            <p>Students will appear here once they start chatting with the AI assistant.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
