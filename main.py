@@ -383,7 +383,7 @@ CLASS MATERIALS:{materials_text}"""
 
 def call_openai(messages, max_tokens=500):
     if not OPENAI_API_KEY:
-        return None
+        return {'error': 'OPENAI_API_KEY environment variable is not set'}
     try:
         import urllib.request
         payload = json.dumps({
@@ -403,9 +403,13 @@ def call_openai(messages, max_tokens=500):
         with urllib.request.urlopen(req, timeout=30) as response:
             result = json.loads(response.read().decode())
             return result['choices'][0]['message']['content']
+    except urllib.request.HTTPError as e:
+        body = e.read().decode() if e.fp else ''
+        print(f"OpenAI HTTP error {e.code}: {body}")
+        return {'error': f'OpenAI API error ({e.code}): {body[:200]}'}
     except Exception as e:
         print(f"OpenAI error: {e}")
-        return None
+        return {'error': f'OpenAI request failed: {str(e)}'}
 
 # Block definitions for the palette
 BLOCK_CATEGORIES = {
@@ -1136,8 +1140,8 @@ def api_chat():
 
     # Call OpenAI
     response_text = call_openai(messages)
-    if response_text is None:
-        return jsonify({'success': False, 'error': 'AI chat is not available. Ask your teacher to check the configuration.'}), 500
+    if isinstance(response_text, dict) and 'error' in response_text:
+        return jsonify({'success': False, 'error': response_text['error']}), 500
 
     # Save to logs
     append_chat_message(class_code, username, 'user', message)
@@ -1181,8 +1185,8 @@ def api_curriculum_advisor():
     ]
 
     response_text = call_openai(messages, max_tokens=1500)
-    if response_text is None:
-        return jsonify({'success': False, 'error': 'AI advisor is not available. Check that the OpenAI API key is configured.'}), 500
+    if isinstance(response_text, dict) and 'error' in response_text:
+        return jsonify({'success': False, 'error': response_text['error']}), 500
 
     # Save analysis
     username = session.get('user')
