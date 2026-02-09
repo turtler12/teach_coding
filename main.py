@@ -325,6 +325,49 @@ def append_chat_message(class_code, username, role, content):
     logs[key] = logs[key][-50:]
     save_chat_logs(logs)
 
+# --- Curriculum advisor helpers ---
+
+def load_curriculum_analyses():
+    if UPSTASH_URL and UPSTASH_TOKEN:
+        try:
+            data = redis_get('trustai_curriculum')
+            if data:
+                return json.loads(data)
+        except Exception as e:
+            print(f"Redis load curriculum error: {e}")
+    return {}
+
+def save_curriculum_analyses(analyses):
+    if UPSTASH_URL and UPSTASH_TOKEN:
+        try:
+            redis_set('trustai_curriculum', json.dumps(analyses))
+        except Exception as e:
+            print(f"Redis save curriculum error: {e}")
+
+def build_curriculum_advisor_prompt(subject, grade_level):
+    return f"""You are an expert education technology consultant specializing in AI integration for K-12 classrooms.
+
+A teacher is asking for help incorporating AI into their {subject} curriculum for {grade_level}.
+
+Analyze their curriculum and provide practical, actionable suggestions organized into exactly these 5 sections:
+
+## Quick Wins
+Simple AI tools and activities that can be added to existing lessons immediately with minimal prep.
+
+## Lesson Enhancements
+Ways to deepen existing lessons using AI — how AI can make current content more engaging and interactive.
+
+## Student Activities
+Hands-on projects where students use AI tools as part of learning. Focus on activities that build understanding of the subject, not just AI literacy.
+
+## Critical Thinking
+Exercises and discussion prompts that help students evaluate AI output, identify biases, and think critically about AI-generated content in the context of {subject}.
+
+## Assessment Ideas
+Creative ways to assess student learning that incorporate AI — both using AI as a tool and assessing students' ability to work with AI responsibly.
+
+Keep suggestions specific to {subject} and age-appropriate for {grade_level}. Be practical and actionable. Use bullet points within each section."""
+
 # --- OpenAI helpers ---
 
 def build_system_prompt(class_data):
@@ -338,7 +381,7 @@ Keep responses short and appropriate for students learning to code.
 
 CLASS MATERIALS:{materials_text}"""
 
-def call_openai(messages):
+def call_openai(messages, max_tokens=500):
     if not OPENAI_API_KEY:
         return None
     try:
@@ -346,7 +389,7 @@ def call_openai(messages):
         payload = json.dumps({
             'model': 'gpt-4o-mini',
             'messages': messages,
-            'max_tokens': 500,
+            'max_tokens': max_tokens,
             'temperature': 0.7
         }).encode('utf-8')
         req = urllib.request.Request(
@@ -1101,6 +1144,66 @@ def api_chat():
     append_chat_message(class_code, username, 'assistant', response_text)
 
     return jsonify({'success': True, 'response': response_text})
+
+# --- Curriculum AI Advisor ---
+
+@app.route('/teacher/curriculum-advisor')
+@login_required
+def curriculum_advisor():
+    if session.get('role') != 'teacher':
+        return redirect(url_for('dashboard'))
+    username = session.get('user')
+    analyses = load_curriculum_analyses()
+    past = analyses.get(username, [])
+    return render_template('curriculum-advisor.html', username=username, past_analyses=past)
+
+@app.route('/api/curriculum-advisor', methods=['POST'])
+@login_required
+def api_curriculum_advisor():
+    if session.get('role') != 'teacher':
+        return jsonify({'success': False, 'error': 'Teacher access required'}), 403
+
+    data = request.json
+    subject = data.get('subject', '').strip()
+    grade_level = data.get('grade_level', '').strip()
+    curriculum = data.get('curriculum', '').strip()
+
+    if not subject or not grade_level or not curriculum:
+        return jsonify({'success': False, 'error': 'Subject, grade level, and curriculum are required'}), 400
+
+    if len(curriculum) > 5000:
+        return jsonify({'success': False, 'error': 'Curriculum text must be under 5000 characters'}), 400
+
+    system_prompt = build_curriculum_advisor_prompt(subject, grade_level)
+    messages = [
+        {'role': 'system', 'content': system_prompt},
+        {'role': 'user', 'content': f"Here is my curriculum:\n\n{curriculum}"}
+    ]
+
+    response_text = call_openai(messages, max_tokens=1500)
+    if response_text is None:
+        return jsonify({'success': False, 'error': 'AI advisor is not available. Check that the OpenAI API key is configured.'}), 500
+
+    # Save analysis
+    username = session.get('user')
+    analyses = load_curriculum_analyses()
+    if username not in analyses:
+        analyses[username] = []
+
+    import uuid
+    analysis = {
+        'id': f"cur_{uuid.uuid4().hex[:8]}",
+        'subject': subject,
+        'grade_level': grade_level,
+        'curriculum_snippet': curriculum[:200],
+        'response': response_text,
+        'created_at': str(datetime.datetime.now())
+    }
+    analyses[username].insert(0, analysis)
+    analyses[username] = analyses[username][:10]
+    save_curriculum_analyses(analyses)
+
+    return jsonify({'success': True, 'response': response_text, 'analysis': analysis})
 
 # --- Admin teacher management ---
 
