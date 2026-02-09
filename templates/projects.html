@@ -194,6 +194,66 @@
             margin-top: 16px;
         }
 
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .example-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 22px;
+            transition: border-color 0.2s;
+        }
+
+        .example-card:hover {
+            border-color: var(--border-light);
+        }
+
+        .example-subject {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 10px;
+        }
+
+        .subject-science { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+        .subject-math { background: rgba(59, 130, 246, 0.12); color: #3b82f6; }
+        .subject-history { background: rgba(245, 158, 11, 0.12); color: #d97706; }
+        .subject-english { background: rgba(236, 72, 153, 0.12); color: #ec4899; }
+        .subject-cs { background: rgba(99, 102, 241, 0.12); color: #6366f1; }
+
+        .example-card h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .example-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .example-highlight {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .example-highlight .example-detail {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
         .ideas-section {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -354,6 +414,43 @@
                 </div>
                 <span class="project-link">Start this project →</span>
             </a>
+        </div>
+
+        <div class="section">
+            <div class="section-title">What Students Can Build</div>
+            <div class="examples-grid">
+                <div class="example-card example-highlight">
+                    <span class="example-subject subject-science">Science</span>
+                    <h4>Mitosis & Meiosis Simulator</h4>
+                    <p>An interactive animation showing cell division stages. Students drag chromosomes through prophase, metaphase, anaphase, and telophase, seeing the difference between mitosis and meiosis play out visually.</p>
+                    <div class="example-detail">Built by a 7th grader for a superintendent demo. Uses block coding to animate each phase step by step.</div>
+                </div>
+                <div class="example-card">
+                    <span class="example-subject subject-math">Math</span>
+                    <h4>Fraction Visualizer</h4>
+                    <p>A tool that draws pie charts and bar models to compare fractions. Type in two fractions and see which is larger, find common denominators, and practice operations.</p>
+                </div>
+                <div class="example-card">
+                    <span class="example-subject subject-history">History</span>
+                    <h4>Timeline Builder</h4>
+                    <p>Students create interactive timelines of historical events. Click any event to see details, images, and connections to other events on the timeline.</p>
+                </div>
+                <div class="example-card">
+                    <span class="example-subject subject-english">English</span>
+                    <h4>Story Branching Tool</h4>
+                    <p>Write choose-your-own-adventure stories with multiple endings. Students learn narrative structure by mapping out decision points and consequences.</p>
+                </div>
+                <div class="example-card">
+                    <span class="example-subject subject-science">Science</span>
+                    <h4>Ecosystem Food Web</h4>
+                    <p>Build a food web by connecting producers, consumers, and decomposers. Remove a species and watch how it affects the rest of the ecosystem.</p>
+                </div>
+                <div class="example-card">
+                    <span class="example-subject subject-cs">CS</span>
+                    <h4>Personal Portfolio Site</h4>
+                    <p>Students build and deploy their own website from scratch using AI tools. Great as a first project for any subject area.</p>
+                </div>
+            </div>
         </div>
 
         <div class="section">
