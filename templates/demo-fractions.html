@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraction Visualizer - TrustAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --border-color: #27272a;
+            --border-light: #3f3f46;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #f472b6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+
+        .nav {
+            max-width: 960px; margin: 0 auto; padding: 20px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 20px; }
+        .logo-icon { font-size: 16px; color: #6366f1; background: rgba(99,102,241,0.15); padding: 6px 10px; border-radius: 8px; font-family: monospace; }
+        .back-link { color: var(--text-muted); text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: white; }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
+
+        .demo-header { margin-bottom: 32px; }
+        .demo-badge { display: inline-block; background: rgba(59,130,246,0.12); color: #3b82f6; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 12px; }
+        .demo-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .demo-header p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; max-width: 600px; }
+
+        .visualizer {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 28px; margin-bottom: 24px;
+        }
+
+        .fraction-inputs {
+            display: flex; gap: 24px; align-items: center; margin-bottom: 28px; flex-wrap: wrap;
+        }
+
+        .fraction-input-group { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .fraction-input-group label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+
+        .fraction-box {
+            display: flex; flex-direction: column; align-items: center; gap: 0;
+        }
+        .fraction-box input {
+            width: 56px; text-align: center; padding: 8px; font-size: 20px; font-weight: 600;
+            background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary);
+            font-family: inherit; border-radius: 8px;
+        }
+        .fraction-box input:focus { outline: none; border-color: var(--accent-primary); }
+        .fraction-line {
+            width: 56px; height: 3px; background: var(--text-secondary); border-radius: 2px; margin: 4px 0;
+        }
+
+        .vs-label { font-size: 18px; font-weight: 600; color: var(--text-muted); padding-top: 20px; }
+
+        .compare-result {
+            text-align: center; font-size: 16px; font-weight: 600; padding: 14px;
+            border-radius: 10px; margin-bottom: 24px;
+        }
+        .compare-result.equal { background: rgba(16,185,129,0.1); color: #10b981; }
+        .compare-result.a-bigger { background: rgba(59,130,246,0.1); color: #3b82f6; }
+        .compare-result.b-bigger { background: rgba(244,114,182,0.1); color: #f472b6; }
+
+        .viz-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;
+        }
+
+        .viz-panel { text-align: center; }
+        .viz-panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+        .viz-panel canvas { display: block; margin: 0 auto; }
+
+        .bar-section { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+        .bar-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 16px; text-align: center; }
+
+        .bar-wrap { display: flex; flex-direction: column; gap: 12px; max-width: 500px; margin: 0 auto; }
+        .bar-item { display: flex; align-items: center; gap: 12px; }
+        .bar-label { width: 50px; text-align: right; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+        .bar-track { flex: 1; height: 28px; background: var(--bg-tertiary); border-radius: 6px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; border-radius: 6px; transition: width 0.4s ease; }
+        .bar-fill-a { background: var(--accent-primary); }
+        .bar-fill-b { background: var(--accent-secondary); }
+        .bar-value { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; color: white; }
+
+        .operations {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 28px; margin-bottom: 24px;
+        }
+        .operations h2 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .ops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+        .op-card {
+            background: var(--bg-tertiary); border-radius: 10px; padding: 16px; text-align: center;
+        }
+        .op-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+        .op-result { font-size: 22px; font-weight: 700; }
+
+        .lcd-section {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 28px;
+        }
+        .lcd-section h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .lcd-section p { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+        .lcd-steps { display: flex; flex-direction: column; gap: 8px; }
+        .lcd-step {
+            display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+            background: var(--bg-tertiary); border-radius: 8px; font-size: 14px;
+        }
+        .lcd-step-num {
+            width: 24px; height: 24px; border-radius: 50%; background: var(--accent-primary);
+            display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;
+        }
+
+        @media (max-width: 640px) {
+            .viz-row { grid-template-columns: 1fr; }
+            .fraction-inputs { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="logo"><span class="logo-icon">&lt;/&gt;</span> TrustAI</a>
+        <a href="/projects" class="back-link">← Back to Projects</a>
+    </nav>
+
+    <div class="container">
+        <div class="demo-header">
+            <span class="demo-badge">Math Demo</span>
+            <h1>Fraction Visualizer</h1>
+            <p>Type in two fractions to compare them visually. See pie charts, bar models, and find common denominators.</p>
+        </div>
+
+        <div class="visualizer">
+            <div class="fraction-inputs">
+                <div class="fraction-input-group">
+                    <label>Fraction A</label>
+                    <div class="fraction-box">
+                        <input type="number" id="numA" value="2" min="0" max="99" onchange="update()">
+                        <div class="fraction-line" style="background: var(--accent-primary);"></div>
+                        <input type="number" id="denA" value="5" min="1" max="99" onchange="update()">
+                    </div>
+                </div>
+                <span class="vs-label">vs</span>
+                <div class="fraction-input-group">
+                    <label>Fraction B</label>
+                    <div class="fraction-box">
+                        <input type="number" id="numB" value="3" min="0" max="99" onchange="update()">
+                        <div class="fraction-line" style="background: var(--accent-secondary);"></div>
+                        <input type="number" id="denB" value="4" min="1" max="99" onchange="update()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="compare-result" id="compareResult">3/4 is greater than 2/5</div>
+
+            <div class="viz-row">
+                <div class="viz-panel">
+                    <h3 style="color: var(--accent-primary);">Fraction A</h3>
+                    <canvas id="pieA" width="180" height="180"></canvas>
+                </div>
+                <div class="viz-panel">
+                    <h3 style="color: var(--accent-secondary);">Fraction B</h3>
+                    <canvas id="pieB" width="180" height="180"></canvas>
+                </div>
+            </div>
+
+            <div class="bar-section">
+                <h3>Bar Comparison</h3>
+                <div class="bar-wrap">
+                    <div class="bar-item">
+                        <span class="bar-label" id="barLabelA" style="color: var(--accent-primary);">2/5</span>
+                        <div class="bar-track">
+                            <div class="bar-fill bar-fill-a" id="barA" style="width: 40%;"></div>
+                            <span class="bar-value" id="barValA">40%</span>
+                        </div>
+                    </div>
+                    <div class="bar-item">
+                        <span class="bar-label" id="barLabelB" style="color: var(--accent-secondary);">3/4</span>
+                        <div class="bar-track">
+                            <div class="bar-fill bar-fill-b" id="barB" style="width: 75%;"></div>
+                            <span class="bar-value" id="barValB">75%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="operations">
+            <h2>Operations</h2>
+            <div class="ops-grid">
+                <div class="op-card">
+                    <div class="op-label">Addition (A + B)</div>
+                    <div class="op-result" id="opAdd">23/20</div>
+                </div>
+                <div class="op-card">
+                    <div class="op-label">Subtraction (A - B)</div>
+                    <div class="op-result" id="opSub">-7/20</div>
+                </div>
+                <div class="op-card">
+                    <div class="op-label">Multiplication (A x B)</div>
+                    <div class="op-result" id="opMul">6/20</div>
+                </div>
+                <div class="op-card">
+                    <div class="op-label">Division (A / B)</div>
+                    <div class="op-result" id="opDiv">8/15</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lcd-section">
+            <h2>Finding Common Denominators</h2>
+            <p id="lcdIntro">To compare or add 2/5 and 3/4, we need the same denominator.</p>
+            <div class="lcd-steps" id="lcdSteps"></div>
+        </div>
+    </div>
+
+<script>
+function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = b; b = a % b; a = t; } return a; }
+function lcm(a, b) { return Math.abs(a * b) / gcd(a, b); }
+function simplify(n, d) {
+    if (d === 0) return { n: 0, d: 1 };
+    var g = gcd(Math.abs(n), Math.abs(d));
+    var sn = n / g, sd = d / g;
+    if (sd < 0) { sn = -sn; sd = -sd; }
+    return { n: sn, d: sd };
+}
+function fracStr(n, d) {
+    var s = simplify(n, d);
+    if (s.d === 1) return '' + s.n;
+    return s.n + '/' + s.d;
+}
+
+function drawPie(canvasId, numerator, denominator, color) {
+    var c = document.getElementById(canvasId);
+    var ctx = c.getContext('2d');
+    var w = c.width, h = c.height;
+    ctx.clearRect(0, 0, w, h);
+
+    var cx = w / 2, cy = h / 2, r = 72;
+    var frac = denominator > 0 ? numerator / denominator : 0;
+    frac = Math.min(Math.max(frac, 0), 1);
+
+    // Background circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = '#27272a';
+    ctx.fill();
+
+    // Filled portion
+    if (frac > 0) {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * frac);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.8;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+
+    // Slice lines
+    if (denominator > 0 && denominator <= 24) {
+        for (var i = 0; i < denominator; i++) {
+            var angle = -Math.PI / 2 + (Math.PI * 2 * i / denominator);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+            ctx.strokeStyle = 'rgba(9,9,11,0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+    }
+
+    // Border
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Label
+    ctx.font = '600 18px Inter, sans-serif';
+    ctx.fillStyle = '#fafafa';
+    ctx.textAlign = 'center';
+    ctx.fillText(numerator + '/' + denominator, cx, cy + r + 22);
+
+    ctx.font = '13px Inter, sans-serif';
+    ctx.fillStyle = '#71717a';
+    ctx.fillText(Math.round(frac * 100) + '%', cx, cy + 6);
+}
+
+function update() {
+    var nA = parseInt(document.getElementById('numA').value) || 0;
+    var dA = parseInt(document.getElementById('denA').value) || 1;
+    var nB = parseInt(document.getElementById('numB').value) || 0;
+    var dB = parseInt(document.getElementById('denB').value) || 1;
+    if (dA < 1) dA = 1;
+    if (dB < 1) dB = 1;
+
+    var valA = nA / dA;
+    var valB = nB / dB;
+
+    // Pie charts
+    drawPie('pieA', nA, dA, '#3b82f6');
+    drawPie('pieB', nB, dB, '#f472b6');
+
+    // Comparison
+    var cr = document.getElementById('compareResult');
+    if (Math.abs(valA - valB) < 0.0001) {
+        cr.textContent = nA + '/' + dA + ' is equal to ' + nB + '/' + dB;
+        cr.className = 'compare-result equal';
+    } else if (valA > valB) {
+        cr.textContent = nA + '/' + dA + ' is greater than ' + nB + '/' + dB;
+        cr.className = 'compare-result a-bigger';
+    } else {
+        cr.textContent = nB + '/' + dB + ' is greater than ' + nA + '/' + dA;
+        cr.className = 'compare-result b-bigger';
+    }
+
+    // Bars
+    var pctA = Math.round(valA * 100);
+    var pctB = Math.round(valB * 100);
+    document.getElementById('barA').style.width = Math.min(pctA, 100) + '%';
+    document.getElementById('barB').style.width = Math.min(pctB, 100) + '%';
+    document.getElementById('barValA').textContent = pctA + '%';
+    document.getElementById('barValB').textContent = pctB + '%';
+    document.getElementById('barLabelA').textContent = nA + '/' + dA;
+    document.getElementById('barLabelB').textContent = nB + '/' + dB;
+
+    // Operations
+    document.getElementById('opAdd').textContent = fracStr(nA * dB + nB * dA, dA * dB);
+    document.getElementById('opSub').textContent = fracStr(nA * dB - nB * dA, dA * dB);
+    document.getElementById('opMul').textContent = fracStr(nA * nB, dA * dB);
+    document.getElementById('opDiv').textContent = nB === 0 ? 'undefined' : fracStr(nA * dB, dA * nB);
+
+    // LCD section
+    var lcd = lcm(dA, dB);
+    var mA = lcd / dA;
+    var mB = lcd / dB;
+    document.getElementById('lcdIntro').textContent =
+        'To compare or add ' + nA + '/' + dA + ' and ' + nB + '/' + dB + ', we need the same denominator.';
+
+    var steps = document.getElementById('lcdSteps');
+    steps.innerHTML = '';
+    var stepTexts = [
+        'Find the LCD of ' + dA + ' and ' + dB + ': LCD = ' + lcd,
+        'Multiply ' + nA + '/' + dA + ' by ' + mA + '/' + mA + ' = ' + (nA * mA) + '/' + lcd,
+        'Multiply ' + nB + '/' + dB + ' by ' + mB + '/' + mB + ' = ' + (nB * mB) + '/' + lcd,
+        'Now compare: ' + (nA * mA) + '/' + lcd + ' vs ' + (nB * mB) + '/' + lcd + ' (' + (nA * mA === nB * mB ? 'equal!' : (nA * mA > nB * mB ? nA + '/' + dA + ' is bigger' : nB + '/' + dB + ' is bigger')) + ')'
+    ];
+    for (var i = 0; i < stepTexts.length; i++) {
+        var div = document.createElement('div');
+        div.className = 'lcd-step';
+        div.innerHTML = '<span class="lcd-step-num">' + (i + 1) + '</span><span>' + stepTexts[i] + '</span>';
+        steps.appendChild(div);
+    }
+}
+
+update();
+</script>
+</body>
+</html>

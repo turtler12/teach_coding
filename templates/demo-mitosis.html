@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitosis & Meiosis Simulator - TrustAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --border-color: #27272a;
+            --border-light: #3f3f46;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-primary: #10b981;
+            --accent-hover: #34d399;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+
+        .nav {
+            max-width: 960px; margin: 0 auto; padding: 20px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 20px; }
+        .logo-icon { font-size: 16px; color: #6366f1; background: rgba(99,102,241,0.15); padding: 6px 10px; border-radius: 8px; font-family: monospace; }
+        .back-link { color: var(--text-muted); text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: white; }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
+
+        .demo-header { margin-bottom: 32px; }
+        .demo-badge { display: inline-block; background: rgba(16,185,129,0.12); color: #10b981; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 12px; }
+        .demo-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .demo-header p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; max-width: 600px; }
+
+        .sim-container {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 24px; margin-bottom: 32px;
+        }
+
+        .mode-toggle {
+            display: flex; gap: 8px; margin-bottom: 20px;
+        }
+        .mode-btn {
+            padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 500;
+            cursor: pointer; border: 1px solid var(--border-color); background: var(--bg-tertiary);
+            color: var(--text-secondary); font-family: inherit; transition: all 0.2s;
+        }
+        .mode-btn.active { background: var(--accent-primary); color: white; border-color: var(--accent-primary); }
+
+        .cell-stage {
+            display: flex; align-items: center; gap: 32px; min-height: 320px;
+        }
+        .cell-canvas-wrap { flex: 1; display: flex; justify-content: center; }
+        canvas { border-radius: 12px; }
+
+        .stage-info { width: 280px; flex-shrink: 0; }
+        .stage-name { font-size: 1.2rem; font-weight: 600; margin-bottom: 4px; }
+        .stage-subtitle { font-size: 12px; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+        .stage-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
+        .stage-detail { font-size: 13px; color: var(--text-muted); line-height: 1.5; padding: 12px; background: var(--bg-tertiary); border-radius: 8px; }
+
+        .controls {
+            display: flex; gap: 10px; align-items: center; margin-top: 20px;
+            padding-top: 20px; border-top: 1px solid var(--border-color);
+        }
+        .ctrl-btn {
+            padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500;
+            cursor: pointer; border: none; font-family: inherit; transition: all 0.2s;
+        }
+        .ctrl-prev { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .ctrl-next { background: var(--accent-primary); color: white; }
+        .ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .ctrl-btn:not(:disabled):hover { transform: translateY(-1px); }
+        .stage-counter { margin-left: auto; font-size: 13px; color: var(--text-muted); }
+
+        .info-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .info-card {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 20px;
+        }
+        .info-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+        .info-card p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .info-card ul { list-style: none; margin-top: 8px; }
+        .info-card li { font-size: 13px; color: var(--text-secondary); padding: 4px 0; padding-left: 16px; position: relative; }
+        .info-card li::before { content: ''; position: absolute; left: 0; top: 11px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-primary); }
+
+        @media (max-width: 700px) {
+            .cell-stage { flex-direction: column; gap: 20px; }
+            .stage-info { width: 100%; }
+            .info-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="logo"><span class="logo-icon">&lt;/&gt;</span> TrustAI</a>
+        <a href="/projects" class="back-link">← Back to Projects</a>
+    </nav>
+
+    <div class="container">
+        <div class="demo-header">
+            <span class="demo-badge">Science Demo</span>
+            <h1>Mitosis & Meiosis Simulator</h1>
+            <p>Watch how cells divide. Step through each phase and see what happens to the chromosomes at every stage. Switch between mitosis and meiosis to compare.</p>
+        </div>
+
+        <div class="sim-container">
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="setMode('mitosis')">Mitosis</button>
+                <button class="mode-btn" onclick="setMode('meiosis')">Meiosis</button>
+            </div>
+
+            <div class="cell-stage">
+                <div class="cell-canvas-wrap">
+                    <canvas id="cellCanvas" width="360" height="300"></canvas>
+                </div>
+                <div class="stage-info">
+                    <div class="stage-subtitle" id="stageLabel">Phase 1 of 5</div>
+                    <div class="stage-name" id="stageName">Interphase</div>
+                    <div class="stage-desc" id="stageDesc">The cell prepares to divide. DNA replicates so each chromosome makes a copy of itself.</div>
+                    <div class="stage-detail" id="stageDetail">Chromosomes: 4 (2 pairs) &rarr; Each chromosome duplicates into sister chromatids joined at the centromere.</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="ctrl-btn ctrl-prev" id="prevBtn" onclick="prevStage()" disabled>Previous</button>
+                <button class="ctrl-btn ctrl-next" id="nextBtn" onclick="nextStage()">Next Phase</button>
+                <span class="stage-counter" id="stageCounter">1 / 5</span>
+            </div>
+        </div>
+
+        <div class="info-cards">
+            <div class="info-card">
+                <h3>Mitosis</h3>
+                <p>One cell divides into two identical daughter cells, each with the same number of chromosomes as the parent.</p>
+                <ul>
+                    <li>Used for growth and repair</li>
+                    <li>Produces 2 identical cells</li>
+                    <li>Same chromosome count (diploid)</li>
+                    <li>One division cycle</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3>Meiosis</h3>
+                <p>One cell divides twice to produce four genetically unique cells, each with half the chromosomes.</p>
+                <ul>
+                    <li>Used to make sex cells (gametes)</li>
+                    <li>Produces 4 unique cells</li>
+                    <li>Half the chromosomes (haploid)</li>
+                    <li>Two division cycles</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+<script>
+var canvas = document.getElementById('cellCanvas');
+var ctx = canvas.getContext('2d');
+var mode = 'mitosis';
+var stage = 0;
+
+var mitosisStages = [
+    {
+        name: 'Interphase',
+        desc: 'The cell prepares to divide. DNA replicates so each chromosome makes a copy of itself.',
+        detail: 'Chromosomes: 4 (2 pairs). Each chromosome duplicates into sister chromatids joined at the centromere.'
+    },
+    {
+        name: 'Prophase',
+        desc: 'Chromosomes condense and become visible. The nuclear envelope starts to break down. Spindle fibers begin to form.',
+        detail: 'The duplicated chromosomes coil up tightly. Each one looks like an X shape (two sister chromatids joined together).'
+    },
+    {
+        name: 'Metaphase',
+        desc: 'Chromosomes line up along the middle of the cell. Spindle fibers attach to the centromere of each chromosome.',
+        detail: 'All chromosomes align at the cell\'s equator. This is the checkpoint -- the cell verifies everything is attached correctly.'
+    },
+    {
+        name: 'Anaphase',
+        desc: 'Sister chromatids are pulled apart to opposite ends of the cell by the spindle fibers.',
+        detail: 'The centromeres split. Each chromatid is now its own chromosome, moving to opposite poles.'
+    },
+    {
+        name: 'Telophase & Cytokinesis',
+        desc: 'Nuclear envelopes reform around each set of chromosomes. The cell pinches in the middle and splits into two identical daughter cells.',
+        detail: 'Result: 2 daughter cells, each with 4 chromosomes (same as parent). These are genetically identical.'
+    }
+];
+
+var meiosisStages = [
+    {
+        name: 'Interphase',
+        desc: 'DNA replicates just like in mitosis. The cell prepares for two rounds of division.',
+        detail: 'Chromosomes: 4 (2 homologous pairs). Each chromosome duplicates into sister chromatids.'
+    },
+    {
+        name: 'Prophase I',
+        desc: 'Homologous chromosomes pair up and can exchange pieces (crossing over). This creates genetic variation.',
+        detail: 'Crossing over shuffles genes between homologous pairs. This is why siblings aren\'t identical.'
+    },
+    {
+        name: 'Metaphase I',
+        desc: 'Homologous pairs line up at the center. Each pair is oriented randomly (independent assortment).',
+        detail: 'Homologous pairs align at the equator. The random orientation means different combinations of maternal and paternal chromosomes end up together.'
+    },
+    {
+        name: 'Anaphase I',
+        desc: 'Homologous chromosomes are pulled apart to opposite poles. Sister chromatids stay together.',
+        detail: 'Unlike mitosis, the centromeres do NOT split. Whole chromosomes (still as sister chromatids) move to each pole.'
+    },
+    {
+        name: 'Telophase I & Cytokinesis',
+        desc: 'The cell divides into two cells. Each cell has half the original chromosome number, but chromosomes are still doubled.',
+        detail: 'Result so far: 2 cells, each with 2 chromosomes (still as sister chromatids). Chromosome number is halved.'
+    },
+    {
+        name: 'Metaphase II',
+        desc: 'In each of the two cells, chromosomes line up at the center again. This time there are no homologous pairs.',
+        detail: 'Both cells prepare for a second division. This part looks similar to mitosis.'
+    },
+    {
+        name: 'Anaphase II & Telophase II',
+        desc: 'Sister chromatids are pulled apart. Each of the two cells divides again, producing four haploid daughter cells.',
+        detail: 'Result: 4 daughter cells, each with 2 chromosomes (half the original). Each cell is genetically unique.'
+    }
+];
+
+function getStages() {
+    return mode === 'mitosis' ? mitosisStages : meiosisStages;
+}
+
+function setMode(m) {
+    mode = m;
+    stage = 0;
+    document.querySelectorAll('.mode-btn').forEach(function(b) {
+        b.classList.toggle('active', b.textContent.toLowerCase() === m);
+    });
+    updateUI();
+}
+
+function nextStage() {
+    if (stage < getStages().length - 1) { stage++; updateUI(); }
+}
+
+function prevStage() {
+    if (stage > 0) { stage--; updateUI(); }
+}
+
+function updateUI() {
+    var stages = getStages();
+    var s = stages[stage];
+    document.getElementById('stageName').textContent = s.name;
+    document.getElementById('stageDesc').textContent = s.desc;
+    document.getElementById('stageDetail').innerHTML = s.detail;
+    document.getElementById('stageLabel').textContent = 'Phase ' + (stage + 1) + ' of ' + stages.length;
+    document.getElementById('stageCounter').textContent = (stage + 1) + ' / ' + stages.length;
+    document.getElementById('prevBtn').disabled = stage === 0;
+    document.getElementById('nextBtn').disabled = stage === stages.length - 1;
+    draw();
+}
+
+// Drawing
+var colors = {
+    cell: '#1e293b',
+    membrane: '#10b981',
+    chr1: '#6366f1',
+    chr2: '#f472b6',
+    chr3: '#6366f1',
+    chr4: '#f472b6',
+    spindle: 'rgba(113,113,122,0.3)',
+    nucleus: 'rgba(99,102,241,0.15)',
+    nucleusBorder: 'rgba(99,102,241,0.4)',
+    bg: '#09090b'
+};
+
+function drawCell(cx, cy, rx, ry, pinch) {
+    ctx.beginPath();
+    if (pinch > 0) {
+        // Pinched cell shape
+        var p = pinch * 0.4;
+        ctx.moveTo(cx - rx, cy);
+        ctx.bezierCurveTo(cx - rx, cy - ry, cx - 10, cy - ry, cx, cy - ry * (1 - p));
+        ctx.bezierCurveTo(cx + 10, cy - ry, cx + rx, cy - ry, cx + rx, cy);
+        ctx.bezierCurveTo(cx + rx, cy + ry, cx + 10, cy + ry, cx, cy + ry * (1 - p));
+        ctx.bezierCurveTo(cx - 10, cy + ry, cx - rx, cy + ry, cx - rx, cy);
+    } else {
+        ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+    }
+    ctx.fillStyle = colors.cell;
+    ctx.fill();
+    ctx.strokeStyle = colors.membrane;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+}
+
+function drawNucleus(cx, cy, r) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = colors.nucleus;
+    ctx.fill();
+    ctx.strokeStyle = colors.nucleusBorder;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+}
+
+function drawChromosomeBlob(cx, cy, color) {
+    // Loose squiggle for interphase
+    ctx.beginPath();
+    ctx.moveTo(cx - 8, cy - 6);
+    ctx.bezierCurveTo(cx - 4, cy - 12, cx + 4, cy - 2, cx + 8, cy - 6);
+    ctx.bezierCurveTo(cx + 12, cy - 10, cx + 6, cy + 4, cx + 2, cy + 6);
+    ctx.bezierCurveTo(cx - 2, cy + 10, cx - 10, cy + 4, cx - 8, cy - 6);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.5;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+}
+
+function drawXChromosome(cx, cy, color, scale) {
+    var s = scale || 1;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3.5 * s;
+    ctx.lineCap = 'round';
+    // Sister chromatids as X shape
+    ctx.beginPath();
+    ctx.moveTo(cx - 6 * s, cy - 14 * s);
+    ctx.lineTo(cx, cy);
+    ctx.lineTo(cx + 6 * s, cy - 14 * s);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - 6 * s, cy + 14 * s);
+    ctx.lineTo(cx, cy);
+    ctx.lineTo(cx + 6 * s, cy + 14 * s);
+    ctx.stroke();
+    // Centromere dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 2.5 * s, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+}
+
+function drawSingleChr(cx, cy, color, len) {
+    var l = len || 14;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - l);
+    ctx.lineTo(cx, cy + l);
+    ctx.stroke();
+}
+
+function drawSpindle(cx, cy, toX, toY) {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(toX, toY);
+    ctx.strokeStyle = colors.spindle;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+}
+
+function draw() {
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = colors.bg;
+    ctx.fillRect(0, 0, w, h);
+
+    var cx = w / 2, cy = h / 2;
+
+    if (mode === 'mitosis') drawMitosis(cx, cy, w, h);
+    else drawMeiosis(cx, cy, w, h);
+}
+
+function drawMitosis(cx, cy, w, h) {
+    if (stage === 0) {
+        // Interphase: cell with nucleus, loose chromatin
+        drawCell(cx, cy, 90, 80, 0);
+        drawNucleus(cx, cy, 50);
+        drawChromosomeBlob(cx - 18, cy - 12, colors.chr1);
+        drawChromosomeBlob(cx + 14, cy - 8, colors.chr2);
+        drawChromosomeBlob(cx - 8, cy + 14, colors.chr1);
+        drawChromosomeBlob(cx + 18, cy + 10, colors.chr2);
+    }
+    else if (stage === 1) {
+        // Prophase: chromosomes condense, no nucleus border
+        drawCell(cx, cy, 90, 80, 0);
+        drawXChromosome(cx - 22, cy - 16, colors.chr1);
+        drawXChromosome(cx + 22, cy - 10, colors.chr2);
+        drawXChromosome(cx - 16, cy + 18, colors.chr1);
+        drawXChromosome(cx + 18, cy + 20, colors.chr2);
+    }
+    else if (stage === 2) {
+        // Metaphase: lined up at center, spindle fibers
+        drawCell(cx, cy, 100, 80, 0);
+        // Spindle fibers
+        var chrPositions = [{x: cx - 18, y: cy - 16}, {x: cx + 18, y: cy - 6}, {x: cx - 12, y: cy + 8}, {x: cx + 14, y: cy + 18}];
+        for (var i = 0; i < chrPositions.length; i++) {
+            drawSpindle(cx - 90, cy, chrPositions[i].x, chrPositions[i].y);
+            drawSpindle(cx + 90, cy, chrPositions[i].x, chrPositions[i].y);
+        }
+        // Center line
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 70);
+        ctx.lineTo(cx, cy + 70);
+        ctx.strokeStyle = 'rgba(113,113,122,0.2)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // Chromosomes at center
+        drawXChromosome(cx - 18, cy - 16, colors.chr1);
+        drawXChromosome(cx + 18, cy - 6, colors.chr2);
+        drawXChromosome(cx - 12, cy + 8, colors.chr1);
+        drawXChromosome(cx + 14, cy + 18, colors.chr2);
+    }
+    else if (stage === 3) {
+        // Anaphase: chromatids pulled apart
+        drawCell(cx, cy, 110, 75, 0);
+        // Left set
+        drawSingleChr(cx - 50, cy - 18, colors.chr1);
+        drawSingleChr(cx - 40, cy + 4, colors.chr2);
+        drawSingleChr(cx - 55, cy + 14, colors.chr1);
+        drawSingleChr(cx - 44, cy + 24, colors.chr2);
+        // Right set
+        drawSingleChr(cx + 50, cy - 18, colors.chr1);
+        drawSingleChr(cx + 40, cy + 4, colors.chr2);
+        drawSingleChr(cx + 55, cy + 14, colors.chr1);
+        drawSingleChr(cx + 44, cy + 24, colors.chr2);
+        // Spindle fibers
+        for (var d = -1; d <= 1; d += 2) {
+            var sx = cx + d * 50;
+            drawSpindle(cx + d * 100, cy, sx, cy - 18);
+            drawSpindle(cx + d * 100, cy, sx - d * 10, cy + 4);
+            drawSpindle(cx + d * 100, cy, sx + d * 5, cy + 14);
+        }
+    }
+    else if (stage === 4) {
+        // Telophase & cytokinesis: two cells
+        // Left cell
+        drawCell(cx - 65, cy, 58, 65, 0);
+        drawNucleus(cx - 65, cy, 32);
+        drawChromosomeBlob(cx - 75, cy - 8, colors.chr1);
+        drawChromosomeBlob(cx - 55, cy + 6, colors.chr2);
+        drawChromosomeBlob(cx - 70, cy + 10, colors.chr1);
+        drawChromosomeBlob(cx - 58, cy - 10, colors.chr2);
+        // Right cell
+        drawCell(cx + 65, cy, 58, 65, 0);
+        drawNucleus(cx + 65, cy, 32);
+        drawChromosomeBlob(cx + 55, cy - 8, colors.chr1);
+        drawChromosomeBlob(cx + 75, cy + 6, colors.chr2);
+        drawChromosomeBlob(cx + 60, cy + 10, colors.chr1);
+        drawChromosomeBlob(cx + 72, cy - 10, colors.chr2);
+        // Labels
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillStyle = colors.membrane;
+        ctx.textAlign = 'center';
+        ctx.fillText('2n = 4', cx - 65, cy + 80);
+        ctx.fillText('2n = 4', cx + 65, cy + 80);
+    }
+}
+
+function drawMeiosis(cx, cy, w, h) {
+    if (stage === 0) {
+        // Interphase (same as mitosis)
+        drawCell(cx, cy, 90, 80, 0);
+        drawNucleus(cx, cy, 50);
+        drawChromosomeBlob(cx - 18, cy - 12, colors.chr1);
+        drawChromosomeBlob(cx + 14, cy - 8, colors.chr2);
+        drawChromosomeBlob(cx - 8, cy + 14, colors.chr1);
+        drawChromosomeBlob(cx + 18, cy + 10, colors.chr2);
+    }
+    else if (stage === 1) {
+        // Prophase I: homologous pairs together, crossing over
+        drawCell(cx, cy, 95, 80, 0);
+        // Pair 1 (close together, crossing over shown)
+        drawXChromosome(cx - 24, cy - 8, colors.chr1);
+        drawXChromosome(cx - 8, cy - 8, colors.chr1);
+        // Crossing over arc
+        ctx.beginPath();
+        ctx.arc(cx - 16, cy - 8, 12, -0.3, 0.3);
+        ctx.strokeStyle = 'rgba(245,158,11,0.6)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        // Pair 2
+        drawXChromosome(cx + 12, cy + 14, colors.chr2);
+        drawXChromosome(cx + 28, cy + 14, colors.chr2);
+        // Label
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillStyle = '#f59e0b';
+        ctx.textAlign = 'center';
+        ctx.fillText('crossing over', cx - 16, cy - 32);
+    }
+    else if (stage === 2) {
+        // Metaphase I: homologous pairs at center
+        drawCell(cx, cy, 100, 80, 0);
+        // Center line
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath(); ctx.moveTo(cx, cy - 70); ctx.lineTo(cx, cy + 70);
+        ctx.strokeStyle = 'rgba(113,113,122,0.2)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.setLineDash([]);
+        // Pair 1 straddling center
+        drawXChromosome(cx - 14, cy - 14, colors.chr1);
+        drawXChromosome(cx + 14, cy - 14, colors.chr1);
+        // Pair 2 straddling center
+        drawXChromosome(cx - 14, cy + 16, colors.chr2);
+        drawXChromosome(cx + 14, cy + 16, colors.chr2);
+        // Spindles
+        drawSpindle(cx - 90, cy, cx - 14, cy - 14);
+        drawSpindle(cx - 90, cy, cx - 14, cy + 16);
+        drawSpindle(cx + 90, cy, cx + 14, cy - 14);
+        drawSpindle(cx + 90, cy, cx + 14, cy + 16);
+    }
+    else if (stage === 3) {
+        // Anaphase I: homologs pulled apart (still X shapes)
+        drawCell(cx, cy, 110, 75, 0);
+        // Left: one from each pair
+        drawXChromosome(cx - 50, cy - 10, colors.chr1);
+        drawXChromosome(cx - 46, cy + 18, colors.chr2);
+        // Right: one from each pair
+        drawXChromosome(cx + 50, cy - 10, colors.chr1);
+        drawXChromosome(cx + 46, cy + 18, colors.chr2);
+        // Spindles
+        drawSpindle(cx - 100, cy, cx - 50, cy - 10);
+        drawSpindle(cx - 100, cy, cx - 46, cy + 18);
+        drawSpindle(cx + 100, cy, cx + 50, cy - 10);
+        drawSpindle(cx + 100, cy, cx + 46, cy + 18);
+    }
+    else if (stage === 4) {
+        // Telophase I: two cells, each with 2 X chromosomes
+        drawCell(cx - 65, cy, 55, 60, 0);
+        drawXChromosome(cx - 72, cy - 8, colors.chr1, 0.8);
+        drawXChromosome(cx - 58, cy + 10, colors.chr2, 0.8);
+
+        drawCell(cx + 65, cy, 55, 60, 0);
+        drawXChromosome(cx + 58, cy - 8, colors.chr1, 0.8);
+        drawXChromosome(cx + 72, cy + 10, colors.chr2, 0.8);
+
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillStyle = colors.membrane;
+        ctx.textAlign = 'center';
+        ctx.fillText('n = 2 (still doubled)', cx - 65, cy + 76);
+        ctx.fillText('n = 2 (still doubled)', cx + 65, cy + 76);
+    }
+    else if (stage === 5) {
+        // Metaphase II: two cells, chromosomes at center
+        drawCell(cx - 65, cy, 52, 55, 0);
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(cx - 65, cy - 48); ctx.lineTo(cx - 65, cy + 48);
+        ctx.strokeStyle = 'rgba(113,113,122,0.15)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.setLineDash([]);
+        drawXChromosome(cx - 65, cy - 10, colors.chr1, 0.75);
+        drawXChromosome(cx - 65, cy + 14, colors.chr2, 0.75);
+
+        drawCell(cx + 65, cy, 52, 55, 0);
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(cx + 65, cy - 48); ctx.lineTo(cx + 65, cy + 48);
+        ctx.strokeStyle = 'rgba(113,113,122,0.15)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.setLineDash([]);
+        drawXChromosome(cx + 65, cy - 10, colors.chr1, 0.75);
+        drawXChromosome(cx + 65, cy + 14, colors.chr2, 0.75);
+    }
+    else if (stage === 6) {
+        // Anaphase II & Telophase II: four cells
+        var positions = [
+            {x: cx - 100, y: cy - 50},
+            {x: cx - 34, y: cy - 50},
+            {x: cx + 34, y: cy + 50},
+            {x: cx + 100, y: cy + 50}
+        ];
+        var chrColors = [colors.chr1, colors.chr2, colors.chr1, colors.chr2];
+        for (var i = 0; i < 4; i++) {
+            drawCell(positions[i].x, positions[i].y, 38, 40, 0);
+            drawNucleus(positions[i].x, positions[i].y, 22);
+            drawSingleChr(positions[i].x - 6, positions[i].y - 2, colors.chr1, 8);
+            drawSingleChr(positions[i].x + 6, positions[i].y + 2, colors.chr2, 8);
+        }
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillStyle = colors.membrane;
+        ctx.textAlign = 'center';
+        ctx.fillText('n = 2 each', cx, cy + 4);
+        ctx.fillText('4 unique haploid cells', cx, cy + 18);
+    }
+}
+
+// Initial draw
+updateUI();
+</script>
+</body>
+</html>

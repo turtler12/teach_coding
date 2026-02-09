@@ -254,6 +254,26 @@
             line-height: 1.5;
         }
 
+        a.example-card {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            cursor: pointer;
+        }
+
+        a.example-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .try-label {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent-primary);
+        }
+
         .ideas-section {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -419,17 +439,19 @@
         <div class="section">
             <div class="section-title">What Students Can Build</div>
             <div class="examples-grid">
-                <div class="example-card example-highlight">
+                <a href="/projects/mitosis-meiosis" class="example-card example-highlight">
                     <span class="example-subject subject-science">Science</span>
                     <h4>Mitosis & Meiosis Simulator</h4>
-                    <p>An interactive animation showing cell division stages. Students drag chromosomes through prophase, metaphase, anaphase, and telophase, seeing the difference between mitosis and meiosis play out visually.</p>
+                    <p>An interactive animation showing cell division stages. Step through prophase, metaphase, anaphase, and telophase, seeing the difference between mitosis and meiosis play out visually.</p>
                     <div class="example-detail">Built by a 7th grader for a superintendent demo. Uses block coding to animate each phase step by step.</div>
-                </div>
-                <div class="example-card">
+                    <span class="try-label">Try it →</span>
+                </a>
+                <a href="/projects/fraction-visualizer" class="example-card">
                     <span class="example-subject subject-math">Math</span>
                     <h4>Fraction Visualizer</h4>
                     <p>A tool that draws pie charts and bar models to compare fractions. Type in two fractions and see which is larger, find common denominators, and practice operations.</p>
-                </div>
+                    <span class="try-label">Try it →</span>
+                </a>
                 <div class="example-card">
                     <span class="example-subject subject-history">History</span>
                     <h4>Timeline Builder</h4>
@@ -440,11 +462,12 @@
                     <h4>Story Branching Tool</h4>
                     <p>Write choose-your-own-adventure stories with multiple endings. Students learn narrative structure by mapping out decision points and consequences.</p>
                 </div>
-                <div class="example-card">
+                <a href="/projects/food-web" class="example-card">
                     <span class="example-subject subject-science">Science</span>
                     <h4>Ecosystem Food Web</h4>
                     <p>Build a food web by connecting producers, consumers, and decomposers. Remove a species and watch how it affects the rest of the ecosystem.</p>
-                </div>
+                    <span class="try-label">Try it →</span>
+                </a>
                 <div class="example-card">
                     <span class="example-subject subject-cs">CS</span>
                     <h4>Personal Portfolio Site</h4>

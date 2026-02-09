@@ -659,6 +659,18 @@ def projects():
 def website_tutorial():
     return render_template('website-tutorial.html')
 
+@app.route('/projects/mitosis-meiosis')
+def demo_mitosis():
+    return render_template('demo-mitosis.html')
+
+@app.route('/projects/fraction-visualizer')
+def demo_fractions():
+    return render_template('demo-fractions.html')
+
+@app.route('/projects/food-web')
+def demo_foodweb():
+    return render_template('demo-foodweb.html')
+
 @app.route('/projects/submit-idea', methods=['POST'])
 def submit_idea():
     try:

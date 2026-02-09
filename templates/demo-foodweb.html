@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecosystem Food Web - TrustAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --border-color: #27272a;
+            --border-light: #3f3f46;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-primary: #10b981;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+
+        .nav {
+            max-width: 1060px; margin: 0 auto; padding: 20px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 20px; }
+        .logo-icon { font-size: 16px; color: #6366f1; background: rgba(99,102,241,0.15); padding: 6px 10px; border-radius: 8px; font-family: monospace; }
+        .back-link { color: var(--text-muted); text-decoration: none; font-size: 14px; }
+        .back-link:hover { color: white; }
+
+        .container { max-width: 1060px; margin: 0 auto; padding: 32px 24px 80px; }
+
+        .demo-header { margin-bottom: 24px; }
+        .demo-badge { display: inline-block; background: rgba(16,185,129,0.12); color: #10b981; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 12px; }
+        .demo-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .demo-header p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; max-width: 650px; }
+
+        .sim-layout { display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
+
+        .web-container {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 16px; position: relative;
+        }
+        canvas { display: block; border-radius: 10px; width: 100%; cursor: pointer; }
+
+        .side-panel {
+            display: flex; flex-direction: column; gap: 16px;
+        }
+
+        .panel-card {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 18px;
+        }
+        .panel-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+
+        .species-list { display: flex; flex-direction: column; gap: 6px; }
+        .species-row {
+            display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+            border-radius: 8px; cursor: pointer; transition: all 0.15s; font-size: 13px;
+        }
+        .species-row:hover { background: var(--bg-tertiary); }
+        .species-row.removed { opacity: 0.3; text-decoration: line-through; }
+        .species-row.highlighted { background: var(--bg-tertiary); border: 1px solid var(--border-light); }
+        .species-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .species-name { flex: 1; font-weight: 500; }
+        .species-type { font-size: 11px; color: var(--text-muted); }
+        .species-remove {
+            width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--border-color);
+            background: transparent; color: var(--text-muted); font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+            font-family: inherit; line-height: 1;
+        }
+        .species-remove:hover { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #ef4444; }
+
+        .impact-box {
+            font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+            padding: 12px; background: var(--bg-tertiary); border-radius: 8px; min-height: 60px;
+        }
+        .impact-box.warning { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+
+        .reset-btn {
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);
+            background: var(--bg-tertiary); color: var(--text-primary); font-size: 13px;
+            font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.2s;
+        }
+        .reset-btn:hover { background: var(--border-color); }
+
+        .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        @media (max-width: 768px) {
+            .sim-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="logo"><span class="logo-icon">&lt;/&gt;</span> TrustAI</a>
+        <a href="/projects" class="back-link">← Back to Projects</a>
+    </nav>
+
+    <div class="container">
+        <div class="demo-header">
+            <span class="demo-badge">Science Demo</span>
+            <h1>Ecosystem Food Web</h1>
+            <p>Click the X next to any species to remove it from the ecosystem. Watch how the loss ripples through the food web and affects other organisms.</p>
+        </div>
+
+        <div class="sim-layout">
+            <div class="web-container">
+                <canvas id="webCanvas" width="700" height="500"></canvas>
+                <div class="legend">
+                    <div class="legend-item"><span class="legend-dot" style="background: #10b981;"></span> Producer</div>
+                    <div class="legend-item"><span class="legend-dot" style="background: #3b82f6;"></span> Primary Consumer</div>
+                    <div class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span> Secondary Consumer</div>
+                    <div class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span> Top Predator</div>
+                    <div class="legend-item"><span class="legend-dot" style="background: #8b5cf6;"></span> Decomposer</div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="panel-card">
+                    <h3>Species</h3>
+                    <div class="species-list" id="speciesList"></div>
+                </div>
+                <div class="panel-card">
+                    <h3>Impact Analysis</h3>
+                    <div class="impact-box" id="impactBox">Click the X next to a species to remove it and see what happens to the ecosystem.</div>
+                </div>
+                <button class="reset-btn" onclick="resetAll()">Reset Ecosystem</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+var species = [
+    { id: 'grass', name: 'Grass', type: 'Producer', color: '#10b981', x: 120, y: 420 },
+    { id: 'algae', name: 'Algae', type: 'Producer', color: '#10b981', x: 320, y: 440 },
+    { id: 'trees', name: 'Oak Trees', type: 'Producer', color: '#10b981', x: 540, y: 420 },
+    { id: 'rabbit', name: 'Rabbit', type: 'Primary Consumer', color: '#3b82f6', x: 80, y: 280 },
+    { id: 'deer', name: 'Deer', type: 'Primary Consumer', color: '#3b82f6', x: 260, y: 260 },
+    { id: 'fish', name: 'Small Fish', type: 'Primary Consumer', color: '#3b82f6', x: 440, y: 290 },
+    { id: 'insect', name: 'Insects', type: 'Primary Consumer', color: '#3b82f6', x: 600, y: 270 },
+    { id: 'snake', name: 'Snake', type: 'Secondary Consumer', color: '#f59e0b', x: 140, y: 150 },
+    { id: 'fox', name: 'Fox', type: 'Secondary Consumer', color: '#f59e0b', x: 360, y: 140 },
+    { id: 'hawk', name: 'Hawk', type: 'Top Predator', color: '#ef4444', x: 260, y: 40 },
+    { id: 'wolf', name: 'Wolf', type: 'Top Predator', color: '#ef4444', x: 500, y: 60 },
+    { id: 'fungi', name: 'Fungi', type: 'Decomposer', color: '#8b5cf6', x: 580, y: 150 }
+];
+
+// Directed edges: prey -> predator
+var links = [
+    ['grass', 'rabbit'], ['grass', 'deer'], ['grass', 'insect'],
+    ['algae', 'fish'], ['algae', 'insect'],
+    ['trees', 'deer'], ['trees', 'insect'],
+    ['rabbit', 'snake'], ['rabbit', 'fox'], ['rabbit', 'hawk'],
+    ['deer', 'wolf'], ['deer', 'fox'],
+    ['fish', 'hawk'],
+    ['insect', 'snake'], ['insect', 'fox'], ['insect', 'fish'],
+    ['snake', 'hawk'],
+    ['fox', 'wolf']
+];
+
+var removed = {};
+var canvas = document.getElementById('webCanvas');
+var ctx = canvas.getContext('2d');
+
+function getSpecies(id) {
+    for (var i = 0; i < species.length; i++) {
+        if (species[i].id === id) return species[i];
+    }
+    return null;
+}
+
+function getAffected(removedId) {
+    // Find species that depend on the removed species
+    // A consumer is affected if ALL of its prey are removed
+    var removedSet = {};
+    for (var k in removed) removedSet[k] = true;
+    removedSet[removedId] = true;
+
+    var changed = true;
+    while (changed) {
+        changed = false;
+        for (var i = 0; i < species.length; i++) {
+            var s = species[i];
+            if (removedSet[s.id]) continue;
+            if (s.type === 'Producer' || s.type === 'Decomposer') continue;
+
+            // Find all prey for this species
+            var preyList = [];
+            for (var j = 0; j < links.length; j++) {
+                if (links[j][1] === s.id) preyList.push(links[j][0]);
+            }
+            if (preyList.length === 0) continue;
+
+            // Check if all prey are removed
+            var allGone = true;
+            for (var j = 0; j < preyList.length; j++) {
+                if (!removedSet[preyList[j]]) { allGone = false; break; }
+            }
+            if (allGone) {
+                removedSet[s.id] = true;
+                changed = true;
+            }
+        }
+    }
+
+    var affected = [];
+    for (var k in removedSet) {
+        if (k !== removedId && !removed[k]) affected.push(k);
+    }
+    return affected;
+}
+
+function removeSpecies(id) {
+    if (removed[id]) return;
+    var affected = getAffected(id);
+    removed[id] = true;
+    for (var i = 0; i < affected.length; i++) {
+        removed[affected[i]] = true;
+    }
+
+    var s = getSpecies(id);
+    var msg = s.name + ' removed from the ecosystem.';
+    if (affected.length > 0) {
+        var names = [];
+        for (var i = 0; i < affected.length; i++) {
+            var a = getSpecies(affected[i]);
+            if (a) names.push(a.name);
+        }
+        msg += ' This also causes ' + names.join(', ') + ' to lose all food sources and decline.';
+    }
+
+    // Check which species are stressed (lost some but not all prey)
+    var stressed = [];
+    for (var i = 0; i < species.length; i++) {
+        var sp = species[i];
+        if (removed[sp.id]) continue;
+        if (sp.type === 'Producer' || sp.type === 'Decomposer') continue;
+        var totalPrey = 0, lostPrey = 0;
+        for (var j = 0; j < links.length; j++) {
+            if (links[j][1] === sp.id) {
+                totalPrey++;
+                if (removed[links[j][0]]) lostPrey++;
+            }
+        }
+        if (lostPrey > 0 && lostPrey < totalPrey) {
+            stressed.push(sp.name);
+        }
+    }
+    if (stressed.length > 0) {
+        msg += ' ' + stressed.join(', ') + (stressed.length === 1 ? ' is' : ' are') + ' under stress from reduced food supply.';
+    }
+
+    var box = document.getElementById('impactBox');
+    box.textContent = msg;
+    box.className = 'impact-box warning';
+
+    renderList();
+    draw();
+}
+
+function resetAll() {
+    removed = {};
+    document.getElementById('impactBox').textContent = 'Click the X next to a species to remove it and see what happens to the ecosystem.';
+    document.getElementById('impactBox').className = 'impact-box';
+    renderList();
+    draw();
+}
+
+function renderList() {
+    var list = document.getElementById('speciesList');
+    list.innerHTML = '';
+    for (var i = 0; i < species.length; i++) {
+        var s = species[i];
+        var row = document.createElement('div');
+        row.className = 'species-row' + (removed[s.id] ? ' removed' : '');
+        row.innerHTML =
+            '<span class="species-dot" style="background: ' + s.color + ';"></span>' +
+            '<span class="species-name">' + s.name + '</span>' +
+            '<span class="species-type">' + s.type.split(' ')[0] + '</span>';
+        if (!removed[s.id]) {
+            var btn = document.createElement('button');
+            btn.className = 'species-remove';
+            btn.textContent = '\u00d7';
+            btn.setAttribute('data-id', s.id);
+            btn.onclick = function() { removeSpecies(this.getAttribute('data-id')); };
+            row.appendChild(btn);
+        }
+        list.appendChild(row);
+    }
+}
+
+function draw() {
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = '#09090b';
+    ctx.fillRect(0, 0, w, h);
+
+    // Draw links
+    for (var i = 0; i < links.length; i++) {
+        var from = getSpecies(links[i][0]);
+        var to = getSpecies(links[i][1]);
+        if (!from || !to) continue;
+        var bothActive = !removed[from.id] && !removed[to.id];
+        var oneRemoved = removed[from.id] || removed[to.id];
+
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+
+        // Curved arrow
+        var mx = (from.x + to.x) / 2;
+        var my = (from.y + to.y) / 2;
+        var dx = to.x - from.x;
+        var dy = to.y - from.y;
+        var nx = -dy * 0.15;
+        var ny = dx * 0.15;
+        ctx.quadraticCurveTo(mx + nx, my + ny, to.x, to.y);
+
+        ctx.strokeStyle = oneRemoved ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.1)';
+        ctx.lineWidth = bothActive ? 1.5 : 1;
+        ctx.stroke();
+
+        // Arrow head
+        if (bothActive) {
+            var angle = Math.atan2(to.y - (my + ny), to.x - (mx + nx));
+            var arrowLen = 8;
+            ctx.beginPath();
+            ctx.moveTo(to.x, to.y);
+            ctx.lineTo(to.x - arrowLen * Math.cos(angle - 0.35), to.y - arrowLen * Math.sin(angle - 0.35));
+            ctx.moveTo(to.x, to.y);
+            ctx.lineTo(to.x - arrowLen * Math.cos(angle + 0.35), to.y - arrowLen * Math.sin(angle + 0.35));
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+    }
+
+    // Draw species nodes
+    for (var i = 0; i < species.length; i++) {
+        var s = species[i];
+        var isRemoved = removed[s.id];
+
+        // Node circle
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 24, 0, Math.PI * 2);
+        ctx.fillStyle = isRemoved ? '#18181b' : s.color + '22';
+        ctx.fill();
+        ctx.strokeStyle = isRemoved ? '#3f3f46' : s.color;
+        ctx.lineWidth = isRemoved ? 1 : 2;
+        ctx.globalAlpha = isRemoved ? 0.3 : 1;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        // Inner dot
+        if (!isRemoved) {
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, 6, 0, Math.PI * 2);
+            ctx.fillStyle = s.color;
+            ctx.fill();
+        } else {
+            // X mark
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2;
+            ctx.globalAlpha = 0.4;
+            ctx.beginPath();
+            ctx.moveTo(s.x - 8, s.y - 8); ctx.lineTo(s.x + 8, s.y + 8);
+            ctx.moveTo(s.x + 8, s.y - 8); ctx.lineTo(s.x - 8, s.y + 8);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+        }
+
+        // Label
+        ctx.font = (isRemoved ? '500' : '600') + ' 11px Inter, sans-serif';
+        ctx.fillStyle = isRemoved ? '#52525b' : '#fafafa';
+        ctx.textAlign = 'center';
+        ctx.fillText(s.name, s.x, s.y + 38);
+    }
+}
+
+renderList();
+draw();
+</script>
+</body>
+</html>
