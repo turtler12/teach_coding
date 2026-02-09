@@ -520,10 +520,12 @@ def signup():
                 return render_template('signup.html')
 
             # Create user
+            school = request.form.get('school', '').strip()
             users[username] = {
                 'password': hash_password(password),
                 'created_at': str(datetime.datetime.now()),
                 'role': 'student',
+                'school': school,
                 'classes': []
             }
 
@@ -777,10 +779,12 @@ def teacher_signup():
                 flash('Username already exists', 'error')
                 return render_template('teacher-signup.html')
 
+            school = request.form.get('school', '').strip()
             users[username] = {
                 'password': hash_password(password),
                 'created_at': str(datetime.datetime.now()),
                 'role': 'teacher',
+                'school': school,
                 'classes': []
             }
             save_users(users)
