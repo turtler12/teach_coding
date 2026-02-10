@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAI - Analyze Student Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
+            --border-color: #E8DDD0;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
+            --accent-amber: #f59e0b;
+            --accent-error: #DC2626;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+
+        .header {
+            background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), #14B8A6);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; color: white;
+        }
+        .logo-text { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .teacher-badge { background: var(--accent-primary); color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-left: 8px; }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; font-family: inherit; }
+        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background: var(--bg-elevated); }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 32px; }
+        .page-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .page-subtitle { color: var(--text-muted); margin-bottom: 32px; font-size: 15px; }
+
+        /* Input section */
+        .input-section {
+            background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 14px;
+            padding: 28px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(45, 35, 25, 0.06);
+        }
+        .input-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .code-input-row { display: flex; gap: 12px; }
+        .code-input {
+            flex: 1; padding: 14px 18px; background: var(--bg-tertiary); border: 1px solid var(--border-color);
+            border-radius: 10px; font-size: 18px; font-family: monospace; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--text-primary); text-align: center; max-width: 240px;
+        }
+        .code-input:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1); }
+        .code-input::placeholder { color: var(--text-muted); letter-spacing: 1px; font-size: 14px; text-transform: none; }
+        .analyze-btn {
+            padding: 14px 28px; background: linear-gradient(135deg, var(--accent-primary), #14B8A6);
+            color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600;
+            cursor: pointer; font-family: inherit; transition: all 0.2s;
+        }
+        .analyze-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25); }
+        .analyze-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+        .hint { font-size: 13px; color: var(--text-muted); margin-top: 12px; }
+
+        /* Error */
+        .error-msg {
+            background: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.2);
+            color: var(--accent-error); padding: 12px 16px; border-radius: 10px; font-size: 14px;
+            display: none; margin-bottom: 16px;
+        }
+        .error-msg.visible { display: block; }
+
+        /* Loading */
+        .loading { display: none; text-align: center; padding: 40px; }
+        .loading.visible { display: block; }
+        .spinner {
+            width: 40px; height: 40px; border: 3px solid var(--border-color);
+            border-top-color: var(--accent-primary); border-radius: 50%;
+            animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { color: var(--text-muted); font-size: 14px; }
+
+        /* Results */
+        .results { display: none; }
+        .results.visible { display: block; }
+
+        .student-info {
+            background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 14px;
+            padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 20px;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.06);
+        }
+        .student-avatar {
+            width: 48px; height: 48px; background: linear-gradient(135deg, var(--accent-primary), #14B8A6);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: white; font-weight: 700; flex-shrink: 0;
+        }
+        .student-details { flex: 1; }
+        .student-name { font-size: 16px; font-weight: 600; }
+        .student-channel { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+        /* Score badge */
+        .score-badge {
+            width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center;
+            justify-content: center; font-size: 24px; font-weight: 700; color: white; flex-shrink: 0;
+        }
+        .score-low { background: linear-gradient(135deg, #DC2626, #EF4444); }
+        .score-mid { background: linear-gradient(135deg, #F59E0B, #FBBF24); color: #000; }
+        .score-high { background: linear-gradient(135deg, #16A34A, #22C55E); }
+
+        /* Analysis card */
+        .analysis-card {
+            background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 14px;
+            padding: 28px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(45, 35, 25, 0.06);
+        }
+        .analysis-content { line-height: 1.7; color: var(--text-secondary); }
+        .analysis-content h2 {
+            font-size: 16px; font-weight: 600; color: var(--accent-primary); margin: 24px 0 10px 0;
+            padding-bottom: 6px; border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-content h2:first-child { margin-top: 0; }
+        .analysis-content ul { margin: 8px 0; padding-left: 20px; }
+        .analysis-content li { margin-bottom: 6px; }
+        .analysis-content strong { color: var(--text-primary); }
+        .analysis-content p { margin-bottom: 8px; }
+
+        /* Conversation transcript */
+        .transcript-toggle {
+            background: none; border: 1px solid var(--border-color); border-radius: 10px;
+            padding: 12px 20px; width: 100%; text-align: left; cursor: pointer;
+            font-family: inherit; font-size: 14px; font-weight: 500; color: var(--text-secondary);
+            display: flex; align-items: center; justify-content: space-between; transition: all 0.2s;
+        }
+        .transcript-toggle:hover { background: var(--bg-tertiary); }
+        .transcript-toggle .arrow { transition: transform 0.2s; }
+        .transcript-toggle.open .arrow { transform: rotate(180deg); }
+        .transcript-content { display: none; margin-top: 16px; }
+        .transcript-content.open { display: block; }
+        .transcript-msg { padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; }
+        .transcript-msg.user { background: rgba(13, 148, 136, 0.08); border-left: 3px solid var(--accent-primary); }
+        .transcript-msg.assistant { background: var(--bg-tertiary); border-left: 3px solid var(--border-color); }
+        .transcript-msg .msg-role { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .transcript-msg.user .msg-role { color: var(--accent-primary); }
+        .transcript-msg.assistant .msg-role { color: var(--text-muted); }
+        .transcript-msg .msg-text { color: var(--text-secondary); white-space: pre-wrap; }
+
+        @media (max-width: 640px) {
+            .code-input-row { flex-direction: column; }
+            .code-input { max-width: 100%; }
+            .header { padding: 16px; }
+            .container { padding: 16px; }
+            .student-info { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">
+            <div class="logo-icon">&lt;/&gt;</div>
+            <span class="logo-text">TrustAI</span>
+            <span class="teacher-badge">Teacher</span>
+        </a>
+        <div class="header-actions">
+            <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-secondary">Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">Analyze Student Chat</h1>
+        <p class="page-subtitle">Enter a student's chat share code to get an AI-powered analysis of how they used the AI helper</p>
+
+        <div class="input-section">
+            <h2>Enter Chat Code</h2>
+            <div class="error-msg" id="errorMsg"></div>
+            <div class="code-input-row">
+                <input type="text" class="code-input" id="codeInput" placeholder="ABC123" maxlength="8" autocomplete="off">
+                <button class="analyze-btn" id="analyzeBtn" onclick="analyzeChat()">Analyze</button>
+            </div>
+            <p class="hint">Students can find their share code in the AI Study Helper sidebar next to each chat channel.</p>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Analyzing conversation and generating report...</div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="student-info" id="studentInfo">
+                <div class="student-avatar" id="studentAvatar"></div>
+                <div class="student-details">
+                    <div class="student-name" id="studentName"></div>
+                    <div class="student-channel" id="studentChannel"></div>
+                </div>
+                <div class="score-badge" id="scoreBadge"></div>
+            </div>
+
+            <div class="analysis-card">
+                <div class="analysis-content" id="analysisContent"></div>
+            </div>
+
+            <div class="analysis-card">
+                <button class="transcript-toggle" id="transcriptToggle" onclick="toggleTranscript()">
+                    <span>View Full Conversation</span>
+                    <span class="arrow">&#9660;</span>
+                </button>
+                <div class="transcript-content" id="transcriptContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var codeInput = document.getElementById('codeInput');
+        codeInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') analyzeChat();
+        });
+        codeInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        });
+
+        function analyzeChat() {
+            var code = codeInput.value.trim().toUpperCase();
+            var errorMsg = document.getElementById('errorMsg');
+            var analyzeBtn = document.getElementById('analyzeBtn');
+
+            errorMsg.classList.remove('visible');
+
+            if (!code) {
+                errorMsg.textContent = 'Please enter a chat code.';
+                errorMsg.classList.add('visible');
+                return;
+            }
+
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = 'Analyzing...';
+            document.getElementById('loading').classList.add('visible');
+            document.getElementById('results').classList.remove('visible');
+
+            fetch('/api/teacher/analyze-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                document.getElementById('loading').classList.remove('visible');
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = 'Analyze';
+
+                if (data.success) {
+                    showResults(data);
+                } else {
+                    errorMsg.textContent = data.error || 'Something went wrong. Please try again.';
+                    errorMsg.classList.add('visible');
+                }
+            })
+            .catch(function() {
+                document.getElementById('loading').classList.remove('visible');
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = 'Analyze';
+                errorMsg.textContent = 'Network error. Please try again.';
+                errorMsg.classList.add('visible');
+            });
+        }
+
+        function showResults(data) {
+            // Student info
+            var initials = data.student.substring(0, 2).toUpperCase();
+            document.getElementById('studentAvatar').textContent = initials;
+            document.getElementById('studentName').textContent = data.student;
+            document.getElementById('studentChannel').textContent = data.channel_name + ' \u2022 ' + data.message_count + ' messages';
+
+            // Parse score from analysis
+            var scoreMatch = data.analysis.match(/\*\*Score:\s*(\d+)\/10\*\*/);
+            var score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+            var badge = document.getElementById('scoreBadge');
+            badge.textContent = score + '/10';
+            badge.className = 'score-badge';
+            if (score <= 3) badge.classList.add('score-low');
+            else if (score <= 6) badge.classList.add('score-mid');
+            else badge.classList.add('score-high');
+
+            // Analysis content
+            document.getElementById('analysisContent').innerHTML = renderMarkdown(data.analysis);
+
+            // Conversation transcript
+            var transcriptHtml = '';
+            if (data.conversation) {
+                data.conversation.forEach(function(msg) {
+                    var roleLabel = msg.role === 'user' ? 'Student' : 'AI Assistant';
+                    transcriptHtml += '<div class="transcript-msg ' + msg.role + '">' +
+                        '<div class="msg-role">' + roleLabel + '</div>' +
+                        '<div class="msg-text">' + escapeHtml(msg.content) + '</div>' +
+                        '</div>';
+                });
+            }
+            document.getElementById('transcriptContent').innerHTML = transcriptHtml;
+
+            document.getElementById('results').classList.add('visible');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function renderMarkdown(text) {
+            var html = text
+                .replace(/## (.+)/g, '<h2>$1</h2>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^- (.+)$/gm, '<li>$1</li>');
+            html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+            html = html.split('\n').map(function(line) {
+                line = line.trim();
+                if (!line || line.startsWith('<h2>') || line.startsWith('<ul>') || line.startsWith('<li>') || line.startsWith('</')) return line;
+                return '<p>' + line + '</p>';
+            }).join('\n');
+            return html;
+        }
+
+        function escapeHtml(text) {
+            var d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        function toggleTranscript() {
+            var btn = document.getElementById('transcriptToggle');
+            var content = document.getElementById('transcriptContent');
+            btn.classList.toggle('open');
+            content.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

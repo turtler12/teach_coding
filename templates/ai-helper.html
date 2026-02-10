@@ -10,16 +10,19 @@
             --bg-primary: #FFF8F0;
             --bg-secondary: #FFFFFF;
             --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
             --border-color: #E8DDD0;
             --text-primary: #2D2319;
             --text-secondary: #6B5D50;
             --text-muted: #A09488;
             --accent-amber: #F59E0B;
             --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); display: flex; flex-direction: column; }
+
         .header {
             background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);
             padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
@@ -29,6 +32,69 @@
         .back-link:hover { color: var(--text-primary); }
         .helper-title { font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 8px; }
         .ai-badge { background: var(--accent-amber); color: #000; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .sidebar-toggle { display: none; background: none; border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 16px; color: var(--text-secondary); }
+
+        .main-layout { flex: 1; display: flex; overflow: hidden; }
+
+        /* Channel Sidebar */
+        .channel-sidebar {
+            width: 260px; background: var(--bg-secondary); border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column; flex-shrink: 0;
+        }
+        .sidebar-header {
+            padding: 16px; border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .sidebar-header h3 { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .new-chat-btn {
+            background: var(--accent-primary); color: white; border: none; border-radius: 8px;
+            padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
+            transition: background 0.2s;
+        }
+        .new-chat-btn:hover { background: var(--accent-hover); }
+        .channel-list { flex: 1; overflow-y: auto; padding: 8px; }
+        .channel-item {
+            padding: 12px; border-radius: 10px; cursor: pointer; margin-bottom: 4px;
+            transition: all 0.15s; border: 1px solid transparent;
+        }
+        .channel-item:hover { background: var(--bg-tertiary); }
+        .channel-item.active { background: var(--bg-elevated); border-color: var(--border-color); }
+        .channel-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; }
+        .channel-meta { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+        .channel-code {
+            font-family: monospace; font-size: 11px; background: var(--bg-tertiary); padding: 2px 6px;
+            border-radius: 4px; color: var(--text-secondary); cursor: pointer; transition: background 0.15s;
+        }
+        .channel-code:hover { background: var(--accent-primary); color: white; }
+        .channel-delete {
+            background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px;
+            padding: 2px 4px; border-radius: 4px; opacity: 0; transition: all 0.15s; line-height: 1;
+        }
+        .channel-item:hover .channel-delete { opacity: 1; }
+        .channel-delete:hover { color: #DC2626; background: rgba(220, 38, 38, 0.1); }
+
+        /* New channel inline form */
+        .new-channel-form {
+            display: none; padding: 12px; border-bottom: 1px solid var(--border-color);
+        }
+        .new-channel-form.show { display: block; }
+        .new-channel-form input {
+            width: 100%; padding: 8px 12px; background: var(--bg-tertiary); border: 1px solid var(--border-color);
+            border-radius: 8px; font-size: 13px; font-family: inherit; color: var(--text-primary);
+        }
+        .new-channel-form input:focus { outline: none; border-color: var(--accent-primary); }
+        .new-channel-form input::placeholder { color: var(--text-muted); }
+        .new-channel-actions { display: flex; gap: 8px; margin-top: 8px; }
+        .new-channel-actions button {
+            flex: 1; padding: 6px; border-radius: 6px; font-size: 12px; font-weight: 500;
+            cursor: pointer; font-family: inherit; border: none;
+        }
+        .btn-create { background: var(--accent-primary); color: white; }
+        .btn-create:hover { background: var(--accent-hover); }
+        .btn-cancel-create { background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-color); }
+
+        /* Chat Area */
+        .chat-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .chat-area { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
         .message { max-width: 75%; display: flex; flex-direction: column; }
         .message.user { align-self: flex-end; }
@@ -58,7 +124,7 @@
             border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
             cursor: pointer; font-family: inherit; transition: background 0.2s;
         }
-        .send-btn:hover { background: #0F766E; }
+        .send-btn:hover { background: var(--accent-hover); }
         .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .typing { display: none; align-self: flex-start; }
         .typing.show { display: flex; }
@@ -67,7 +133,22 @@
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
-        @media (max-width: 640px) {
+
+        /* Toast notification */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            background: var(--text-primary); color: white; padding: 10px 20px; border-radius: 10px;
+            font-size: 13px; font-weight: 500; z-index: 1000; opacity: 0; transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+
+        @media (max-width: 768px) {
+            .channel-sidebar { display: none; position: fixed; top: 0; left: 0; bottom: 0; z-index: 200; width: 280px; box-shadow: 4px 0 24px rgba(45, 35, 25, 0.15); }
+            .channel-sidebar.open { display: flex; }
+            .sidebar-toggle { display: block; }
+            .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(45, 35, 25, 0.3); z-index: 199; }
+            .sidebar-overlay.show { display: block; }
             .message { max-width: 90%; }
             .input-area { padding: 12px 16px; }
         }
@@ -76,49 +157,89 @@
 <body>
     <header class="header">
         <div class="header-left">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">&#9776;</button>
             <a href="{{ url_for('dashboard') }}" class="back-link">&larr; Dashboard</a>
             <span class="helper-title">AI Study Helper <span class="ai-badge">Safe AI</span></span>
         </div>
     </header>
 
-    <div class="chat-area" id="chatArea">
-        {% if conversation|length == 0 %}
-        <div class="welcome-message">
-            <h3>AI Study Helper</h3>
-            <p>Ask me anything about coding, homework, or learning! I'm here to help you understand concepts, debug code, and build study strategies.</p>
-            <div class="safe-note">This AI is monitored for safety. Your teacher can review conversations.</div>
-        </div>
-        {% endif %}
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-        {% for msg in conversation %}
-        <div class="message {{ msg.role }}{% if msg.flagged %} flagged{% endif %}">
-            <div class="message-bubble">{{ msg.content }}</div>
-            <div class="message-meta">
-                {% if msg.flagged %}<span class="flag-tag">flagged</span>{% endif %}
-                {% if msg.timestamp %}{{ msg.timestamp[:16] }}{% endif %}
+    <div class="main-layout">
+        <aside class="channel-sidebar" id="channelSidebar">
+            <div class="sidebar-header">
+                <h3>My Chats</h3>
+                <button class="new-chat-btn" onclick="showNewChannelForm()">+ New</button>
             </div>
-        </div>
-        {% endfor %}
+            <div class="new-channel-form" id="newChannelForm">
+                <input type="text" id="newChannelName" placeholder="e.g. Math Homework, Python Help..." maxlength="50" autocomplete="off">
+                <div class="new-channel-actions">
+                    <button class="btn-create" onclick="createChannel()">Create</button>
+                    <button class="btn-cancel-create" onclick="hideNewChannelForm()">Cancel</button>
+                </div>
+            </div>
+            <div class="channel-list" id="channelList">
+                {% for ch in channels %}
+                <div class="channel-item{% if ch.id == active_channel %} active{% endif %}" data-id="{{ ch.id }}" onclick="switchChannel('{{ ch.id }}')">
+                    <div class="channel-name">
+                        <span>{{ ch.name }}</span>
+                        {% if channels|length > 1 %}
+                        <button class="channel-delete" onclick="event.stopPropagation(); deleteChannel('{{ ch.id }}', '{{ ch.name }}')" title="Delete chat">&times;</button>
+                        {% endif %}
+                    </div>
+                    <div class="channel-meta">
+                        <span>{{ ch.message_count }} messages</span>
+                        <span class="channel-code" onclick="event.stopPropagation(); copyCode('{{ ch.code }}')" title="Click to copy share code">{{ ch.code }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </aside>
 
-        <div class="message assistant typing" id="typing">
-            <div class="message-bubble">
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
+        <div class="chat-container">
+            <div class="chat-area" id="chatArea">
+                {% if conversation|length == 0 %}
+                <div class="welcome-message">
+                    <h3>AI Study Helper</h3>
+                    <p>Ask me anything about coding, homework, or learning! I'm here to help you understand concepts, debug code, and build study strategies.</p>
+                    <div class="safe-note">This AI is monitored for safety. Your teacher can review conversations using your share code.</div>
+                </div>
+                {% endif %}
+
+                {% for msg in conversation %}
+                <div class="message {{ msg.role }}{% if msg.flagged %} flagged{% endif %}">
+                    <div class="message-bubble">{{ msg.content }}</div>
+                    <div class="message-meta">
+                        {% if msg.flagged %}<span class="flag-tag">flagged</span>{% endif %}
+                        {% if msg.timestamp %}{{ msg.timestamp[:16] }}{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="message assistant typing" id="typing">
+                    <div class="message-bubble">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <input type="text" id="messageInput" placeholder="Ask a question about coding, homework, or any learning topic..." autocomplete="off">
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
             </div>
         </div>
     </div>
 
-    <div class="input-area">
-        <input type="text" id="messageInput" placeholder="Ask a question about coding, homework, or any learning topic..." autocomplete="off">
-        <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
-    </div>
+    <div class="toast" id="toast"></div>
 
     <script>
         var chatArea = document.getElementById('chatArea');
         var input = document.getElementById('messageInput');
         var sendBtn = document.getElementById('sendBtn');
         var typing = document.getElementById('typing');
+        var activeChannel = '{{ active_channel }}';
 
         chatArea.scrollTop = chatArea.scrollHeight;
 
@@ -145,7 +266,7 @@
             fetch('/api/ai-helper', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message })
+                body: JSON.stringify({ message: message, channel_id: activeChannel })
             })
             .then(function(r) { return r.json(); })
             .then(function(data) {
@@ -156,6 +277,7 @@
                     if (data.flagged && userDiv) {
                         userDiv.classList.add('flagged');
                     }
+                    updateChannelCount(activeChannel);
                 } else {
                     addMessage('assistant', data.error || 'Something went wrong. Try again.');
                 }
@@ -181,6 +303,103 @@
             var d = document.createElement('div');
             d.textContent = text;
             return d.innerHTML;
+        }
+
+        function switchChannel(channelId) {
+            window.location.href = '/ai-helper?channel=' + channelId;
+        }
+
+        function showNewChannelForm() {
+            var form = document.getElementById('newChannelForm');
+            form.classList.add('show');
+            document.getElementById('newChannelName').focus();
+        }
+
+        function hideNewChannelForm() {
+            document.getElementById('newChannelForm').classList.remove('show');
+            document.getElementById('newChannelName').value = '';
+        }
+
+        document.getElementById('newChannelName').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); createChannel(); }
+            if (e.key === 'Escape') { hideNewChannelForm(); }
+        });
+
+        function createChannel() {
+            var name = document.getElementById('newChannelName').value.trim();
+            if (!name) return;
+
+            fetch('/api/ai-helper/channels', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: name })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = '/ai-helper?channel=' + data.channel.id;
+                } else {
+                    showToast(data.error || 'Could not create channel');
+                }
+            })
+            .catch(function() {
+                showToast('Could not reach the server');
+            });
+        }
+
+        function deleteChannel(channelId, channelName) {
+            if (!confirm('Delete "' + channelName + '"? This will permanently remove all messages in this chat.')) return;
+
+            fetch('/api/ai-helper/channels/' + channelId, {
+                method: 'DELETE'
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = '/ai-helper';
+                } else {
+                    showToast(data.error || 'Could not delete channel');
+                }
+            })
+            .catch(function() {
+                showToast('Could not reach the server');
+            });
+        }
+
+        function copyCode(code) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(function() {
+                    showToast('Share code copied: ' + code);
+                });
+            } else {
+                var ta = document.createElement('textarea');
+                ta.value = code;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast('Share code copied: ' + code);
+            }
+        }
+
+        function updateChannelCount(channelId) {
+            var item = document.querySelector('.channel-item[data-id="' + channelId + '"] .channel-meta span:first-child');
+            if (item) {
+                var current = parseInt(item.textContent) || 0;
+                item.textContent = (current + 1) + ' messages';
+            }
+        }
+
+        function showToast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(function() { t.classList.remove('show'); }, 2500);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('channelSidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
         }
     </script>
 </body>

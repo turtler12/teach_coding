@@ -5,6 +5,8 @@ import os
 import json
 import hashlib
 import datetime
+import random
+import string
 from io import StringIO
 
 app = Flask(__name__)
@@ -325,7 +327,7 @@ def append_chat_message(class_code, username, role, content):
     logs[key] = logs[key][-50:]
     save_chat_logs(logs)
 
-# --- AI Helper log helpers ---
+# --- AI Helper log helpers (channel-based) ---
 
 def load_ai_helper_logs():
     if UPSTASH_URL and UPSTASH_TOKEN:
@@ -344,23 +346,158 @@ def save_ai_helper_logs(logs):
         except Exception as e:
             print(f"Redis save AI helper logs error: {e}")
 
-def get_ai_helper_chat(username):
-    logs = load_ai_helper_logs()
-    return logs.get(username, [])
+def generate_chat_code(logs):
+    """Generate a unique 6-char alphanumeric share code."""
+    existing_codes = set()
+    for udata in logs.values():
+        if isinstance(udata, dict) and 'channels' in udata:
+            for ch in udata['channels'].values():
+                existing_codes.add(ch.get('code', ''))
+    for _ in range(100):
+        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        if code not in existing_codes:
+            return code
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
-def append_ai_helper_message(username, role, content, flagged=False, flag_reason=None):
-    logs = load_ai_helper_logs()
+def migrate_user_ai_data(user_data, logs):
+    """Migrate old flat message list to channel-based format."""
+    if isinstance(user_data, list):
+        channel_id = 'general'
+        code = generate_chat_code(logs)
+        return {
+            'channels': {
+                channel_id: {
+                    'name': 'General',
+                    'code': code,
+                    'created_at': str(datetime.datetime.now()),
+                    'messages': user_data[-50:]
+                }
+            },
+            'active_channel': channel_id
+        }
+    return user_data
+
+def ensure_user_channels(username, logs):
+    """Ensure user has channel-based format. Migrates if needed. Returns (logs, user_data)."""
     if username not in logs:
-        logs[username] = []
-    logs[username].append({
-        'role': role,
-        'content': content,
-        'timestamp': str(datetime.datetime.now()),
-        'flagged': flagged,
-        'flag_reason': flag_reason
-    })
-    logs[username] = logs[username][-50:]
+        channel_id = 'general'
+        code = generate_chat_code(logs)
+        logs[username] = {
+            'channels': {
+                channel_id: {
+                    'name': 'General',
+                    'code': code,
+                    'created_at': str(datetime.datetime.now()),
+                    'messages': []
+                }
+            },
+            'active_channel': channel_id
+        }
+    elif isinstance(logs[username], list):
+        logs[username] = migrate_user_ai_data(logs[username], logs)
+    elif not isinstance(logs[username], dict) or 'channels' not in logs[username]:
+        channel_id = 'general'
+        code = generate_chat_code(logs)
+        logs[username] = {
+            'channels': {
+                channel_id: {
+                    'name': 'General',
+                    'code': code,
+                    'created_at': str(datetime.datetime.now()),
+                    'messages': []
+                }
+            },
+            'active_channel': channel_id
+        }
+    return logs, logs[username]
+
+def get_user_channels(username):
+    """Get list of channels for a user."""
+    logs = load_ai_helper_logs()
+    logs, user_data = ensure_user_channels(username, logs)
     save_ai_helper_logs(logs)
+    channels = []
+    for cid, ch in user_data['channels'].items():
+        user_msgs = [m for m in ch['messages'] if m['role'] == 'user']
+        channels.append({
+            'id': cid,
+            'name': ch['name'],
+            'code': ch['code'],
+            'message_count': len(user_msgs),
+            'created_at': ch.get('created_at', '')
+        })
+    channels.sort(key=lambda c: c['created_at'])
+    return channels, user_data.get('active_channel', 'general')
+
+def get_ai_helper_chat(username, channel_id=None):
+    """Get messages for a specific channel (or active channel)."""
+    logs = load_ai_helper_logs()
+    logs, user_data = ensure_user_channels(username, logs)
+    save_ai_helper_logs(logs)
+    if channel_id is None:
+        channel_id = user_data.get('active_channel', 'general')
+    ch = user_data['channels'].get(channel_id)
+    if ch:
+        return ch['messages']
+    return []
+
+def create_ai_channel(username, name):
+    """Create a new chat channel for a user. Returns channel info."""
+    logs = load_ai_helper_logs()
+    logs, user_data = ensure_user_channels(username, logs)
+    channel_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    code = generate_chat_code(logs)
+    user_data['channels'][channel_id] = {
+        'name': name[:50],
+        'code': code,
+        'created_at': str(datetime.datetime.now()),
+        'messages': []
+    }
+    user_data['active_channel'] = channel_id
+    save_ai_helper_logs(logs)
+    return {'id': channel_id, 'name': name[:50], 'code': code}
+
+def delete_ai_channel(username, channel_id):
+    """Delete a chat channel. Cannot delete the last channel."""
+    logs = load_ai_helper_logs()
+    logs, user_data = ensure_user_channels(username, logs)
+    if channel_id not in user_data['channels']:
+        return False
+    if len(user_data['channels']) <= 1:
+        return False
+    del user_data['channels'][channel_id]
+    if user_data.get('active_channel') == channel_id:
+        user_data['active_channel'] = next(iter(user_data['channels']))
+    save_ai_helper_logs(logs)
+    return True
+
+def append_ai_helper_message(username, channel_id, role, content, flagged=False, flag_reason=None):
+    logs = load_ai_helper_logs()
+    logs, user_data = ensure_user_channels(username, logs)
+    if channel_id not in user_data['channels']:
+        channel_id = user_data.get('active_channel', 'general')
+    ch = user_data['channels'].get(channel_id)
+    if ch:
+        ch['messages'].append({
+            'role': role,
+            'content': content,
+            'timestamp': str(datetime.datetime.now()),
+            'flagged': flagged,
+            'flag_reason': flag_reason
+        })
+        ch['messages'] = ch['messages'][-50:]
+        user_data['active_channel'] = channel_id
+    save_ai_helper_logs(logs)
+
+def get_channel_by_code(code):
+    """Look up a channel by its share code. Returns (username, channel_id, channel_data) or None."""
+    logs = load_ai_helper_logs()
+    for uname, udata in logs.items():
+        if isinstance(udata, dict) and 'channels' in udata:
+            for cid, ch in udata['channels'].items():
+                if ch.get('code') == code:
+                    return uname, cid, ch
+    return None
 
 # --- Safety flag helpers ---
 
@@ -502,6 +639,42 @@ Rate the student's AI usage on a scale of 1-10 where:
 Provide the score as: **Score: X/10** followed by a one-sentence justification.
 
 Be fair and nuanced. Not all AI use is bad. Focus on whether the student LEARNED from the AI interaction. If no prompt logs are provided, analyze only the submitted work for AI-generation indicators."""
+
+# --- Chat Analysis system prompt (for share-link analysis) ---
+
+CHAT_ANALYSIS_SYSTEM_PROMPT = """You are an AI Usage Analyst for educators. You analyze a student's AI chat conversation to evaluate how effectively and responsibly they used AI as a learning tool.
+
+Given the full conversation transcript between a student and an AI assistant, provide analysis in EXACTLY these sections:
+
+## AI Usage Score
+Rate the student's AI usage on a scale of 1-10:
+- 1-3: Poor usage (asking AI to do work for them, copy-paste requests, no learning evident)
+- 4-6: Mixed usage (some learning, but also some over-reliance or lazy prompting)
+- 7-10: Excellent usage (thoughtful questions, debugging help, concept exploration, building understanding)
+
+Provide the score as: **Score: X/10**
+
+## Summary
+A 2-3 sentence overview of how the student used the AI assistant in this conversation. What topics did they cover? What was the overall pattern?
+
+## Strengths
+List 2-4 specific things the student did well in their AI usage. Examples:
+- Asked follow-up questions showing understanding
+- Used AI for debugging rather than getting answers
+- Broke complex problems into smaller questions
+- Applied AI suggestions and iterated
+
+## Areas for Improvement
+List 2-4 specific, actionable suggestions for how the student could use AI more effectively next time. Be constructive and encouraging. Examples:
+- Try asking "why" more often to deepen understanding
+- Instead of asking for complete solutions, ask for hints
+- Practice explaining your understanding back to the AI
+- Try to attempt the problem first before asking for help
+
+## Overall Assessment
+A brief 2-3 sentence encouraging assessment suitable for sharing with the student. Focus on growth and learning potential.
+
+Be fair, constructive, and age-appropriate for K-12 students. Focus on whether the student is LEARNING from the AI, not just getting answers."""
 
 # --- Curriculum advisor helpers ---
 
@@ -1425,14 +1598,23 @@ def api_curriculum_advisor():
 @login_required
 def ai_helper():
     username = session.get('user')
-    conversation = get_ai_helper_chat(username)
-    return render_template('ai-helper.html', username=username, conversation=conversation)
+    channel_id = request.args.get('channel', None)
+    channels, active_channel = get_user_channels(username)
+    if channel_id is None:
+        channel_id = active_channel
+    conversation = get_ai_helper_chat(username, channel_id)
+    return render_template('ai-helper.html',
+                         username=username,
+                         conversation=conversation,
+                         channels=channels,
+                         active_channel=channel_id)
 
 @app.route('/api/ai-helper', methods=['POST'])
 @login_required
 def api_ai_helper():
     data = request.json
     message = data.get('message', '').strip()
+    channel_id = data.get('channel_id', '')
     if not message or len(message) > 1000:
         return jsonify({'success': False, 'error': 'Message must be 1-1000 characters'}), 400
 
@@ -1441,7 +1623,7 @@ def api_ai_helper():
     if flagged:
         add_safety_flag(username, message, flag_reason)
 
-    history = get_ai_helper_chat(username)
+    history = get_ai_helper_chat(username, channel_id)
     messages = [{'role': 'system', 'content': AI_HELPER_SYSTEM_PROMPT}]
     for msg in history[-10:]:
         messages.append({'role': msg['role'], 'content': msg['content']})
@@ -1451,10 +1633,85 @@ def api_ai_helper():
     if isinstance(response_text, dict) and 'error' in response_text:
         return jsonify({'success': False, 'error': response_text['error']}), 500
 
-    append_ai_helper_message(username, 'user', message, flagged=flagged, flag_reason=flag_reason)
-    append_ai_helper_message(username, 'assistant', response_text)
+    append_ai_helper_message(username, channel_id, 'user', message, flagged=flagged, flag_reason=flag_reason)
+    append_ai_helper_message(username, channel_id, 'assistant', response_text)
 
     return jsonify({'success': True, 'response': response_text, 'flagged': flagged})
+
+@app.route('/api/ai-helper/channels', methods=['POST'])
+@login_required
+def api_create_channel():
+    data = request.json
+    name = data.get('name', '').strip()
+    if not name or len(name) > 50:
+        return jsonify({'success': False, 'error': 'Channel name must be 1-50 characters'}), 400
+    username = session.get('user')
+    channel = create_ai_channel(username, name)
+    return jsonify({'success': True, 'channel': channel})
+
+@app.route('/api/ai-helper/channels/<channel_id>', methods=['DELETE'])
+@login_required
+def api_delete_channel(channel_id):
+    username = session.get('user')
+    if delete_ai_channel(username, channel_id):
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'error': 'Cannot delete this channel'}), 400
+
+# --- Teacher Chat Analysis (share-link) ---
+
+@app.route('/teacher/analyze-chat')
+@teacher_required
+def teacher_analyze_chat():
+    return render_template('teacher-analyze-chat.html')
+
+@app.route('/api/teacher/analyze-chat', methods=['POST'])
+@login_required
+def api_teacher_analyze_chat():
+    if session.get('role') != 'teacher' and not session.get('is_admin'):
+        return jsonify({'success': False, 'error': 'Teacher or admin access required'}), 403
+
+    data = request.json
+    code = data.get('code', '').strip().upper()
+    if not code or len(code) > 10:
+        return jsonify({'success': False, 'error': 'Please enter a valid chat code'}), 400
+
+    result = get_channel_by_code(code)
+    if not result:
+        return jsonify({'success': False, 'error': 'No chat found with that code. Check the code and try again.'}), 404
+
+    student_username, channel_id, channel_data = result
+    conversation = channel_data.get('messages', [])
+
+    if not conversation:
+        return jsonify({'success': False, 'error': 'This chat has no messages yet.'}), 400
+
+    # Build transcript for analysis
+    transcript_lines = []
+    for msg in conversation:
+        role_label = 'Student' if msg['role'] == 'user' else 'AI Assistant'
+        transcript_lines.append(f"{role_label}: {msg['content']}")
+    transcript = '\n\n'.join(transcript_lines)
+
+    if len(transcript) > 15000:
+        transcript = transcript[:15000] + '\n\n[Transcript truncated]'
+
+    messages = [
+        {'role': 'system', 'content': CHAT_ANALYSIS_SYSTEM_PROMPT},
+        {'role': 'user', 'content': f"## Chat Conversation: {channel_data.get('name', 'Untitled')}\n## Student: {student_username}\n## Messages: {len(conversation)}\n\n{transcript}"}
+    ]
+
+    response_text = call_openai(messages, max_tokens=1500)
+    if isinstance(response_text, dict) and 'error' in response_text:
+        return jsonify({'success': False, 'error': response_text['error']}), 500
+
+    return jsonify({
+        'success': True,
+        'analysis': response_text,
+        'student': student_username,
+        'channel_name': channel_data.get('name', 'Untitled'),
+        'message_count': len(conversation),
+        'conversation': conversation
+    })
 
 # --- Teacher Student Logs ---
 
@@ -1474,27 +1731,57 @@ def teacher_student_logs():
     ai_logs = load_ai_helper_logs()
     student_summaries = []
     for student in sorted(teacher_students):
-        chat = ai_logs.get(student, [])
-        if chat:
-            total_msgs = len([m for m in chat if m['role'] == 'user'])
-            flagged_count = len([m for m in chat if m.get('flagged')])
-            last_msg_time = chat[-1].get('timestamp', '')[:16] if chat else ''
+        sdata = ai_logs.get(student)
+        if sdata is None:
+            continue
+        # Handle both old (list) and new (dict with channels) formats
+        all_msgs = []
+        student_channels = []
+        if isinstance(sdata, list):
+            all_msgs = sdata
+        elif isinstance(sdata, dict) and 'channels' in sdata:
+            for cid, ch in sdata['channels'].items():
+                msgs = ch.get('messages', [])
+                all_msgs.extend(msgs)
+                user_msg_count = len([m for m in msgs if m['role'] == 'user'])
+                if user_msg_count > 0:
+                    student_channels.append({'id': cid, 'name': ch.get('name', 'Untitled'), 'code': ch.get('code', ''), 'message_count': user_msg_count})
+        if all_msgs:
+            total_msgs = len([m for m in all_msgs if m['role'] == 'user'])
+            flagged_count = len([m for m in all_msgs if m.get('flagged')])
+            last_msg_time = max((m.get('timestamp', '') for m in all_msgs), default='')[:16]
             student_summaries.append({
                 'username': student,
                 'message_count': total_msgs,
                 'flagged_count': flagged_count,
-                'last_active': last_msg_time
+                'last_active': last_msg_time,
+                'channels': student_channels
             })
 
     selected = request.args.get('student', '')
+    selected_channel = request.args.get('channel', '')
     conversation = []
+    selected_channels = []
     if selected:
-        conversation = ai_logs.get(selected, [])
+        sdata = ai_logs.get(selected)
+        if isinstance(sdata, list):
+            conversation = sdata
+        elif isinstance(sdata, dict) and 'channels' in sdata:
+            for cid, ch in sdata['channels'].items():
+                selected_channels.append({'id': cid, 'name': ch.get('name', 'Untitled'), 'code': ch.get('code', '')})
+            if selected_channel and selected_channel in sdata['channels']:
+                conversation = sdata['channels'][selected_channel].get('messages', [])
+            elif sdata['channels']:
+                first_cid = next(iter(sdata['channels']))
+                conversation = sdata['channels'][first_cid].get('messages', [])
+                selected_channel = first_cid
 
     return render_template('teacher-student-logs.html',
                          username=username,
                          students=student_summaries,
                          selected_student=selected,
+                         selected_channel=selected_channel,
+                         selected_channels=selected_channels,
                          conversation=conversation)
 
 # --- AI Usage Analyzer ---
