@@ -1,28 +1,31 @@
-/* TrustAI - Professional Dark Theme */
+/* TrustAI - Warm & Friendly Theme */
 
 :root {
-    --bg-primary: #0f0f13;
-    --bg-secondary: #16161d;
-    --bg-tertiary: #1c1c26;
-    --bg-elevated: #22222e;
-    --border-color: #2a2a3a;
-    --border-light: #363647;
-    --text-primary: #e8e8ed;
-    --text-secondary: #a0a0b0;
-    --text-muted: #6b6b7b;
-    --accent-primary: #6366f1;
-    --accent-hover: #818cf8;
-    --accent-success: #10b981;
+    --bg-primary: #FFF8F0;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #F5EDE3;
+    --bg-elevated: #FFF1E6;
+    --border-color: #E8DDD0;
+    --border-light: #F0E6DA;
+    --text-primary: #2D2319;
+    --text-secondary: #6B5D50;
+    --text-muted: #A09488;
+    --accent-primary: #0D9488;
+    --accent-hover: #0F766E;
+    --accent-success: #16A34A;
     --accent-warning: #f59e0b;
-    --accent-error: #ef4444;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-    --radius-sm: 6px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
+    --accent-error: #DC2626;
+    --shadow-sm: 0 1px 3px rgba(45, 35, 25, 0.06);
+    --shadow-md: 0 4px 12px rgba(45, 35, 25, 0.08);
+    --shadow-lg: 0 8px 24px rgba(45, 35, 25, 0.12);
+    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
     --transition-fast: 150ms ease;
     --transition-normal: 250ms ease;
+    /* Code panel uses a dark bg for readability */
+    --code-bg: #2D2319;
+    --code-text: #F5EDE3;
 }
 
 * {
@@ -68,7 +71,7 @@ body {
     font-size: 20px;
     font-weight: 700;
     color: var(--accent-primary);
-    background: rgba(99, 102, 241, 0.15);
+    background: rgba(13, 148, 136, 0.1);
     padding: 6px 10px;
     border-radius: var(--radius-sm);
 }
@@ -77,7 +80,7 @@ body {
     font-size: 20px;
     font-weight: 700;
     letter-spacing: -0.5px;
-    color: #38bdf8;
+    color: var(--accent-primary);
 }
 
 .nav-actions {
@@ -318,8 +321,8 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 32px;
-    color: var(--border-light);
-    border: 2px dashed var(--border-light);
+    color: var(--border-color);
+    border: 2px dashed var(--border-color);
     border-radius: var(--radius-lg);
 }
 
@@ -371,8 +374,8 @@ body {
 }
 
 .block-input {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: var(--radius-sm);
     padding: 4px 8px;
     color: white;
@@ -385,12 +388,12 @@ body {
 .block-input:focus {
     outline: none;
     border-color: rgba(255, 255, 255, 0.5);
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.3);
 }
 
 .block-select {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: var(--radius-sm);
     padding: 4px 8px;
     color: white;
@@ -400,7 +403,7 @@ body {
 
 .delete-block {
     margin-left: auto;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.15);
     border: none;
     color: rgba(255, 255, 255, 0.6);
     width: 24px;
@@ -425,18 +428,18 @@ body {
     padding: 12px;
     border-left: 3px solid var(--block-color);
     min-height: 50px;
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(45, 35, 25, 0.04);
     border-radius: 0 var(--radius-md) var(--radius-md) 0;
     margin-top: 4px;
 }
 
 .block-children.selected {
     border: 2px dashed var(--accent-primary);
-    background: rgba(99, 102, 241, 0.1);
+    background: rgba(13, 148, 136, 0.08);
 }
 
 .block-children.drop-target {
-    background: rgba(99, 102, 241, 0.15);
+    background: rgba(13, 148, 136, 0.1);
     border-color: var(--accent-primary);
 }
 
@@ -508,6 +511,7 @@ body {
     letter-spacing: 0.5px;
 }
 
+/* Code display stays dark for readability */
 .code-display {
     flex: 1;
     padding: 16px;
@@ -515,13 +519,14 @@ body {
     font-size: 12px;
     line-height: 1.6;
     overflow: auto;
-    background: var(--bg-tertiary);
+    background: var(--code-bg);
+    color: var(--code-text);
     margin: 0;
     white-space: pre-wrap;
 }
 
 .code-comment {
-    color: var(--text-muted);
+    color: #A09488;
 }
 
 .code-keyword {
@@ -547,48 +552,51 @@ body {
 }
 
 .code-line.executing {
-    background: rgba(245, 158, 11, 0.2);
+    background: rgba(245, 158, 11, 0.25);
 }
 
 .code-line.executed {
-    background: rgba(16, 185, 129, 0.1);
+    background: rgba(16, 185, 129, 0.15);
 }
 
+/* Console stays dark for readability */
 .console-output {
     flex: 1;
     padding: 16px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     overflow: auto;
-    background: var(--bg-tertiary);
+    background: var(--code-bg);
+    color: var(--code-text);
 }
 
 .console-placeholder {
-    color: var(--text-muted);
+    color: #A09488;
     font-style: italic;
 }
 
 .console-line {
     padding: 2px 0;
-    color: var(--text-primary);
+    color: var(--code-text);
 }
 
 .console-error {
     color: var(--accent-error);
 }
 
+/* Variables panel stays dark */
 .variables-display {
     flex: 1;
     padding: 12px 16px;
     overflow: auto;
-    background: var(--bg-tertiary);
+    background: var(--code-bg);
 }
 
 .variable-item {
     display: flex;
     justify-content: space-between;
     padding: 6px 0;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(245, 237, 227, 0.1);
 }
 
 .variable-item:last-child {
@@ -598,13 +606,13 @@ body {
 .variable-name {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
-    color: var(--accent-primary);
+    color: #14B8A6;
 }
 
 .variable-value {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
-    color: var(--text-primary);
+    color: var(--code-text);
 }
 
 /* Scrollbar Styling */
@@ -618,7 +626,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border-light);
+    background: var(--border-color);
     border-radius: 4px;
 }
 

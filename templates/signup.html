@@ -7,16 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --border-color: #2a2a3a;
-            --text-primary: #f0f0f5;
-            --text-secondary: #a0a0b0;
-            --text-muted: #606070;
-            --accent-primary: #6366f1;
-            --accent-success: #10b981;
-            --accent-error: #ef4444;
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --border-color: #E8DDD0;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-success: #16A34A;
+            --accent-error: #DC2626;
         }
 
         * {
@@ -43,8 +43,8 @@
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(ellipse at 20% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 20%, rgba(13, 148, 136, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
@@ -74,13 +74,14 @@
         .logo-icon {
             width: 48px;
             height: 48px;
-            background: linear-gradient(135deg, var(--accent-success), #059669);
-            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-primary), #14B8A6);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 18px;
+            color: white;
         }
 
         .logo-text {
@@ -107,21 +108,21 @@
 
         .flash {
             padding: 12px 16px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
             margin-bottom: 8px;
         }
 
         .flash.error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.2);
             color: var(--accent-error);
         }
 
         .flash.success {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: var(--accent-success);
+            background: rgba(13, 148, 136, 0.08);
+            border: 1px solid rgba(13, 148, 136, 0.2);
+            color: var(--accent-primary);
         }
 
         .form-group {
@@ -141,7 +142,7 @@
             padding: 14px 16px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 12px;
             color: var(--text-primary);
             font-size: 16px;
             font-family: inherit;
@@ -150,8 +151,8 @@
 
         input:focus {
             outline: none;
-            border-color: var(--accent-success);
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
         }
 
         input::placeholder {
@@ -161,10 +162,10 @@
         .btn-primary {
             width: 100%;
             padding: 14px 24px;
-            background: linear-gradient(135deg, var(--accent-success), #059669);
+            background: linear-gradient(135deg, var(--accent-primary), #14B8A6);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -174,7 +175,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.25);
         }
 
         .divider {
@@ -214,7 +215,7 @@
             margin-top: 20px;
             padding: 16px;
             background: var(--bg-tertiary);
-            border-radius: 10px;
+            border-radius: 12px;
         }
 
         .requirements-title {
@@ -285,7 +286,7 @@
                 <div class="form-group">
                     <label for="email">School Email</label>
                     <input type="email" id="email" name="email" placeholder="you@school.edu" required>
-                    <div id="eduHint" style="display: none; margin-top: 8px; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5;"></div>
+                    <div id="eduHint" style="display: none; margin-top: 8px; padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.5;"></div>
                 </div>
 
                 <div class="form-group">
@@ -304,29 +305,29 @@
             <div class="requirements">
                 <div class="requirements-title">Password Requirements</div>
                 <div class="requirement">
-                    <span class="requirement-icon">✓</span>
+                    <span class="requirement-icon">&#10003;</span>
                     <span>At least 6 characters long</span>
                 </div>
                 <div class="requirement">
-                    <span class="requirement-icon">✓</span>
+                    <span class="requirement-icon">&#10003;</span>
                     <span>Username at least 3 characters</span>
                 </div>
             </div>
 
-            <div id="trialPopup" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px;">
-                <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:16px; padding:32px; max-width:420px; width:100%; text-align:center;">
+            <div id="trialPopup" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px;">
+                <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:18px; padding:32px; max-width:420px; width:100%; text-align:center;">
                     <div style="font-size:40px; margin-bottom:16px;">&#127891;</div>
                     <h3 style="font-size:20px; margin-bottom:8px;">Free Trial with School Email!</h3>
-                    <p style="color:var(--text-secondary); font-size:14px; line-height:1.6; margin-bottom:20px;">Sign up with your <strong style="color:#10b981;">.edu email</strong> and get a <strong style="color:#f59e0b;">free 10-day trial</strong> with full access to all features.</p>
-                    <div style="background:var(--bg-tertiary); border-radius:10px; padding:16px; text-align:left; margin-bottom:20px;">
+                    <p style="color:var(--text-secondary); font-size:14px; line-height:1.6; margin-bottom:20px;">Sign up with your <strong style="color:#0D9488;">.edu email</strong> and get a <strong style="color:#f59e0b;">free 10-day trial</strong> with full access to all features.</p>
+                    <div style="background:var(--bg-tertiary); border-radius:12px; padding:16px; text-align:left; margin-bottom:20px;">
                         <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;"><strong style="color:var(--text-primary);">Want even more time?</strong></p>
                         <div style="font-size:13px; color:var(--text-secondary); line-height:1.8;">
-                            &#10003; Share feedback about your experience &rarr; <strong style="color:#10b981;">+5 days</strong><br>
-                            &#10003; Refer a teacher who signs up &rarr; <strong style="color:#10b981;">+10 days</strong><br>
-                            &#10003; Refer a student who signs up &rarr; <strong style="color:#10b981;">+3 days</strong>
+                            &#10003; Share feedback about your experience &rarr; <strong style="color:#0D9488;">+5 days</strong><br>
+                            &#10003; Refer a teacher who signs up &rarr; <strong style="color:#0D9488;">+10 days</strong><br>
+                            &#10003; Refer a student who signs up &rarr; <strong style="color:#0D9488;">+3 days</strong>
                         </div>
                     </div>
-                    <button onclick="document.getElementById('trialPopup').style.display='none'" style="padding:12px 32px; background:linear-gradient(135deg,var(--accent-success),#059669); color:white; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit;">Got it!</button>
+                    <button onclick="document.getElementById('trialPopup').style.display='none'" style="padding:12px 32px; background:linear-gradient(135deg,var(--accent-primary),#14B8A6); color:white; border:none; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit;">Got it!</button>
                 </div>
             </div>
 
@@ -350,9 +351,9 @@
             var val = this.value.trim().toLowerCase();
             if (val.includes('@') && (val.endsWith('.edu') || val.match(/\.edu\..+$/))) {
                 hint.style.display = 'block';
-                hint.style.background = 'rgba(16, 185, 129, 0.1)';
-                hint.style.border = '1px solid rgba(16, 185, 129, 0.3)';
-                hint.style.color = '#10b981';
+                hint.style.background = 'rgba(13, 148, 136, 0.1)';
+                hint.style.border = '1px solid rgba(13, 148, 136, 0.3)';
+                hint.style.color = '#0D9488';
                 hint.innerHTML = '&#127891; <strong>School email detected!</strong> You qualify for a free 10-day trial.';
                 if (!popupShown) {
                     popupShown = true;

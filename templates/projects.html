@@ -7,20 +7,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #09090b;
-            --bg-secondary: #18181b;
-            --bg-tertiary: #27272a;
-            --bg-elevated: #3f3f46;
-            --border-color: #27272a;
-            --border-light: #3f3f46;
-            --text-primary: #fafafa;
-            --text-secondary: #a1a1aa;
-            --text-muted: #71717a;
-            --accent-primary: #6366f1;
-            --accent-hover: #818cf8;
-            --accent-success: #10b981;
-            --accent-warning: #f59e0b;
-            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
+            --border-color: #E8DDD0;
+            --border-light: #F0E6DA;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
+            --accent-success: #16A34A;
+            --accent-warning: #F59E0B;
+            --accent-error: #DC2626;
+            --gradient-1: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
         }
 
         * {
@@ -43,8 +44,8 @@
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 20%, rgba(13, 148, 136, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
@@ -78,16 +79,16 @@
             font-size: 18px;
             font-weight: 700;
             color: var(--accent-primary);
-            background: rgba(99, 102, 241, 0.15);
+            background: rgba(13, 148, 136, 0.1);
             padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(13, 148, 136, 0.2);
         }
 
         .logo-text {
             font-size: 24px;
             font-weight: 700;
-            color: white;
+            color: var(--text-primary);
         }
 
         .nav-links {
@@ -105,7 +106,7 @@
         }
 
         .nav-link:hover {
-            color: white;
+            color: var(--text-primary);
         }
 
         .page-header {
@@ -140,17 +141,19 @@
         .project-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 28px;
-            transition: border-color 0.2s, transform 0.2s;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
             text-decoration: none;
             color: inherit;
             display: block;
+            box-shadow: 0 2px 8px rgba(45, 35, 25, 0.06);
         }
 
         .project-card:hover {
             border-color: var(--border-light);
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(45, 35, 25, 0.1);
         }
 
         .project-status {
@@ -158,7 +161,7 @@
             background: rgba(245, 158, 11, 0.12);
             color: #d97706;
             padding: 4px 10px;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
@@ -203,19 +206,21 @@
         .example-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 22px;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(45, 35, 25, 0.06);
         }
 
         .example-card:hover {
             border-color: var(--border-light);
+            box-shadow: 0 4px 16px rgba(45, 35, 25, 0.1);
         }
 
         .example-subject {
             display: inline-block;
             padding: 3px 8px;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
@@ -227,7 +232,7 @@
         .subject-math { background: rgba(59, 130, 246, 0.12); color: #3b82f6; }
         .subject-history { background: rgba(245, 158, 11, 0.12); color: #d97706; }
         .subject-english { background: rgba(236, 72, 153, 0.12); color: #ec4899; }
-        .subject-cs { background: rgba(99, 102, 241, 0.12); color: #6366f1; }
+        .subject-cs { background: rgba(13, 148, 136, 0.12); color: #0D9488; }
         .subject-finance { background: rgba(34, 197, 94, 0.12); color: #22c55e; }
 
         .example-card h4 {
@@ -243,7 +248,7 @@
         }
 
         .example-highlight {
-            border-color: rgba(16, 185, 129, 0.3);
+            border-color: rgba(13, 148, 136, 0.3);
         }
 
         .example-highlight .example-detail {
@@ -278,8 +283,9 @@
         .ideas-section {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 28px;
+            box-shadow: 0 2px 8px rgba(45, 35, 25, 0.06);
         }
 
         .ideas-intro {
@@ -304,18 +310,19 @@
         .form-input {
             width: 100%;
             padding: 12px 14px;
-            background: var(--bg-tertiary);
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             color: var(--text-primary);
             font-size: 14px;
             font-family: inherit;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
         }
 
         .form-textarea {
@@ -331,19 +338,21 @@
 
         .submit-btn {
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             border: none;
             font-family: inherit;
-            background: var(--accent-primary);
+            background: linear-gradient(135deg, #0D9488, #14B8A6);
             color: white;
-            transition: background 0.2s;
+            transition: opacity 0.2s, transform 0.2s;
+            box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
         }
 
         .submit-btn:hover {
-            background: #5558e3;
+            opacity: 0.9;
+            transform: translateY(-1px);
         }
 
         .submit-btn:disabled {
@@ -357,21 +366,21 @@
 
         .flash {
             padding: 14px 18px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 10px;
             font-size: 14px;
         }
 
         .flash.success {
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(16, 185, 129, 0.25);
+            background: rgba(22, 163, 74, 0.1);
+            border: 1px solid rgba(22, 163, 74, 0.25);
             color: var(--accent-success);
         }
 
         .flash.error {
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid rgba(239, 68, 68, 0.25);
-            color: #ef4444;
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.25);
+            color: var(--accent-error);
         }
 
         @media (max-width: 640px) {

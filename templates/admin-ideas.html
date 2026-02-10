@@ -7,16 +7,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #09090b;
-            --bg-secondary: #18181b;
-            --bg-tertiary: #27272a;
-            --border-color: #27272a;
-            --text-primary: #fafafa;
-            --text-secondary: #a1a1aa;
-            --text-muted: #71717a;
-            --accent-primary: #6366f1;
-            --accent-success: #10b981;
-            --accent-warning: #f59e0b;
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
+            --border-color: #E8DDD0;
+            --border-light: #F0E6DA;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
+            --accent-success: #16A34A;
+            --accent-warning: #F59E0B;
+            --accent-error: #DC2626;
+            --accent-red: #DC2626;
+            --accent-amber: #F59E0B;
         }
 
         * {
@@ -47,15 +53,17 @@
 
         .header h1 {
             font-size: 1.5rem;
+            color: var(--text-primary);
         }
 
         .back-link {
             color: var(--text-secondary);
             text-decoration: none;
+            transition: color 0.2s;
         }
 
         .back-link:hover {
-            color: white;
+            color: var(--accent-primary);
         }
 
         .stats {
@@ -70,6 +78,7 @@
             border-radius: 12px;
             padding: 20px;
             flex: 1;
+            box-shadow: 0 2px 8px rgba(45, 35, 25, 0.06);
         }
 
         .stat-value {
@@ -94,6 +103,12 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 24px;
+            box-shadow: 0 2px 8px rgba(45, 35, 25, 0.06);
+            transition: box-shadow 0.2s;
+        }
+
+        .idea-card:hover {
+            box-shadow: 0 4px 16px rgba(45, 35, 25, 0.1);
         }
 
         .idea-header {
@@ -111,6 +126,7 @@
 
         .idea-name {
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         .idea-badge {
@@ -119,11 +135,12 @@
             border-radius: 6px;
             font-size: 12px;
             color: var(--text-muted);
+            border: 1px solid var(--border-light);
         }
 
-        .idea-badge.beginner { color: var(--accent-success); }
-        .idea-badge.intermediate { color: var(--accent-warning); }
-        .idea-badge.advanced { color: #ef4444; }
+        .idea-badge.beginner { color: var(--accent-success); background: rgba(22, 163, 74, 0.08); border-color: rgba(22, 163, 74, 0.2); }
+        .idea-badge.intermediate { color: var(--accent-warning); background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.2); }
+        .idea-badge.advanced { color: var(--accent-error); background: rgba(220, 38, 38, 0.08); border-color: rgba(220, 38, 38, 0.2); }
 
         .idea-time {
             color: var(--text-muted);
@@ -146,6 +163,9 @@
             text-align: center;
             padding: 60px;
             color: var(--text-muted);
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
         }
 
         .empty-state-icon {

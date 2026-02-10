@@ -7,23 +7,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #09090b;
-            --bg-secondary: #18181b;
-            --bg-tertiary: #27272a;
-            --bg-elevated: #3f3f46;
-            --border-color: #27272a;
-            --border-light: #3f3f46;
-            --text-primary: #fafafa;
-            --text-secondary: #a1a1aa;
-            --text-muted: #71717a;
-            --accent-primary: #6366f1;
-            --accent-hover: #818cf8;
-            --accent-success: #10b981;
-            --accent-warning: #f59e0b;
-            --accent-blue: #3b82f6;
-            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-            --gradient-2: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-            --gradient-3: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
+            --border-color: #E8DDD0;
+            --border-light: #F0E6DA;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
+            --accent-success: #16A34A;
+            --accent-warning: #F59E0B;
+            --accent-blue: #2563EB;
+            --gradient-1: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
+            --gradient-2: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+            --gradient-3: linear-gradient(135deg, #16A34A 0%, #22C55E 100%);
         }
 
         * {
@@ -40,7 +40,7 @@
             overflow-x: hidden;
         }
 
-        /* Animated Background */
+        /* Subtle warm background */
         .bg-gradient {
             position: fixed;
             top: 0;
@@ -48,9 +48,9 @@
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+                radial-gradient(ellipse at 20% 20%, rgba(13, 148, 136, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(22, 163, 74, 0.03) 0%, transparent 70%);
             pointer-events: none;
             z-index: 0;
         }
@@ -81,16 +81,16 @@
             font-size: 18px;
             font-weight: 700;
             color: var(--accent-primary);
-            background: rgba(99, 102, 241, 0.15);
+            background: rgba(13, 148, 136, 0.1);
             padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(13, 148, 136, 0.2);
         }
 
         .logo-text {
             font-size: 24px;
             font-weight: 700;
-            color: white;
+            color: var(--text-primary);
             letter-spacing: -0.5px;
         }
 
@@ -108,14 +108,14 @@
         }
 
         .nav-link:hover {
-            color: white;
+            color: var(--text-primary);
         }
 
         .nav-cta {
             background: var(--gradient-1);
             color: white;
             padding: 10px 24px;
-            border-radius: 8px;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
             font-size: 14px;
@@ -124,7 +124,7 @@
 
         .nav-cta:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 40px rgba(13, 148, 136, 0.25);
         }
 
         .nav-user {
@@ -156,41 +156,12 @@
             margin: 0 auto;
         }
 
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 102, 0, 0.15);
-            border: 1px solid rgba(255, 102, 0, 0.4);
-            padding: 8px 16px;
-            border-radius: 100px;
-            font-size: 13px;
-            color: white;
-            margin-bottom: 32px;
-        }
-
-        .hero-badge span {
-            width: 6px;
-            height: 6px;
-            background: var(--accent-success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
         .hero h1 {
             font-size: 4.5rem;
             font-weight: 800;
             line-height: 1.1;
             margin-bottom: 24px;
-            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--text-primary);
             letter-spacing: -2px;
         }
 
@@ -219,7 +190,7 @@
             background: var(--gradient-1);
             color: white;
             padding: 16px 32px;
-            border-radius: 12px;
+            border-radius: 14px;
             text-decoration: none;
             font-weight: 600;
             font-size: 16px;
@@ -233,27 +204,27 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 20px 40px rgba(13, 148, 136, 0.25);
         }
 
         .btn-secondary {
-            background: var(--bg-tertiary);
+            background: var(--bg-secondary);
             color: var(--text-primary);
             padding: 16px 32px;
-            border-radius: 12px;
+            border-radius: 14px;
             text-decoration: none;
             font-weight: 600;
             font-size: 16px;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border-color);
             transition: all 0.2s;
         }
 
         .btn-secondary:hover {
             background: var(--bg-elevated);
-            border-color: var(--text-muted);
+            border-color: var(--accent-primary);
         }
 
         /* Stats */
@@ -274,7 +245,7 @@
         .stat-value {
             font-size: 2.5rem;
             font-weight: 700;
-            color: white;
+            color: var(--accent-primary);
             margin-bottom: 4px;
         }
 
@@ -335,6 +306,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
         }
 
         .course-card::before {
@@ -350,9 +322,9 @@
         }
 
         .course-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-6px);
             border-color: var(--border-light);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(45, 35, 25, 0.1);
         }
 
         .course-card:hover::before {
@@ -362,7 +334,7 @@
         .course-card.coding { --card-gradient: var(--gradient-1); }
         .course-card.workflow { --card-gradient: var(--gradient-2); }
         .course-card.git { --card-gradient: var(--gradient-3); }
-        .course-card.academy { --card-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); }
+        .course-card.academy { --card-gradient: linear-gradient(135deg, #ec4899 0%, #a855f7 100%); }
 
         .course-icon {
             width: 56px;
@@ -372,14 +344,14 @@
             justify-content: center;
             font-size: 24px;
             background: var(--bg-tertiary);
-            border-radius: 14px;
+            border-radius: 16px;
             margin-bottom: 24px;
         }
 
-        .course-card.coding .course-icon { background: rgba(99, 102, 241, 0.15); }
-        .course-card.workflow .course-icon { background: rgba(245, 158, 11, 0.15); }
-        .course-card.git .course-icon { background: rgba(16, 185, 129, 0.15); }
-        .course-card.academy .course-icon { background: rgba(236, 72, 153, 0.15); }
+        .course-card.coding .course-icon { background: rgba(13, 148, 136, 0.1); }
+        .course-card.workflow .course-icon { background: rgba(245, 158, 11, 0.1); }
+        .course-card.git .course-icon { background: rgba(22, 163, 74, 0.1); }
+        .course-card.academy .course-icon { background: rgba(236, 72, 153, 0.1); }
 
         .course-title {
             font-size: 1.5rem;
@@ -405,7 +377,7 @@
             gap: 6px;
             padding: 6px 12px;
             background: var(--bg-tertiary);
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 12px;
             color: var(--text-secondary);
         }
@@ -458,8 +430,8 @@
             justify-content: center;
             font-size: 24px;
             margin: 0 auto 16px;
-            background: var(--bg-tertiary);
-            border-radius: 12px;
+            background: var(--bg-elevated);
+            border-radius: 14px;
         }
 
         .feature-title {
@@ -496,6 +468,7 @@
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
         }
 
         .pricing-card.featured {
@@ -520,6 +493,7 @@
         .pricing-card:hover {
             border-color: var(--accent-primary);
             transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(45, 35, 25, 0.1);
         }
 
         .pricing-card.featured:hover {
@@ -567,7 +541,7 @@
         }
 
         .pricing-feature::before {
-            content: '✓';
+            content: '\2713';
             color: var(--accent-success);
             font-weight: bold;
         }
@@ -576,7 +550,7 @@
             display: block;
             width: 100%;
             padding: 14px 24px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.2s;
@@ -588,7 +562,7 @@
         }
 
         .pricing-btn.primary:hover {
-            background: #5558e8;
+            background: var(--accent-hover);
         }
 
         .pricing-btn.secondary {
@@ -615,16 +589,18 @@
             gap: 12px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 24px 36px;
             text-decoration: none;
             color: inherit;
-            transition: border-color 0.2s, transform 0.2s;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
         }
 
         .privacy-banner a:hover {
-            border-color: var(--border-light);
+            border-color: var(--accent-primary);
             transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(45, 35, 25, 0.08);
         }
 
         .privacy-banner-text {
@@ -668,7 +644,7 @@
         }
 
         .footer a:hover {
-            color: white;
+            color: var(--text-primary);
         }
 
         /* YC Badge - Fixed Bottom Right */
@@ -676,23 +652,23 @@
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background: white;
-            color: #1a1a24;
+            background: var(--text-primary);
+            color: white;
             padding: 14px 24px;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 16px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 24px rgba(45, 35, 25, 0.2);
             z-index: 1000;
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .yc-badge:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 32px rgba(45, 35, 25, 0.3);
         }
 
         .yc-badge-dot {
@@ -701,6 +677,11 @@
             background: #f97316;
             border-radius: 50%;
             animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* Responsive */
@@ -773,7 +754,7 @@
             <div class="nav-user">
                 {% if session.get('user') %}
                     {% if session.get('is_admin') %}
-                    <a href="/admin" class="nav-link" style="color: #ef4444;">Admin</a>
+                    <a href="/admin" class="nav-link" style="color: #DC2626;">Admin</a>
                     {% endif %}
                     <a href="/dashboard" class="nav-link">My Dashboard</a>
                     <span class="user-greeting">Hi, {{ session.get('user') }}</span>

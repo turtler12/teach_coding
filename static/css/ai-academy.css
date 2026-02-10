@@ -2,27 +2,26 @@
 
 /* ===== CSS VARIABLES ===== */
 :root {
-    --primary: #166534;
-    --primary-dark: #14532d;
-    --primary-light: #22c55e;
-    --secondary: #15803d;
-    --secondary-dark: #166534;
-    --accent: #4ade80;
-    --danger: #dc2626;
+    --primary: #0D9488;
+    --primary-dark: #0F766E;
+    --primary-light: #14B8A6;
+    --secondary: #0D9488;
+    --secondary-dark: #0F766E;
+    --accent: #14B8A6;
+    --danger: #DC2626;
 
-    --bg-dark: #ffffff;
-    --bg-card: #ffffff;
-    --bg-hover: #f0fdf4;
-    --bg-light: #f8fafc;
-    --bg-sidebar: #f8fafc;
+    --bg-dark: #FFF8F0;
+    --bg-card: #FFFFFF;
+    --bg-hover: #FFF1E6;
+    --bg-light: #FFF8F0;
+    --bg-sidebar: #FFFFFF;
 
-    --text-primary: #1a1a1a;
-    --text-secondary: #4b5563;
-    --text-muted: #6b7280;
-    --text-dark: #1e293b;
+    --text-primary: #2D2319;
+    --text-secondary: #6B5D50;
+    --text-muted: #A09488;
 
-    --border: #e5e7eb;
-    --border-light: #d1d5db;
+    --border: #E8DDD0;
+    --border-light: #F0E6DA;
 
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -34,10 +33,10 @@
     --sidebar-width: 260px;
 
     /* Block colors for coding section */
-    --block-var: #166534;
-    --block-output: #15803d;
+    --block-var: #0D9488;
+    --block-output: #0F766E;
     --block-loop: #ca8a04;
-    --block-condition: #dc2626;
+    --block-condition: #DC2626;
 }
 
 /* ===== RESET & BASE ===== */
@@ -53,7 +52,7 @@ html {
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #f9fafb;
+    background: #FFF8F0;
     color: var(--text-primary);
     line-height: 1.6;
     min-height: 100vh;
@@ -171,7 +170,7 @@ body {
 
 .progress-bar {
     height: 8px;
-    background: #e5e7eb;
+    background: #E8DDD0;
     border-radius: 4px;
     overflow: hidden;
 }
@@ -354,14 +353,14 @@ body {
     gap: 16px;
     padding: 20px;
     background: var(--bg-hover);
-    border: 1px solid #bbf7d0;
+    border: 1px solid #F0E6DA;
     border-radius: var(--radius);
     margin: 20px 0;
 }
 
 .info-box.info-success {
     background: var(--bg-hover);
-    border-color: #86efac;
+    border-color: #E8DDD0;
 }
 
 .info-icon-wrapper {
@@ -371,13 +370,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #dcfce7;
+    background: #FFF1E6;
     border-radius: 8px;
     color: var(--primary);
 }
 
 .info-box.info-success .info-icon-wrapper {
-    background: #bbf7d0;
+    background: #F0E6DA;
     color: var(--primary);
 }
 
@@ -450,7 +449,7 @@ body {
 }
 
 .token:nth-child(3n) {
-    background: #15803d;
+    background: #0F766E;
     color: white;
 }
 
@@ -624,7 +623,7 @@ body {
 }
 
 .quiz-feedback.correct {
-    background: rgba(16, 185, 129, 0.2);
+    background: rgba(13, 148, 136, 0.2);
     color: var(--secondary);
 }
 
@@ -993,7 +992,7 @@ body {
 .concept-icon-wrapper {
     width: 48px;
     height: 48px;
-    background: #dcfce7;
+    background: #FFF1E6;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -1240,7 +1239,7 @@ body {
 .git-icon-wrapper {
     width: 48px;
     height: 48px;
-    background: #dcfce7;
+    background: #FFF1E6;
     border-radius: 12px;
     display: flex;
     align-items: center;

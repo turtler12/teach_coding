@@ -7,20 +7,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --bg-elevated: #242430;
-            --border-color: #2a2a3a;
-            --border-light: #3a3a4a;
-            --text-primary: #f0f0f5;
-            --text-secondary: #9090a0;
-            --text-muted: #606070;
-            --accent-primary: #6366f1;
-            --accent-success: #10b981;
-            --accent-warning: #f59e0b;
-            --accent-error: #ef4444;
-            --accent-blue: #3b82f6;
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
+            --border-color: #E8DDD0;
+            --border-light: #F0E6DA;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
+            --accent-success: #16A34A;
+            --accent-warning: #F59E0B;
+            --accent-error: #DC2626;
+            --accent-blue: #2563EB;
+            --shadow-sm: 0 1px 3px rgba(45, 35, 25, 0.06);
+            --shadow-md: 0 4px 12px rgba(45, 35, 25, 0.08);
+            --shadow-lg: 0 8px 24px rgba(45, 35, 25, 0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
             --accent-purple: #8b5cf6;
             --accent-pink: #ec4899;
             --accent-cyan: #06b6d4;
@@ -55,6 +64,7 @@
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             z-index: 100;
+            box-shadow: var(--shadow-sm);
         }
 
         .logo {
@@ -69,15 +79,15 @@
             font-size: 18px;
             font-weight: 700;
             color: var(--accent-primary);
-            background: rgba(99, 102, 241, 0.15);
+            background: rgba(13, 148, 136, 0.12);
             padding: 6px 10px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
         }
 
         .logo-text {
             font-size: 20px;
             font-weight: 700;
-            color: white;
+            color: var(--text-primary);
         }
 
         .header-actions {
@@ -93,19 +103,21 @@
             font-size: 13px;
             font-weight: 600;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all var(--transition-fast);
             text-decoration: none;
         }
 
         .btn-primary {
-            background: var(--accent-success);
+            background: var(--accent-primary);
             color: white;
         }
 
         .btn-primary:hover {
-            filter: brightness(1.1);
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-secondary {
@@ -116,7 +128,8 @@
 
         .btn-secondary:hover {
             background: var(--bg-elevated);
-            color: white;
+            color: var(--text-primary);
+            border-color: var(--border-light);
         }
 
         /* Main Layout */
@@ -177,9 +190,9 @@
             margin-bottom: 6px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all var(--transition-fast);
             text-align: left;
         }
 
@@ -187,6 +200,7 @@
             background: var(--bg-elevated);
             border-color: var(--border-light);
             transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
         }
 
         .command-btn.disabled {
@@ -248,18 +262,19 @@
             border: 1px solid var(--border-color);
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all var(--transition-fast);
             font-size: 13px;
             color: var(--text-secondary);
         }
 
         .branch-tab:hover {
             background: var(--bg-elevated);
+            border-color: var(--border-light);
         }
 
         .branch-tab.active {
-            background: var(--accent-success);
-            border-color: var(--accent-success);
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
             color: white;
         }
 
@@ -274,6 +289,8 @@
             position: relative;
             overflow: auto;
             background:
+                var(--bg-primary);
+            background-image:
                 radial-gradient(circle at 1px 1px, var(--border-color) 1px, transparent 0);
             background-size: 24px 24px;
         }
@@ -296,17 +313,19 @@
             cursor: pointer;
             transition: all 0.2s;
             font-size: 18px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 12px rgba(45, 35, 25, 0.2);
             z-index: 10;
+            color: white;
         }
 
         .commit-node:hover {
             transform: scale(1.15);
             z-index: 20;
+            box-shadow: 0 6px 16px rgba(45, 35, 25, 0.25);
         }
 
         .commit-node.selected {
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.4);
         }
 
         .commit-node.main { background: var(--accent-success); }
@@ -326,6 +345,7 @@
             padding: 4px 8px;
             border-radius: 4px;
             border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
         }
 
         .commit-hash {
@@ -368,7 +388,7 @@
             font-weight: 600;
             color: white;
             z-index: 15;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
         }
 
         .head-pointer::before {
@@ -406,8 +426,9 @@
 
         .commit-details {
             background: var(--bg-tertiary);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             padding: 16px;
+            border: 1px solid var(--border-color);
         }
 
         .commit-details-hash {
@@ -432,7 +453,7 @@
             color: var(--text-muted);
         }
 
-        /* Terminal */
+        /* Terminal - KEEP DARK */
         .terminal-section {
             flex: 1;
             display: flex;
@@ -442,12 +463,13 @@
 
         .terminal {
             flex: 1;
-            background: #0d1117;
-            border-radius: 8px;
+            background: #2D2319;
+            border-radius: var(--radius-sm);
             margin: 0 20px 20px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            box-shadow: var(--shadow-md);
         }
 
         .terminal-header {
@@ -455,7 +477,7 @@
             align-items: center;
             gap: 8px;
             padding: 10px 14px;
-            background: #161b22;
+            background: #3A2E22;
         }
 
         .terminal-dot {
@@ -482,15 +504,15 @@
         }
 
         .terminal-line.command {
-            color: var(--accent-success);
+            color: #4ADE80;
         }
 
         .terminal-line.output {
-            color: var(--text-secondary);
+            color: #C4B5A5;
         }
 
         .terminal-line.error {
-            color: var(--accent-error);
+            color: #F87171;
         }
 
         .terminal-input-line {
@@ -501,17 +523,21 @@
         }
 
         .terminal-prompt {
-            color: var(--accent-success);
+            color: #4ADE80;
         }
 
         .terminal-input {
             flex: 1;
             background: none;
             border: none;
-            color: var(--text-primary);
+            color: #F5EDE3;
             font-family: inherit;
             font-size: inherit;
             outline: none;
+        }
+
+        .terminal-input::placeholder {
+            color: #7A6B5D;
         }
 
         /* Modal */
@@ -521,7 +547,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(45, 35, 25, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -539,15 +565,17 @@
         .modal {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             padding: 24px;
             width: 400px;
             max-width: 90%;
+            box-shadow: var(--shadow-lg);
         }
 
         .modal h3 {
             font-size: 18px;
             margin-bottom: 16px;
+            color: var(--text-primary);
         }
 
         .modal-input {
@@ -555,7 +583,7 @@
             padding: 12px 14px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             color: var(--text-primary);
             font-size: 14px;
             margin-bottom: 16px;
@@ -564,6 +592,7 @@
         .modal-input:focus {
             outline: none;
             border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
         }
 
         .modal-buttons {
@@ -578,6 +607,22 @@
             font-style: italic;
             text-align: center;
             padding: 20px;
+        }
+
+        /* Scrollbar styling for warm theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
         }
     </style>
 </head>
@@ -605,7 +650,7 @@
                     <div class="command-group">
                         <div class="command-group-title">Basic</div>
                         <button class="command-btn" data-command="commit">
-                            <div class="command-icon" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-success);">+</div>
+                            <div class="command-icon" style="background: rgba(22, 163, 74, 0.15); color: var(--accent-success);">+</div>
                             <div class="command-info">
                                 <h4>Commit</h4>
                                 <p>Save your changes</p>
@@ -616,21 +661,21 @@
                     <div class="command-group">
                         <div class="command-group-title">Branches</div>
                         <button class="command-btn" data-command="branch">
-                            <div class="command-icon" style="background: rgba(139, 92, 246, 0.2); color: var(--accent-purple);">🌿</div>
+                            <div class="command-icon" style="background: rgba(139, 92, 246, 0.15); color: var(--accent-purple);">🌿</div>
                             <div class="command-info">
                                 <h4>New Branch</h4>
                                 <p>Create a branch</p>
                             </div>
                         </button>
                         <button class="command-btn" data-command="checkout">
-                            <div class="command-icon" style="background: rgba(59, 130, 246, 0.2); color: var(--accent-blue);">↩</div>
+                            <div class="command-icon" style="background: rgba(37, 99, 235, 0.15); color: var(--accent-blue);">↩</div>
                             <div class="command-info">
                                 <h4>Checkout</h4>
                                 <p>Switch branches</p>
                             </div>
                         </button>
                         <button class="command-btn" data-command="merge">
-                            <div class="command-icon" style="background: rgba(245, 158, 11, 0.2); color: var(--accent-warning);">🔀</div>
+                            <div class="command-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-warning);">🔀</div>
                             <div class="command-info">
                                 <h4>Merge</h4>
                                 <p>Combine branches</p>
@@ -641,14 +686,14 @@
                     <div class="command-group">
                         <div class="command-group-title">Remote</div>
                         <button class="command-btn" data-command="push">
-                            <div class="command-icon" style="background: rgba(236, 72, 153, 0.2); color: var(--accent-pink);">⬆</div>
+                            <div class="command-icon" style="background: rgba(236, 72, 153, 0.15); color: var(--accent-pink);">⬆</div>
                             <div class="command-info">
                                 <h4>Push</h4>
                                 <p>Upload to remote</p>
                             </div>
                         </button>
                         <button class="command-btn" data-command="pull">
-                            <div class="command-icon" style="background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan);">⬇</div>
+                            <div class="command-icon" style="background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan);">⬇</div>
                             <div class="command-info">
                                 <h4>Pull</h4>
                                 <p>Download changes</p>
@@ -659,7 +704,7 @@
                     <div class="command-group">
                         <div class="command-group-title">History</div>
                         <button class="command-btn" data-command="revert">
-                            <div class="command-icon" style="background: rgba(239, 68, 68, 0.2); color: var(--accent-error);">↶</div>
+                            <div class="command-icon" style="background: rgba(220, 38, 38, 0.15); color: var(--accent-error);">↶</div>
                             <div class="command-info">
                                 <h4>Revert</h4>
                                 <p>Undo a commit</p>
@@ -1296,7 +1341,7 @@
                 await this.sleep(500);
 
                 this.addTerminalLine('', 'output');
-                this.addTerminalLine('🎉 Tutorial complete! Try the commands yourself.', 'output');
+                this.addTerminalLine('Tutorial complete! Try the commands yourself.', 'output');
             }
 
             sleep(ms) {

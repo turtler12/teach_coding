@@ -7,16 +7,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #09090b;
-            --bg-secondary: #18181b;
-            --bg-tertiary: #27272a;
-            --border-color: #27272a;
-            --border-light: #3f3f46;
-            --text-primary: #fafafa;
-            --text-secondary: #a1a1aa;
-            --text-muted: #71717a;
-            --accent-primary: #10b981;
-            --accent-hover: #34d399;
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
+            --border-color: #E8DDD0;
+            --border-light: #F0E6DA;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
+            --accent-secondary: #14B8A6;
+            --accent-success: #16A34A;
+            --accent-warning: #F59E0B;
+            --accent-error: #DC2626;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
@@ -25,56 +30,66 @@
             max-width: 960px; margin: 0 auto; padding: 20px 24px;
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
         }
-        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 20px; }
-        .logo-icon { font-size: 16px; color: #6366f1; background: rgba(99,102,241,0.15); padding: 6px 10px; border-radius: 8px; font-family: monospace; }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); font-weight: 700; font-size: 20px; }
+        .logo-icon { font-size: 16px; color: var(--accent-primary); background: rgba(13,148,136,0.1); padding: 6px 10px; border-radius: 10px; font-family: monospace; }
         .back-link { color: var(--text-muted); text-decoration: none; font-size: 14px; }
-        .back-link:hover { color: white; }
+        .back-link:hover { color: var(--text-primary); }
 
         .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
 
         .demo-header { margin-bottom: 32px; }
-        .demo-badge { display: inline-block; background: rgba(16,185,129,0.12); color: #10b981; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 12px; }
-        .demo-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .demo-badge { display: inline-block; background: rgba(13,148,136,0.1); color: var(--accent-primary); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 12px; }
+        .demo-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
         .demo-header p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; max-width: 600px; }
 
         .sim-container {
             background: var(--bg-secondary); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 24px; margin-bottom: 32px;
+            border-radius: 18px; padding: 24px; margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
         }
 
         .mode-toggle {
             display: flex; gap: 8px; margin-bottom: 20px;
         }
         .mode-btn {
-            padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 500;
+            padding: 8px 20px; border-radius: 10px; font-size: 14px; font-weight: 500;
             cursor: pointer; border: 1px solid var(--border-color); background: var(--bg-tertiary);
             color: var(--text-secondary); font-family: inherit; transition: all 0.2s;
         }
         .mode-btn.active { background: var(--accent-primary); color: white; border-color: var(--accent-primary); }
+        .mode-btn:not(.active):hover { background: var(--bg-elevated); border-color: var(--border-color); color: var(--text-primary); }
 
         .cell-stage {
             display: flex; align-items: center; gap: 32px; min-height: 320px;
         }
         .cell-canvas-wrap { flex: 1; display: flex; justify-content: center; }
-        canvas { border-radius: 12px; }
+        canvas { border-radius: 14px; }
 
-        .stage-info { width: 280px; flex-shrink: 0; }
-        .stage-name { font-size: 1.2rem; font-weight: 600; margin-bottom: 4px; }
+        .stage-info {
+            width: 280px; flex-shrink: 0;
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 20px;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
+        }
+        .stage-name { font-size: 1.2rem; font-weight: 600; margin-bottom: 4px; color: var(--text-primary); }
         .stage-subtitle { font-size: 12px; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
         .stage-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
-        .stage-detail { font-size: 13px; color: var(--text-muted); line-height: 1.5; padding: 12px; background: var(--bg-tertiary); border-radius: 8px; }
+        .stage-detail { font-size: 13px; color: var(--text-muted); line-height: 1.5; padding: 12px; background: var(--bg-tertiary); border-radius: 10px; border: 1px solid var(--border-light); }
 
         .controls {
             display: flex; gap: 10px; align-items: center; margin-top: 20px;
             padding-top: 20px; border-top: 1px solid var(--border-color);
         }
         .ctrl-btn {
-            padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500;
+            padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 500;
             cursor: pointer; border: none; font-family: inherit; transition: all 0.2s;
         }
         .ctrl-prev { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .ctrl-prev:not(:disabled):hover { background: var(--bg-elevated); }
         .ctrl-next { background: var(--accent-primary); color: white; }
+        .ctrl-next:not(:disabled):hover { background: var(--accent-hover); }
         .ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .ctrl-btn:not(:disabled):hover { transform: translateY(-1px); }
         .stage-counter { margin-left: auto; font-size: 13px; color: var(--text-muted); }
@@ -82,9 +97,10 @@
         .info-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .info-card {
             background: var(--bg-secondary); border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 20px;
+            border-radius: 14px; padding: 20px;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
         }
-        .info-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+        .info-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary); }
         .info-card p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
         .info-card ul { list-style: none; margin-top: 8px; }
         .info-card li { font-size: 13px; color: var(--text-secondary); padding: 4px 0; padding-left: 16px; position: relative; }
@@ -100,7 +116,7 @@
 <body>
     <nav class="nav">
         <a href="/" class="logo"><span class="logo-icon">&lt;/&gt;</span> TrustAI</a>
-        <a href="/projects" class="back-link">← Back to Projects</a>
+        <a href="/projects" class="back-link">&larr; Back to Projects</a>
     </nav>
 
     <div class="container">
@@ -267,16 +283,16 @@ function updateUI() {
 
 // Drawing
 var colors = {
-    cell: '#1e293b',
-    membrane: '#10b981',
+    cell: '#F5EDE3',
+    membrane: '#0D9488',
     chr1: '#6366f1',
     chr2: '#f472b6',
     chr3: '#6366f1',
     chr4: '#f472b6',
-    spindle: 'rgba(113,113,122,0.3)',
-    nucleus: 'rgba(99,102,241,0.15)',
-    nucleusBorder: 'rgba(99,102,241,0.4)',
-    bg: '#09090b'
+    spindle: 'rgba(160,148,136,0.35)',
+    nucleus: 'rgba(13,148,136,0.1)',
+    nucleusBorder: 'rgba(13,148,136,0.35)',
+    bg: '#FFFFFF'
 };
 
 function drawCell(cx, cy, rx, ry, pinch) {
@@ -411,7 +427,7 @@ function drawMitosis(cx, cy, w, h) {
         ctx.beginPath();
         ctx.moveTo(cx, cy - 70);
         ctx.lineTo(cx, cy + 70);
-        ctx.strokeStyle = 'rgba(113,113,122,0.2)';
+        ctx.strokeStyle = 'rgba(160,148,136,0.25)';
         ctx.lineWidth = 1;
         ctx.stroke();
         ctx.setLineDash([]);
@@ -504,7 +520,7 @@ function drawMeiosis(cx, cy, w, h) {
         // Center line
         ctx.setLineDash([3, 5]);
         ctx.beginPath(); ctx.moveTo(cx, cy - 70); ctx.lineTo(cx, cy + 70);
-        ctx.strokeStyle = 'rgba(113,113,122,0.2)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.strokeStyle = 'rgba(160,148,136,0.25)'; ctx.lineWidth = 1; ctx.stroke();
         ctx.setLineDash([]);
         // Pair 1 straddling center
         drawXChromosome(cx - 14, cy - 14, colors.chr1);
@@ -554,7 +570,7 @@ function drawMeiosis(cx, cy, w, h) {
         drawCell(cx - 65, cy, 52, 55, 0);
         ctx.setLineDash([3, 4]);
         ctx.beginPath(); ctx.moveTo(cx - 65, cy - 48); ctx.lineTo(cx - 65, cy + 48);
-        ctx.strokeStyle = 'rgba(113,113,122,0.15)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.strokeStyle = 'rgba(160,148,136,0.2)'; ctx.lineWidth = 1; ctx.stroke();
         ctx.setLineDash([]);
         drawXChromosome(cx - 65, cy - 10, colors.chr1, 0.75);
         drawXChromosome(cx - 65, cy + 14, colors.chr2, 0.75);
@@ -562,7 +578,7 @@ function drawMeiosis(cx, cy, w, h) {
         drawCell(cx + 65, cy, 52, 55, 0);
         ctx.setLineDash([3, 4]);
         ctx.beginPath(); ctx.moveTo(cx + 65, cy - 48); ctx.lineTo(cx + 65, cy + 48);
-        ctx.strokeStyle = 'rgba(113,113,122,0.15)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.strokeStyle = 'rgba(160,148,136,0.2)'; ctx.lineWidth = 1; ctx.stroke();
         ctx.setLineDash([]);
         drawXChromosome(cx + 65, cy - 10, colors.chr1, 0.75);
         drawXChromosome(cx + 65, cy + 14, colors.chr2, 0.75);

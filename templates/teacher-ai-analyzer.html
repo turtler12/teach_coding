@@ -7,60 +7,79 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --border-color: #2a2a3a;
-            --text-primary: #f0f0f5;
-            --text-secondary: #a0a0b0;
-            --text-muted: #606070;
-            --accent-teal: #14b8a6;
-            --accent-amber: #f59e0b;
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
+            --border-color: #E8DDD0;
+            --border-light: #F0E6DA;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
+            --accent-teal: #0D9488;
+            --accent-success: #16A34A;
+            --accent-warning: #F59E0B;
+            --accent-error: #DC2626;
+            --accent-amber: #F59E0B;
+            --accent-red: #DC2626;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
         .header {
             background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);
             padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
         }
         .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-teal), #0d9488); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: white; }
+        .logo-icon {
+            width: 40px; height: 40px;
+            background: rgba(13, 148, 136, 0.1);
+            border: 1px solid rgba(13, 148, 136, 0.2);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; color: var(--accent-teal);
+        }
         .logo-text { font-size: 20px; font-weight: 700; color: var(--text-primary); }
-        .role-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-left: 8px; }
+        .role-badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-left: 8px; }
         .role-badge.teacher { background: var(--accent-teal); color: white; }
-        .role-badge.admin { background: #ef4444; color: white; }
+        .role-badge.admin { background: var(--accent-error); color: white; }
         .header-actions { display: flex; gap: 12px; }
-        .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; font-family: inherit; }
+        .btn { padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; font-family: inherit; }
         .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
-        .btn-secondary:hover { background: var(--border-color); }
+        .btn-secondary:hover { background: var(--border-color); color: var(--text-primary); }
         .container { max-width: 900px; margin: 0 auto; padding: 32px; }
         .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
-        .page-title { font-size: 28px; font-weight: 700; }
-        .ai-badge { background: var(--accent-amber); color: #000; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .page-title { font-size: 28px; font-weight: 700; color: var(--text-primary); }
+        .ai-badge { background: var(--accent-amber); color: #000; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
         .page-subtitle { color: var(--text-muted); margin-bottom: 32px; }
-        .section { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .section {
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 24px; margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
+        }
+        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: var(--text-primary); }
         .form-group { margin-bottom: 20px; }
         label { display: block; font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; }
         .label-hint { font-weight: 400; color: var(--text-muted); font-size: 12px; }
         textarea {
-            width: 100%; padding: 14px; background: var(--bg-tertiary); border: 1px solid var(--border-color);
-            border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: inherit;
+            width: 100%; padding: 14px; background: var(--bg-primary); border: 1px solid var(--border-color);
+            border-radius: 10px; color: var(--text-primary); font-size: 14px; font-family: inherit;
             resize: vertical; min-height: 160px; line-height: 1.6; transition: border-color 0.2s;
         }
-        textarea:focus { outline: none; border-color: var(--accent-amber); }
+        textarea:focus { outline: none; border-color: var(--accent-amber); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
         textarea::placeholder { color: var(--text-muted); }
         .char-count { text-align: right; font-size: 12px; color: var(--text-muted); margin-top: 4px; }
         .btn-analyze {
             width: 100%; padding: 14px; background: linear-gradient(135deg, var(--accent-amber), #d97706);
-            color: #000; border: none; border-radius: 10px; font-size: 16px; font-weight: 600;
+            color: #000; border: none; border-radius: 12px; font-size: 16px; font-weight: 600;
             cursor: pointer; transition: all 0.2s; font-family: inherit;
         }
-        .btn-analyze:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); }
+        .btn-analyze:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25); }
         .btn-analyze:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
         .loading { display: none; text-align: center; padding: 40px; }
         .loading.visible { display: block; }
-        .spinner { width: 40px; height: 40px; border: 3px solid var(--border-color); border-top-color: var(--accent-amber); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border-color); border-top-color: var(--accent-teal); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .loading-text { color: var(--text-muted); font-size: 14px; }
         .results-section { display: none; }
@@ -72,7 +91,7 @@
         .result-content li { margin-bottom: 6px; }
         .result-content strong { color: var(--text-primary); }
         .result-content p { margin-bottom: 8px; }
-        .error-msg { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 12px 16px; border-radius: 8px; font-size: 14px; display: none; margin-bottom: 16px; }
+        .error-msg { background: rgba(220, 38, 38, 0.06); border: 1px solid rgba(220, 38, 38, 0.2); color: var(--accent-error); padding: 12px 16px; border-radius: 10px; font-size: 14px; display: none; margin-bottom: 16px; }
         .error-msg.visible { display: block; }
         @media (max-width: 768px) {
             .header { padding: 16px; }

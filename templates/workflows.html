@@ -7,26 +7,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0f0f13;
-            --bg-secondary: #16161d;
-            --bg-tertiary: #1c1c26;
-            --bg-elevated: #22222e;
-            --border-color: #2a2a3a;
-            --border-light: #363647;
-            --text-primary: #e8e8ed;
-            --text-secondary: #a0a0b0;
-            --text-muted: #6b6b7b;
-            --accent-primary: #6366f1;
-            --accent-hover: #818cf8;
-            --accent-success: #10b981;
-            --accent-warning: #f59e0b;
-            --accent-error: #ef4444;
-            --accent-blue: #3b82f6;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
+            --border-color: #E8DDD0;
+            --border-light: #F0E6DA;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
+            --accent-success: #16A34A;
+            --accent-warning: #F59E0B;
+            --accent-error: #DC2626;
+            --accent-blue: #2563EB;
+            --shadow-sm: 0 1px 3px rgba(45, 35, 25, 0.06);
+            --shadow-md: 0 4px 12px rgba(45, 35, 25, 0.08);
+            --shadow-lg: 0 8px 24px rgba(45, 35, 25, 0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
         }
 
         * {
@@ -59,6 +62,7 @@
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             z-index: 100;
+            box-shadow: var(--shadow-sm);
         }
 
         .logo {
@@ -72,7 +76,7 @@
             font-size: 20px;
             font-weight: 700;
             color: var(--accent-primary);
-            background: rgba(99, 102, 241, 0.15);
+            background: rgba(13, 148, 136, 0.12);
             padding: 6px 10px;
             border-radius: var(--radius-sm);
         }
@@ -81,7 +85,7 @@
             font-size: 20px;
             font-weight: 700;
             letter-spacing: -0.5px;
-            color: white;
+            color: var(--text-primary);
         }
 
         .nav-actions {
@@ -97,20 +101,21 @@
             font-size: 14px;
             font-weight: 600;
             border: none;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all var(--transition-fast);
             text-decoration: none;
         }
 
         .btn-primary {
-            background: var(--accent-warning);
-            color: #000;
+            background: var(--accent-primary);
+            color: white;
         }
 
         .btn-primary:hover {
-            filter: brightness(1.1);
+            background: var(--accent-hover);
             transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-secondary {
@@ -122,6 +127,7 @@
         .btn-secondary:hover {
             background: var(--bg-elevated);
             color: var(--text-primary);
+            border-color: var(--border-light);
         }
 
         /* Main Layout */
@@ -179,15 +185,16 @@
             margin-bottom: 6px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all var(--transition-fast);
         }
 
         .node-template:hover {
             background: var(--bg-elevated);
             border-color: var(--border-light);
             transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
         }
 
         .node-icon {
@@ -198,6 +205,7 @@
             justify-content: center;
             border-radius: var(--radius-sm);
             font-size: 16px;
+            color: white;
         }
 
         .node-info h4 {
@@ -216,9 +224,10 @@
             flex: 1;
             position: relative;
             overflow: hidden;
-            background:
-                linear-gradient(rgba(42, 42, 58, 0.3) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(42, 42, 58, 0.3) 1px, transparent 1px);
+            background: var(--bg-primary);
+            background-image:
+                linear-gradient(rgba(232, 221, 208, 0.5) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(232, 221, 208, 0.5) 1px, transparent 1px);
             background-size: 20px 20px;
         }
 
@@ -262,7 +271,7 @@
 
         .workflow-node.selected {
             border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.25);
         }
 
         .workflow-node.running {
@@ -275,7 +284,7 @@
         }
 
         @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.3); }
             50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
         }
 
@@ -296,12 +305,14 @@
             justify-content: center;
             border-radius: var(--radius-sm);
             font-size: 14px;
+            color: white;
         }
 
         .node-header-title {
             flex: 1;
             font-size: 13px;
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         .node-delete {
@@ -312,6 +323,7 @@
             font-size: 18px;
             padding: 4px;
             border-radius: 4px;
+            transition: all var(--transition-fast);
         }
 
         .node-delete:hover {
@@ -356,6 +368,7 @@
         .node-field textarea:focus {
             outline: none;
             border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
         }
 
         /* Connection Points */
@@ -363,15 +376,17 @@
             position: absolute;
             width: 14px;
             height: 14px;
-            background: var(--bg-elevated);
-            border: 2px solid var(--border-light);
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
             border-radius: 50%;
             cursor: crosshair;
+            transition: all var(--transition-fast);
         }
 
         .connection-point:hover {
             background: var(--accent-primary);
             border-color: var(--accent-primary);
+            transform: translateY(-50%) scale(1.2);
         }
 
         .connection-point.input {
@@ -398,7 +413,7 @@
 
         .connection-line {
             fill: none;
-            stroke: var(--border-light);
+            stroke: var(--text-muted);
             stroke-width: 2;
             cursor: pointer;
             pointer-events: stroke;
@@ -443,13 +458,15 @@
             letter-spacing: 0.5px;
         }
 
+        /* Output/Terminal - KEEP DARK */
         .panel-content {
             padding: 16px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             max-height: 200px;
             overflow-y: auto;
-            background: var(--bg-tertiary);
+            background: #2D2319;
+            color: #C4B5A5;
         }
 
         .execution-log {
@@ -460,7 +477,7 @@
 
         .log-entry {
             padding: 8px 0;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid rgba(245, 237, 227, 0.1);
             display: flex;
             align-items: flex-start;
             gap: 8px;
@@ -480,21 +497,21 @@
 
         .log-node {
             font-weight: 600;
-            color: var(--text-primary);
+            color: #F5EDE3;
         }
 
         .log-message {
-            color: var(--text-secondary);
+            color: #C4B5A5;
             font-size: 11px;
         }
 
         .log-time {
-            color: var(--text-muted);
+            color: #7A6B5D;
             font-size: 10px;
         }
 
         .placeholder {
-            color: var(--text-muted);
+            color: #7A6B5D;
             font-style: italic;
             text-align: center;
             padding: 20px;
@@ -502,7 +519,7 @@
 
         /* Problem Description */
         .problem-section {
-            background: var(--bg-tertiary);
+            background: var(--bg-elevated);
             padding: 16px;
             border-bottom: 1px solid var(--border-color);
         }
@@ -518,6 +535,33 @@
             font-size: 13px;
             color: var(--text-secondary);
             line-height: 1.6;
+        }
+
+        /* Scrollbar styling for warm theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Dark panel scrollbar override */
+        .panel-content::-webkit-scrollbar-track {
+            background: #3A2E22;
+        }
+        .panel-content::-webkit-scrollbar-thumb {
+            background: #5A4A3A;
+        }
+        .panel-content::-webkit-scrollbar-thumb:hover {
+            background: #7A6B5D;
         }
     </style>
 </head>
@@ -545,14 +589,14 @@
                     <div class="node-category">
                         <div class="category-title">Triggers</div>
                         <div class="node-template" data-type="trigger" data-node="start">
-                            <div class="node-icon" style="background: #10b981;">▶</div>
+                            <div class="node-icon" style="background: #16A34A;">▶</div>
                             <div class="node-info">
                                 <h4>Start</h4>
                                 <p>Begin workflow</p>
                             </div>
                         </div>
                         <div class="node-template" data-type="trigger" data-node="input">
-                            <div class="node-icon" style="background: #6366f1;">📥</div>
+                            <div class="node-icon" style="background: #0D9488;">📥</div>
                             <div class="node-info">
                                 <h4>Input Data</h4>
                                 <p>Define input values</p>
@@ -570,14 +614,14 @@
                             </div>
                         </div>
                         <div class="node-template" data-type="process" data-node="filter">
-                            <div class="node-icon" style="background: #f59e0b;">🔍</div>
+                            <div class="node-icon" style="background: #F59E0B;">🔍</div>
                             <div class="node-info">
                                 <h4>Filter</h4>
                                 <p>Filter by condition</p>
                             </div>
                         </div>
                         <div class="node-template" data-type="process" data-node="calculate">
-                            <div class="node-icon" style="background: #3b82f6;">🧮</div>
+                            <div class="node-icon" style="background: #2563EB;">🧮</div>
                             <div class="node-info">
                                 <h4>Calculate</h4>
                                 <p>Math operations</p>
@@ -606,14 +650,14 @@
                     <div class="node-category">
                         <div class="category-title">Output</div>
                         <div class="node-template" data-type="output" data-node="display">
-                            <div class="node-icon" style="background: #10b981;">📤</div>
+                            <div class="node-icon" style="background: #16A34A;">📤</div>
                             <div class="node-info">
                                 <h4>Display</h4>
                                 <p>Show result</p>
                             </div>
                         </div>
                         <div class="node-template" data-type="output" data-node="end">
-                            <div class="node-icon" style="background: #ef4444;">⏹</div>
+                            <div class="node-icon" style="background: #DC2626;">⏹</div>
                             <div class="node-info">
                                 <h4>End</h4>
                                 <p>Finish workflow</p>
@@ -680,27 +724,27 @@
                 this.connectingFrom = null;
 
                 this.nodeTypes = {
-                    start: { icon: '▶', color: '#10b981', title: 'Start', fields: [] },
-                    input: { icon: '📥', color: '#6366f1', title: 'Input Data', fields: [
+                    start: { icon: '▶', color: '#16A34A', title: 'Start', fields: [] },
+                    input: { icon: '📥', color: '#0D9488', title: 'Input Data', fields: [
                         { name: 'value', label: 'Value', type: 'text', default: '10' }
                     ]},
                     transform: { icon: '🔄', color: '#8b5cf6', title: 'Transform', fields: [
                         { name: 'operation', label: 'Operation', type: 'select', options: ['Uppercase', 'Lowercase', 'Double', 'Square'] }
                     ]},
-                    filter: { icon: '🔍', color: '#f59e0b', title: 'Filter', fields: [
+                    filter: { icon: '🔍', color: '#F59E0B', title: 'Filter', fields: [
                         { name: 'condition', label: 'Condition', type: 'text', default: '> 5' }
                     ]},
-                    calculate: { icon: '🧮', color: '#3b82f6', title: 'Calculate', fields: [
+                    calculate: { icon: '🧮', color: '#2563EB', title: 'Calculate', fields: [
                         { name: 'expression', label: 'Expression', type: 'text', default: 'x * 2' }
                     ]},
                     condition: { icon: '🔀', color: '#ec4899', title: 'Condition', fields: [
                         { name: 'check', label: 'If', type: 'text', default: 'x > 10' }
                     ]},
                     merge: { icon: '🔗', color: '#14b8a6', title: 'Merge', fields: [] },
-                    display: { icon: '📤', color: '#10b981', title: 'Display', fields: [
+                    display: { icon: '📤', color: '#16A34A', title: 'Display', fields: [
                         { name: 'label', label: 'Label', type: 'text', default: 'Result' }
                     ]},
-                    end: { icon: '⏹', color: '#ef4444', title: 'End', fields: [] }
+                    end: { icon: '⏹', color: '#DC2626', title: 'End', fields: [] }
                 };
 
                 this.init();
@@ -1132,7 +1176,7 @@
                         case 'display':
                             const displayText = `${node.values.label}: ${currentValue}`;
                             addLog('📤', 'Display', displayText);
-                            outputDiv.innerHTML += `<div style="padding: 8px 0; border-bottom: 1px solid var(--border-color);">${displayText}</div>`;
+                            outputDiv.innerHTML += `<div style="padding: 8px 0; border-bottom: 1px solid rgba(245, 237, 227, 0.1); color: #F5EDE3;">${displayText}</div>`;
                             break;
                         case 'end':
                             addLog('⏹', 'End', 'Workflow completed');

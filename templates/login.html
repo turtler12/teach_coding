@@ -7,16 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-tertiary: #1a1a24;
-            --border-color: #2a2a3a;
-            --text-primary: #f0f0f5;
-            --text-secondary: #a0a0b0;
-            --text-muted: #606070;
-            --accent-primary: #6366f1;
-            --accent-success: #10b981;
-            --accent-error: #ef4444;
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --border-color: #E8DDD0;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-success: #16A34A;
+            --accent-error: #DC2626;
         }
 
         * {
@@ -43,8 +43,8 @@
             right: 0;
             bottom: 0;
             background:
-                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 20%, rgba(13, 148, 136, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
@@ -59,7 +59,7 @@
         .login-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 20px;
+            border-radius: 22px;
             padding: 48px 40px;
         }
 
@@ -74,13 +74,15 @@
         .logo-icon {
             width: 48px;
             height: 48px;
-            background: linear-gradient(135deg, var(--accent-primary), #8b5cf6);
-            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-primary), #14B8A6);
+            border: 2px solid rgba(13, 148, 136, 0.2);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 18px;
+            color: white;
         }
 
         .logo-text {
@@ -107,20 +109,20 @@
 
         .flash {
             padding: 12px 16px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
             margin-bottom: 8px;
         }
 
         .flash.error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
             color: var(--accent-error);
         }
 
         .flash.success {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: rgba(22, 163, 74, 0.1);
+            border: 1px solid rgba(22, 163, 74, 0.3);
             color: var(--accent-success);
         }
 
@@ -141,7 +143,7 @@
             padding: 14px 16px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 12px;
             color: var(--text-primary);
             font-size: 16px;
             font-family: inherit;
@@ -151,7 +153,7 @@
         input:focus {
             outline: none;
             border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
         }
 
         input::placeholder {
@@ -161,10 +163,10 @@
         .btn-primary {
             width: 100%;
             padding: 14px 24px;
-            background: linear-gradient(135deg, var(--accent-primary), #8b5cf6);
+            background: linear-gradient(135deg, var(--accent-primary), #14B8A6);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -174,7 +176,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.25);
         }
 
         .divider {
@@ -235,7 +237,7 @@
             text-align: center;
             padding: 12px 8px;
             background: var(--bg-tertiary);
-            border-radius: 8px;
+            border-radius: 10px;
         }
 
         .feature-icon {

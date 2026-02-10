@@ -7,16 +7,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #09090b;
-            --bg-secondary: #18181b;
-            --bg-tertiary: #27272a;
-            --border-color: #27272a;
-            --border-light: #3f3f46;
-            --text-primary: #fafafa;
-            --text-secondary: #a1a1aa;
-            --text-muted: #71717a;
-            --accent-primary: #3b82f6;
-            --accent-secondary: #f472b6;
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
+            --border-color: #E8DDD0;
+            --border-light: #F0E6DA;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
+            --accent-secondary: #14B8A6;
+            --accent-success: #16A34A;
+            --accent-warning: #F59E0B;
+            --accent-error: #DC2626;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
@@ -25,22 +30,24 @@
             max-width: 960px; margin: 0 auto; padding: 20px 24px;
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
         }
-        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 700; font-size: 20px; }
-        .logo-icon { font-size: 16px; color: #6366f1; background: rgba(99,102,241,0.15); padding: 6px 10px; border-radius: 8px; font-family: monospace; }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-primary); font-weight: 700; font-size: 20px; }
+        .logo-icon { font-size: 16px; color: var(--accent-primary); background: rgba(13,148,136,0.1); padding: 6px 10px; border-radius: 10px; font-family: monospace; }
         .back-link { color: var(--text-muted); text-decoration: none; font-size: 14px; }
-        .back-link:hover { color: white; }
+        .back-link:hover { color: var(--text-primary); }
 
         .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
 
         .demo-header { margin-bottom: 32px; }
-        .demo-badge { display: inline-block; background: rgba(59,130,246,0.12); color: #3b82f6; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 12px; }
-        .demo-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .demo-badge { display: inline-block; background: rgba(13,148,136,0.1); color: var(--accent-primary); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 12px; }
+        .demo-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
         .demo-header p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; max-width: 600px; }
 
         .visualizer {
             background: var(--bg-secondary); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 28px; margin-bottom: 24px;
+            border-radius: 18px; padding: 28px; margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
         }
 
         .fraction-inputs {
@@ -55,70 +62,81 @@
         }
         .fraction-box input {
             width: 56px; text-align: center; padding: 8px; font-size: 20px; font-weight: 600;
-            background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary);
-            font-family: inherit; border-radius: 8px;
+            background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary);
+            font-family: inherit; border-radius: 10px;
         }
-        .fraction-box input:focus { outline: none; border-color: var(--accent-primary); }
+        .fraction-box input:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
         .fraction-line {
-            width: 56px; height: 3px; background: var(--text-secondary); border-radius: 2px; margin: 4px 0;
+            width: 56px; height: 3px; background: var(--accent-primary); border-radius: 2px; margin: 4px 0;
         }
 
         .vs-label { font-size: 18px; font-weight: 600; color: var(--text-muted); padding-top: 20px; }
 
         .compare-result {
             text-align: center; font-size: 16px; font-weight: 600; padding: 14px;
-            border-radius: 10px; margin-bottom: 24px;
+            border-radius: 12px; margin-bottom: 24px;
         }
-        .compare-result.equal { background: rgba(16,185,129,0.1); color: #10b981; }
-        .compare-result.a-bigger { background: rgba(59,130,246,0.1); color: #3b82f6; }
-        .compare-result.b-bigger { background: rgba(244,114,182,0.1); color: #f472b6; }
+        .compare-result.equal { background: rgba(13,148,136,0.08); color: var(--accent-primary); }
+        .compare-result.a-bigger { background: rgba(13,148,136,0.08); color: var(--accent-primary); }
+        .compare-result.b-bigger { background: rgba(244,114,182,0.08); color: #e84393; }
 
         .viz-row {
             display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;
         }
 
-        .viz-panel { text-align: center; }
+        .viz-panel {
+            text-align: center;
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 14px; padding: 16px;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
+        }
         .viz-panel h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
         .viz-panel canvas { display: block; margin: 0 auto; }
 
         .bar-section { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-color); }
-        .bar-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 16px; text-align: center; }
+        .bar-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 16px; text-align: center; color: var(--text-primary); }
 
         .bar-wrap { display: flex; flex-direction: column; gap: 12px; max-width: 500px; margin: 0 auto; }
         .bar-item { display: flex; align-items: center; gap: 12px; }
         .bar-label { width: 50px; text-align: right; font-size: 14px; font-weight: 600; flex-shrink: 0; }
-        .bar-track { flex: 1; height: 28px; background: var(--bg-tertiary); border-radius: 6px; overflow: hidden; position: relative; }
-        .bar-fill { height: 100%; border-radius: 6px; transition: width 0.4s ease; }
+        .bar-track { flex: 1; height: 28px; background: var(--bg-tertiary); border-radius: 8px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; border-radius: 8px; transition: width 0.4s ease; }
         .bar-fill-a { background: var(--accent-primary); }
-        .bar-fill-b { background: var(--accent-secondary); }
+        .bar-fill-b { background: #f472b6; }
         .bar-value { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; color: white; }
 
         .operations {
             background: var(--bg-secondary); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 28px; margin-bottom: 24px;
+            border-radius: 18px; padding: 28px; margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
         }
-        .operations h2 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .operations h2 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text-primary); }
         .ops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
         .op-card {
-            background: var(--bg-tertiary); border-radius: 10px; padding: 16px; text-align: center;
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 16px; text-align: center;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
         }
         .op-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-        .op-result { font-size: 22px; font-weight: 700; }
+        .op-result { font-size: 22px; font-weight: 700; color: var(--text-primary); }
 
         .lcd-section {
             background: var(--bg-secondary); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 28px;
+            border-radius: 18px; padding: 28px;
+            box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04);
         }
-        .lcd-section h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .lcd-section h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
         .lcd-section p { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
         .lcd-steps { display: flex; flex-direction: column; gap: 8px; }
         .lcd-step {
             display: flex; align-items: center; gap: 12px; padding: 10px 14px;
-            background: var(--bg-tertiary); border-radius: 8px; font-size: 14px;
+            background: var(--bg-tertiary); border-radius: 10px; font-size: 14px; color: var(--text-secondary);
+            border: 1px solid var(--border-light);
         }
         .lcd-step-num {
             width: 24px; height: 24px; border-radius: 50%; background: var(--accent-primary);
             display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;
+            color: white;
         }
 
         @media (max-width: 640px) {
@@ -130,7 +148,7 @@
 <body>
     <nav class="nav">
         <a href="/" class="logo"><span class="logo-icon">&lt;/&gt;</span> TrustAI</a>
-        <a href="/projects" class="back-link">← Back to Projects</a>
+        <a href="/projects" class="back-link">&larr; Back to Projects</a>
     </nav>
 
     <div class="container">
@@ -155,7 +173,7 @@
                     <label>Fraction B</label>
                     <div class="fraction-box">
                         <input type="number" id="numB" value="3" min="0" max="99" onchange="update()">
-                        <div class="fraction-line" style="background: var(--accent-secondary);"></div>
+                        <div class="fraction-line" style="background: #f472b6;"></div>
                         <input type="number" id="denB" value="4" min="1" max="99" onchange="update()">
                     </div>
                 </div>
@@ -169,7 +187,7 @@
                     <canvas id="pieA" width="180" height="180"></canvas>
                 </div>
                 <div class="viz-panel">
-                    <h3 style="color: var(--accent-secondary);">Fraction B</h3>
+                    <h3 style="color: #e84393;">Fraction B</h3>
                     <canvas id="pieB" width="180" height="180"></canvas>
                 </div>
             </div>
@@ -185,7 +203,7 @@
                         </div>
                     </div>
                     <div class="bar-item">
-                        <span class="bar-label" id="barLabelB" style="color: var(--accent-secondary);">3/4</span>
+                        <span class="bar-label" id="barLabelB" style="color: #e84393;">3/4</span>
                         <div class="bar-track">
                             <div class="bar-fill bar-fill-b" id="barB" style="width: 75%;"></div>
                             <span class="bar-value" id="barValB">75%</span>
@@ -253,7 +271,7 @@ function drawPie(canvasId, numerator, denominator, color) {
     // Background circle
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.fillStyle = '#27272a';
+    ctx.fillStyle = '#F5EDE3';
     ctx.fill();
 
     // Filled portion
@@ -275,7 +293,7 @@ function drawPie(canvasId, numerator, denominator, color) {
             ctx.beginPath();
             ctx.moveTo(cx, cy);
             ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
-            ctx.strokeStyle = 'rgba(9,9,11,0.6)';
+            ctx.strokeStyle = 'rgba(255,255,255,0.7)';
             ctx.lineWidth = 1.5;
             ctx.stroke();
         }
@@ -290,12 +308,12 @@ function drawPie(canvasId, numerator, denominator, color) {
 
     // Label
     ctx.font = '600 18px Inter, sans-serif';
-    ctx.fillStyle = '#fafafa';
+    ctx.fillStyle = '#2D2319';
     ctx.textAlign = 'center';
     ctx.fillText(numerator + '/' + denominator, cx, cy + r + 22);
 
     ctx.font = '13px Inter, sans-serif';
-    ctx.fillStyle = '#71717a';
+    ctx.fillStyle = '#A09488';
     ctx.fillText(Math.round(frac * 100) + '%', cx, cy + 6);
 }
 
@@ -311,7 +329,7 @@ function update() {
     var valB = nB / dB;
 
     // Pie charts
-    drawPie('pieA', nA, dA, '#3b82f6');
+    drawPie('pieA', nA, dA, '#0D9488');
     drawPie('pieB', nB, dB, '#f472b6');
 
     // Comparison
