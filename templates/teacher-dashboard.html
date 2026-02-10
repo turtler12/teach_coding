@@ -122,12 +122,26 @@
             </div>
         </div>
 
-        <div class="section" style="margin-bottom: 24px;">
+        <div class="classes-grid" style="margin-bottom: 24px;">
             <a href="{{ url_for('curriculum_advisor') }}" class="class-card" style="display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05)); border-color: rgba(245, 158, 11, 0.3);">
-                <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">&#9733;</div>
+                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">&#9733;</div>
                 <div>
-                    <div class="class-name" style="margin-bottom: 4px;">Curriculum AI Advisor</div>
-                    <div style="font-size: 13px; color: var(--text-muted);">Paste your curriculum and get AI-powered suggestions for incorporating AI into your lessons</div>
+                    <div class="class-name" style="margin-bottom: 2px;">Curriculum AI Advisor</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">AI suggestions for your curriculum</div>
+                </div>
+            </a>
+            <a href="{{ url_for('teacher_student_logs') }}" class="class-card" style="display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05)); border-color: rgba(245, 158, 11, 0.3);">
+                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">&#128274;</div>
+                <div>
+                    <div class="class-name" style="margin-bottom: 2px;">Student AI Logs</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Monitor conversations &amp; safety flags</div>
+                </div>
+            </a>
+            <a href="{{ url_for('teacher_ai_analyzer') }}" class="class-card" style="display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05)); border-color: rgba(245, 158, 11, 0.3);">
+                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">&#128269;</div>
+                <div>
+                    <div class="class-name" style="margin-bottom: 2px;">AI Usage Analyzer</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Analyze student work vs AI prompts</div>
                 </div>
             </a>
         </div>

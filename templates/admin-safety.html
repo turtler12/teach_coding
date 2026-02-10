@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAI - Safety Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --border-color: #2a2a3a;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+        .header {
+            background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-red), #dc2626); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: white; }
+        .logo-text { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .admin-badge { background: var(--accent-red); color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-left: 8px; }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; font-family: inherit; }
+        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background: var(--border-color); }
+        .container { max-width: 1100px; margin: 0 auto; padding: 32px; }
+        .page-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .page-subtitle { color: var(--text-muted); margin-bottom: 32px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+        .stat-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; }
+        .stat-value { font-size: 32px; font-weight: 700; margin-bottom: 2px; }
+        .stat-value.alert { color: var(--accent-red); }
+        .stat-label { color: var(--text-muted); font-size: 14px; }
+        .section { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .reason-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+        .reason-chip { padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; }
+        .reason-chip.profanity { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+        .reason-chip.violence_or_self_harm { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .reason-chip.jailbreak_attempt { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+        .reason-chip.personal_info_sharing { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .reason-chip.academic_dishonesty_attempt { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+        .reason-chip.unknown { background: var(--bg-tertiary); color: var(--text-muted); }
+        .flags-table { width: 100%; border-collapse: collapse; }
+        .flags-table th { text-align: left; padding: 12px 14px; font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border-color); }
+        .flags-table td { padding: 14px; font-size: 14px; border-bottom: 1px solid var(--border-color); vertical-align: top; }
+        .flags-table tr:last-child td { border-bottom: none; }
+        .flags-table tr.unreviewed { border-left: 3px solid var(--accent-red); }
+        .msg-preview { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); }
+        .reason-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 500; white-space: nowrap; }
+        .reason-badge.profanity { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+        .reason-badge.violence_or_self_harm { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .reason-badge.jailbreak_attempt { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+        .reason-badge.personal_info_sharing { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .reason-badge.academic_dishonesty_attempt { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+        .status-reviewed { color: #10b981; font-size: 12px; }
+        .status-unreviewed { color: var(--accent-red); font-size: 12px; font-weight: 600; }
+        .btn-review { padding: 6px 12px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .btn-review:hover { background: var(--border-color); }
+        .btn-review:disabled { opacity: 0.4; cursor: not-allowed; }
+        .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .header { padding: 16px; }
+            .container { padding: 16px; }
+            .flags-table { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">
+            <div class="logo-icon">&lt;/&gt;</div>
+            <span class="logo-text">TrustAI</span>
+            <span class="admin-badge">Admin</span>
+        </a>
+        <div class="header-actions">
+            <a href="{{ url_for('admin_analyzer') }}" class="btn btn-secondary" style="border-color: var(--accent-amber); color: var(--accent-amber);">AI Analyzer</a>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Admin Panel</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">Safety Dashboard</h1>
+        <p class="page-subtitle">Monitor flagged student messages across all AI Helper conversations</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ total_flags }}</div>
+                <div class="stat-label">Total Flags</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value {{ 'alert' if unreviewed > 0 else '' }}">{{ unreviewed }}</div>
+                <div class="stat-label">Unreviewed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ unique_students }}</div>
+                <div class="stat-label">Students Flagged</div>
+            </div>
+        </div>
+
+        {% if reason_counts %}
+        <div class="section">
+            <h2 class="section-title">Flag Reasons</h2>
+            <div class="reason-grid">
+                {% for reason, count in reason_counts.items() %}
+                <div class="reason-chip {{ reason }}">{{ reason|replace('_', ' ')|title }}: {{ count }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="section">
+            <h2 class="section-title">Flagged Messages</h2>
+            {% if flags %}
+            <table class="flags-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Message</th>
+                        <th>Reason</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in flags %}
+                    <tr class="{{ '' if f.reviewed else 'unreviewed' }}" id="row-{{ loop.index0 }}">
+                        <td><strong>{{ f.username }}</strong></td>
+                        <td><div class="msg-preview" title="{{ f.content }}">{{ f.content[:80] }}{% if f.content|length > 80 %}...{% endif %}</div></td>
+                        <td><span class="reason-badge {{ f.flag_reason }}">{{ f.flag_reason|replace('_', ' ')|title }}</span></td>
+                        <td style="white-space: nowrap; color: var(--text-muted); font-size: 13px;">{{ f.timestamp[:16] }}</td>
+                        <td>
+                            {% if f.reviewed %}
+                                <span class="status-reviewed">Reviewed</span>
+                            {% else %}
+                                <span class="status-unreviewed">New</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not f.reviewed %}
+                            <button class="btn-review" onclick="markReviewed({{ loop.index0 }}, this)">Mark Reviewed</button>
+                            {% else %}
+                            <button class="btn-review" disabled>Done</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">No flagged messages yet. The system is monitoring student AI Helper conversations.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function markReviewed(index, btn) {
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            fetch('/admin/safety-review', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ index: index })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    btn.textContent = 'Done';
+                    var row = document.getElementById('row-' + index);
+                    if (row) {
+                        row.classList.remove('unreviewed');
+                        var statusCell = row.querySelector('.status-unreviewed');
+                        if (statusCell) {
+                            statusCell.className = 'status-reviewed';
+                            statusCell.textContent = 'Reviewed';
+                        }
+                    }
+                } else {
+                    btn.textContent = 'Error';
+                    btn.disabled = false;
+                }
+            })
+            .catch(function() {
+                btn.textContent = 'Error';
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
