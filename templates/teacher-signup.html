@@ -123,11 +123,33 @@
                     <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
                 </div>
                 <div class="form-group">
-                    <label for="school">School <span style="color: var(--text-muted); font-weight: 400;">(optional)</span></label>
-                    <input type="text" id="school" name="school" placeholder="Your school name">
+                    <label for="email">School Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@school.edu" required>
+                    <div id="eduHint" style="display: none; margin-top: 8px; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5;"></div>
+                </div>
+                <div class="form-group">
+                    <label for="school">School Name</label>
+                    <input type="text" id="school" name="school" placeholder="Your school name" required>
                 </div>
                 <button type="submit" class="btn-primary">Create Teacher Account</button>
             </form>
+
+            <div id="trialPopup" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+                <div style="background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:16px; padding:32px; max-width:420px; width:100%; text-align:center;">
+                    <div style="font-size:40px; margin-bottom:16px;">&#127891;</div>
+                    <h3 style="font-size:20px; margin-bottom:8px;">Free Trial with School Email!</h3>
+                    <p style="color:var(--text-secondary); font-size:14px; line-height:1.6; margin-bottom:20px;">Sign up with your <strong style="color:#14b8a6;">.edu email</strong> and get a <strong style="color:#f59e0b;">free 10-day trial</strong> with full access to all features.</p>
+                    <div style="background:var(--bg-tertiary); border-radius:10px; padding:16px; text-align:left; margin-bottom:20px;">
+                        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:10px;"><strong style="color:var(--text-primary);">Want even more time?</strong></p>
+                        <div style="font-size:13px; color:var(--text-secondary); line-height:1.8;">
+                            &#10003; Share feedback about your experience &rarr; <strong style="color:#14b8a6;">+5 days</strong><br>
+                            &#10003; Refer a teacher who signs up &rarr; <strong style="color:#14b8a6;">+10 days</strong><br>
+                            &#10003; Refer a student who signs up &rarr; <strong style="color:#14b8a6;">+3 days</strong>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('trialPopup').style.display='none'" style="padding:12px 32px; background:linear-gradient(135deg,#14b8a6,#0d9488); color:white; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit;">Got it!</button>
+                </div>
+            </div>
 
             <div class="divider">or</div>
             <p class="login-link">
@@ -138,5 +160,34 @@
             </p>
         </div>
     </div>
+
+    <script>
+        var emailInput = document.getElementById('email');
+        var hint = document.getElementById('eduHint');
+        var popupShown = false;
+
+        emailInput.addEventListener('input', function() {
+            var val = this.value.trim().toLowerCase();
+            if (val.includes('@') && (val.endsWith('.edu') || val.match(/\.edu\..+$/))) {
+                hint.style.display = 'block';
+                hint.style.background = 'rgba(20, 184, 166, 0.1)';
+                hint.style.border = '1px solid rgba(20, 184, 166, 0.3)';
+                hint.style.color = '#14b8a6';
+                hint.innerHTML = '&#127891; <strong>School email detected!</strong> You qualify for a free 10-day trial.';
+                if (!popupShown) {
+                    popupShown = true;
+                    document.getElementById('trialPopup').style.display = 'flex';
+                }
+            } else if (val.includes('@')) {
+                hint.style.display = 'block';
+                hint.style.background = 'rgba(245, 158, 11, 0.1)';
+                hint.style.border = '1px solid rgba(245, 158, 11, 0.3)';
+                hint.style.color = '#f59e0b';
+                hint.innerHTML = 'Tip: Use a <strong>.edu email</strong> for a free 10-day trial!';
+            } else {
+                hint.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

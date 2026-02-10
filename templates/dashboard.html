@@ -477,6 +477,9 @@
                 <span class="logo-text">TrustAI</span>
             </a>
             <div class="nav-links">
+                {% if session.get('role') == 'teacher' %}
+                <a href="{{ url_for('teacher_dashboard') }}" class="nav-link" style="color: #14b8a6; font-weight: 600;">Back to Teacher View</a>
+                {% endif %}
                 <a href="/" class="nav-link">Home</a>
                 <a href="/dashboard" class="nav-link active">Dashboard</a>
                 <a href="/coding" class="nav-link">Block Coding</a>

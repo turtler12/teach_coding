@@ -566,13 +566,28 @@ def signup():
                 flash('Username already exists', 'error')
                 return render_template('signup.html')
 
-            # Create user
+            # Validate school and email
+            email = request.form.get('email', '').strip().lower()
             school = request.form.get('school', '').strip()
+            if not email or '@' not in email:
+                flash('A valid email is required', 'error')
+                return render_template('signup.html')
+            if not school:
+                flash('School name is required', 'error')
+                return render_template('signup.html')
+
+            # Check if .edu email for trial
+            is_edu = email.endswith('.edu') or '.edu.' in email.split('@')[-1]
+
+            # Create user
             users[username] = {
                 'password': hash_password(password),
                 'created_at': str(datetime.datetime.now()),
                 'role': 'student',
+                'email': email,
                 'school': school,
+                'is_edu': is_edu,
+                'trial_days': 10 if is_edu else 0,
                 'classes': []
             }
 
@@ -613,6 +628,10 @@ def home():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    # Teachers default to teacher dashboard
+    if session.get('role') == 'teacher' and not request.args.get('student_view'):
+        return redirect(url_for('teacher_dashboard'))
+
     username = session.get('user')
     users = load_users()
 
@@ -826,12 +845,25 @@ def teacher_signup():
                 flash('Username already exists', 'error')
                 return render_template('teacher-signup.html')
 
+            email = request.form.get('email', '').strip().lower()
             school = request.form.get('school', '').strip()
+            if not email or '@' not in email:
+                flash('A valid email is required', 'error')
+                return render_template('teacher-signup.html')
+            if not school:
+                flash('School name is required', 'error')
+                return render_template('teacher-signup.html')
+
+            is_edu = email.endswith('.edu') or '.edu.' in email.split('@')[-1]
+
             users[username] = {
                 'password': hash_password(password),
                 'created_at': str(datetime.datetime.now()),
                 'role': 'teacher',
+                'email': email,
                 'school': school,
+                'is_edu': is_edu,
+                'trial_days': 10 if is_edu else 0,
                 'classes': []
             }
             save_users(users)
