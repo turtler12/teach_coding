@@ -7,6 +7,7 @@ import hashlib
 import datetime
 import random
 import string
+import re
 from io import StringIO
 
 app = Flask(__name__)
@@ -581,6 +582,80 @@ def moderate_message(message):
             return True, 'academic_dishonesty_attempt'
 
     return False, None
+
+# --- Output moderation (checks LLM responses before sending to students) ---
+
+SAFE_RESPONSE_FALLBACK = "I'm sorry, I wasn't able to generate a helpful response. Could you try rephrasing your question? I'm here to help with coding, homework concepts, and study tips!"
+
+def moderate_output(response_text):
+    """Check LLM output for unsafe content before sending to students.
+    Returns (is_safe, flag_reason). If not safe, the response should be replaced."""
+    text_lower = response_text.lower()
+
+    # Check for profanity/slurs that the LLM should never output
+    profanity_words = [
+        'fuck', 'shit', 'asshole', 'bitch', 'bastard', 'slut', 'whore', 'cunt',
+        'damn', 'dick', 'piss',
+        'nigger', 'nigga', 'faggot', 'fag', 'retard', 'retarded',
+        'chink', 'spic', 'kike', 'wetback', 'gook', 'towelhead', 'beaner'
+    ]
+    for word in profanity_words:
+        # Use word boundary check to avoid false positives (e.g. "class" matching "ass")
+        if re.search(r'\b' + re.escape(word) + r'\b', text_lower):
+            return False, 'profanity_in_output'
+
+    # Check for racist/discriminatory content
+    racist_phrases = [
+        'white supremacy is good', 'racial superiority', 'inferior race',
+        'go back to your country', 'those people are', 'all [race] are',
+        'hate crime is justified', 'segregation was right',
+        'holocaust denial', 'holocaust didn\'t happen',
+    ]
+    for phrase in racist_phrases:
+        if phrase in text_lower:
+            return False, 'racist_content_in_output'
+
+    # Check for violence encouragement
+    violence_phrases = [
+        'how to make a bomb', 'how to make a weapon', 'how to hurt',
+        'how to kill', 'you should kill', 'you should hurt',
+        'instructions for violence', 'attack someone',
+        'how to hack into', 'how to break into someone',
+    ]
+    for phrase in violence_phrases:
+        if phrase in text_lower:
+            return False, 'violence_in_output'
+
+    # Check for sexual content inappropriate for K-12
+    sexual_phrases = [
+        'sexual intercourse', 'pornograph', 'orgasm', 'masturbat',
+        'erotic', 'sexually explicit', 'nude photo', 'naked photo',
+        'sex position', 'sexual fantasy',
+    ]
+    for phrase in sexual_phrases:
+        if phrase in text_lower:
+            return False, 'sexual_content_in_output'
+
+    # Check for self-harm encouragement (LLM should provide resources, not encourage)
+    harmful_phrases = [
+        'you should kill yourself', 'end your life', 'you\'re better off dead',
+        'nobody would miss you', 'the world is better without you',
+        'here\'s how to harm yourself',
+    ]
+    for phrase in harmful_phrases:
+        if phrase in text_lower:
+            return False, 'self_harm_encouragement_in_output'
+
+    # Check for personal data that shouldn't be in responses
+    personal_data_patterns = [
+        r'\b\d{3}-\d{2}-\d{4}\b',  # SSN pattern
+        r'\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b',  # Credit card pattern
+    ]
+    for pattern in personal_data_patterns:
+        if re.search(pattern, response_text):
+            return False, 'personal_data_in_output'
+
+    return True, None
 
 # --- AI Helper system prompt ---
 
@@ -1633,8 +1708,14 @@ def api_ai_helper():
     if isinstance(response_text, dict) and 'error' in response_text:
         return jsonify({'success': False, 'error': response_text['error']}), 500
 
+    # Moderate the LLM output before sending to student
+    output_safe, output_flag_reason = moderate_output(response_text)
+    if not output_safe:
+        add_safety_flag(username, f"[LLM OUTPUT FLAGGED] {response_text[:500]}", output_flag_reason)
+        response_text = SAFE_RESPONSE_FALLBACK
+
     append_ai_helper_message(username, channel_id, 'user', message, flagged=flagged, flag_reason=flag_reason)
-    append_ai_helper_message(username, channel_id, 'assistant', response_text)
+    append_ai_helper_message(username, channel_id, 'assistant', response_text, flagged=not output_safe, flag_reason=output_flag_reason)
 
     return jsonify({'success': True, 'response': response_text, 'flagged': flagged})
 
