@@ -1800,6 +1800,7 @@ def api_ai_analyzer():
     data = request.json
     student_work = data.get('student_work', '').strip()
     prompt_logs = data.get('prompt_logs', '').strip()
+    chat_code = data.get('chat_code', '').strip().upper()
 
     if not student_work:
         return jsonify({'success': False, 'error': 'Student work is required'}), 400
@@ -1807,6 +1808,24 @@ def api_ai_analyzer():
         return jsonify({'success': False, 'error': 'Student work must be under 10,000 characters'}), 400
     if len(prompt_logs) > 10000:
         return jsonify({'success': False, 'error': 'Prompt logs must be under 10,000 characters'}), 400
+
+    # If a chat code is provided, look up the conversation and use it as prompt logs
+    chat_info = None
+    if chat_code:
+        result = get_channel_by_code(chat_code)
+        if not result:
+            return jsonify({'success': False, 'error': 'No chat found with code "' + chat_code + '". Check the code and try again.'}), 404
+        student_username, channel_id, channel_data = result
+        conversation = channel_data.get('messages', [])
+        if conversation:
+            transcript_lines = []
+            for msg in conversation:
+                role_label = 'Student' if msg['role'] == 'user' else 'AI Assistant'
+                transcript_lines.append(f"{role_label}: {msg['content']}")
+            prompt_logs = '\n\n'.join(transcript_lines)
+            if len(prompt_logs) > 15000:
+                prompt_logs = prompt_logs[:15000] + '\n\n[Transcript truncated]'
+            chat_info = {'student': student_username, 'channel': channel_data.get('name', 'Untitled'), 'messages': len(conversation)}
 
     messages = [
         {'role': 'system', 'content': AI_ANALYZER_SYSTEM_PROMPT},
@@ -1817,7 +1836,10 @@ def api_ai_analyzer():
     if isinstance(response_text, dict) and 'error' in response_text:
         return jsonify({'success': False, 'error': response_text['error']}), 500
 
-    return jsonify({'success': True, 'analysis': response_text})
+    result = {'success': True, 'analysis': response_text}
+    if chat_info:
+        result['chat_info'] = chat_info
+    return jsonify(result)
 
 # --- Admin Safety Dashboard ---
 
