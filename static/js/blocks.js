@@ -25,6 +25,8 @@ class TrustAIApp {
         this.setupButtons();
         this.setupWorkspaceDragDrop();
         this.updateCodeDisplay();
+        this.currentExercise = 0;
+        this.exercises = this.getExercises();
     }
 
     // Category accordion toggles
@@ -975,6 +977,251 @@ class TrustAIApp {
         document.querySelectorAll('.code-line').forEach(line => {
             line.classList.remove('executing', 'executed');
         });
+    }
+
+    // ─── Exercises System ───────────────────────────────────────
+
+    getExercises() {
+        return [
+            {
+                title: 'Hello World',
+                difficulty: 'beginner',
+                goal: 'Get familiar with adding blocks and running code.',
+                instructions: '<p>Add a <strong>Print</strong> block and make it display "Hello, World!"</p>',
+                expected: 'Hello, World!'
+            },
+            {
+                title: 'Create and Print a Variable',
+                difficulty: 'beginner',
+                goal: 'Learn how variables store values.',
+                instructions: '<ol><li>Add a <strong>Create variable</strong> block and set <code>name</code> to <code>age</code> and <code>value</code> to <code>12</code></li><li>Add a <strong>Print variable</strong> block to display <code>age</code></li></ol>',
+                expected: '12'
+            },
+            {
+                title: 'Simple Math',
+                difficulty: 'beginner',
+                goal: 'Practice changing variable values.',
+                instructions: '<ol><li>Create a variable called <code>score</code> with value <code>10</code></li><li>Use <strong>Change by</strong> to add <code>5</code> to <code>score</code></li><li>Print <code>score</code></li></ol>',
+                expected: '15'
+            },
+            {
+                title: 'Repeat a Message',
+                difficulty: 'easy',
+                goal: 'Introduction to loops.',
+                instructions: '<p>Use a <strong>Repeat times</strong> block to print "I love coding!" exactly 3 times.</p>',
+                expected: 'I love coding!\nI love coding!\nI love coding!'
+            },
+            {
+                title: 'Counting Up',
+                difficulty: 'easy',
+                goal: 'Combine loops with variables.',
+                instructions: '<ol><li>Create a variable <code>count</code> with value <code>0</code></li><li>Use a <strong>Repeat times</strong> block (5 times)</li><li>Inside the loop: <strong>Change by</strong> <code>1</code> to <code>count</code>, then <strong>Print variable</strong> <code>count</code></li></ol>',
+                expected: '1\n2\n3\n4\n5'
+            },
+            {
+                title: 'Making Decisions',
+                difficulty: 'medium',
+                goal: 'Introduction to if statements.',
+                instructions: '<ol><li>Create a variable <code>temperature</code> with value <code>35</code></li><li>Add an <strong>If</strong> block with condition <code>temperature > 30</code></li><li>Inside the if: Print <code>"It\'s hot outside!"</code></li></ol>',
+                expected: "It's hot outside!"
+            },
+            {
+                title: 'If-Else Choices',
+                difficulty: 'medium',
+                goal: 'Learn branching with if-else.',
+                instructions: '<ol><li>Create a variable <code>grade</code> with value <code>85</code></li><li>Add an <strong>If-Else</strong> block with condition <code>grade >= 70</code></li><li>In the if section: Print <code>"You passed!"</code></li><li>In the else section: Print <code>"Keep trying!"</code></li></ol>',
+                expected: 'You passed!',
+                challenge: 'Change <code>grade</code> to <code>50</code> and run again. What happens?'
+            },
+            {
+                title: 'Multiplication Table',
+                difficulty: 'medium',
+                goal: 'Combine loops and math operations.',
+                instructions: '<p>Create a program that prints the 5 times table (5 x 1 through 5 x 5):</p><ol><li>Create variable <code>result</code> with value <code>0</code></li><li>Create variable <code>multiplier</code> with value <code>0</code></li><li>Use <strong>Repeat times</strong> (5 times)</li><li>Inside: Change <code>multiplier</code> by <code>1</code>, set <code>result</code> to <code>multiplier * 5</code> using <strong>Set variable</strong>, then print <code>result</code></li></ol>',
+                expected: '5\n10\n15\n20\n25'
+            },
+            {
+                title: 'Sum of Numbers',
+                difficulty: 'hard',
+                goal: 'Use loops to accumulate a total.',
+                instructions: '<p>Calculate the sum of numbers from 1 to 10:</p><ol><li>Create <code>total</code> with value <code>0</code></li><li>Create <code>number</code> with value <code>0</code></li><li><strong>Repeat times</strong> 10 times:</li><li style="margin-left:20px">Change <code>number</code> by <code>1</code></li><li style="margin-left:20px">Change <code>total</code> by the current value of <code>number</code></li><li>After the loop, print <code>total</code></li></ol>',
+                expected: '55'
+            },
+            {
+                title: 'FizzBuzz (Simplified)',
+                difficulty: 'hard',
+                goal: 'Combine loops with multiple conditions.',
+                instructions: '<p>Print numbers 1-10, but:</p><ul><li>If the number equals 5, print "FIVE!" instead</li><li>If the number equals 10, print "TEN!" instead</li></ul><ol><li>Create <code>num</code> with value <code>0</code></li><li><strong>Repeat times</strong> 10 times:</li><li style="margin-left:20px">Change <code>num</code> by <code>1</code></li><li style="margin-left:20px">Use <strong>If-Else</strong> with condition <code>num == 5</code></li><li style="margin-left:40px">If true: Print <code>"FIVE!"</code></li><li style="margin-left:40px">Else: Use another <strong>If-Else</strong> with <code>num == 10</code></li><li style="margin-left:60px">If true: Print <code>"TEN!"</code></li><li style="margin-left:60px">Else: Print variable <code>num</code></li></ol>',
+                expected: '1\n2\n3\n4\nFIVE!\n6\n7\n8\n9\nTEN!'
+            },
+            {
+                title: 'Find the Maximum',
+                difficulty: 'hard',
+                goal: 'Loop through a list to find the biggest number.',
+                instructions: '<ol><li>Create a list <code>numbers</code> with items <code>3, 7, 2, 9, 4</code></li><li>Create variable <code>biggest</code> with value <code>0</code></li><li>Use <strong>For each in list</strong> with <code>num</code> in <code>numbers</code>:</li><li style="margin-left:20px">Use <strong>If</strong> with condition <code>num > biggest</code>:</li><li style="margin-left:40px">Set <code>biggest</code> to <code>num</code></li><li>Print variable <code>biggest</code></li></ol>',
+                expected: '9'
+            },
+            {
+                title: 'Even Numbers Only',
+                difficulty: 'hard',
+                goal: 'Print only even numbers using modulo.',
+                instructions: '<ol><li>Create variable <code>num</code> with value <code>0</code></li><li><strong>Repeat times</strong> 10 times:</li><li style="margin-left:20px">Change <code>num</code> by <code>1</code></li><li style="margin-left:20px">Use <strong>If</strong> with condition <code>num % 2 == 0</code>:</li><li style="margin-left:40px">Print variable <code>num</code></li></ol>',
+                expected: '2\n4\n6\n8\n10'
+            },
+            {
+                title: 'Build a List',
+                difficulty: 'hard',
+                goal: 'Create an empty list and add squares of 1-5.',
+                instructions: '<ol><li>Create an empty list called <code>squares</code></li><li>Create variable <code>i</code> with value <code>0</code></li><li><strong>Repeat times</strong> 5 times:</li><li style="margin-left:20px">Change <code>i</code> by <code>1</code></li><li style="margin-left:20px">Create variable <code>square</code> with value <code>i * i</code></li><li style="margin-left:20px">Add <code>square</code> to list <code>squares</code></li><li>Print variable <code>squares</code></li></ol>',
+                expected: '[1, 4, 9, 16, 25]'
+            },
+            {
+                title: 'Factorial Calculator',
+                difficulty: 'hard',
+                goal: 'Calculate 5! using a while loop.',
+                instructions: '<ol><li>Create variable <code>result</code> with value <code>1</code></li><li>Create variable <code>n</code> with value <code>5</code></li><li><strong>While</strong> <code>n > 0</code>:</li><li style="margin-left:20px">Multiply <code>result</code> by <code>n</code></li><li style="margin-left:20px">Change <code>n</code> by <code>-1</code></li><li>Print variable <code>result</code></li></ol>',
+                expected: '120'
+            },
+            {
+                title: 'Prime Number Check',
+                difficulty: 'expert',
+                goal: 'Check if 7 is prime by testing divisibility.',
+                instructions: '<ol><li>Create variable <code>n</code> with value <code>7</code></li><li>Create variable <code>is_prime</code> with value <code>True</code></li><li>Create variable <code>i</code> with value <code>1</code></li><li><strong>Repeat times</strong> 5 times (checks 2 through 6):</li><li style="margin-left:20px">Change <code>i</code> by <code>1</code></li><li style="margin-left:20px">Use <strong>If</strong> with condition <code>n % i == 0</code>:</li><li style="margin-left:40px">Set <code>is_prime</code> to <code>False</code></li><li>Use <strong>If-Else</strong> with condition <code>is_prime</code>:</li><li style="margin-left:20px">If true: Print <code>"Prime!"</code></li><li style="margin-left:20px">Else: Print <code>"Not prime"</code></li></ol>',
+                expected: 'Prime!'
+            },
+            {
+                title: 'Fibonacci Sequence',
+                difficulty: 'expert',
+                goal: 'Generate the first 10 Fibonacci numbers.',
+                instructions: '<ol><li>Create variable <code>a</code> with value <code>0</code></li><li>Create variable <code>b</code> with value <code>1</code></li><li><strong>Repeat times</strong> 10 times:</li><li style="margin-left:20px">Print variable <code>a</code></li><li style="margin-left:20px">Create variable <code>temp</code> with value <code>a + b</code></li><li style="margin-left:20px">Set <code>a</code> to <code>b</code></li><li style="margin-left:20px">Set <code>b</code> to <code>temp</code></li></ol>',
+                expected: '0\n1\n1\n2\n3\n5\n8\n13\n21\n34'
+            },
+            {
+                title: 'Sum of List',
+                difficulty: 'hard',
+                goal: 'Sum all numbers in a list without using sum().',
+                instructions: '<ol><li>Create list <code>numbers</code> with items <code>10, 20, 30, 40, 50</code></li><li>Create variable <code>total</code> with value <code>0</code></li><li>Use <strong>For each in list</strong> with <code>num</code> in <code>numbers</code>:</li><li style="margin-left:20px">Change <code>total</code> by <code>num</code></li><li>Print variable <code>total</code></li></ol>',
+                expected: '150'
+            },
+            {
+                title: 'Countdown with Break',
+                difficulty: 'hard',
+                goal: 'Count down from 10 and stop at 5 using break.',
+                instructions: '<ol><li>Create variable <code>num</code> with value <code>11</code></li><li><strong>Repeat times</strong> 10 times:</li><li style="margin-left:20px">Change <code>num</code> by <code>-1</code></li><li style="margin-left:20px">Print variable <code>num</code></li><li style="margin-left:20px">Use <strong>If</strong> with condition <code>num == 5</code>:</li><li style="margin-left:40px"><strong>Break</strong></li></ol>',
+                expected: '10\n9\n8\n7\n6\n5'
+            },
+            {
+                title: 'Skip Odd Numbers',
+                difficulty: 'hard',
+                goal: 'Print 1-10 but skip odd numbers using continue.',
+                instructions: '<ol><li>Create variable <code>num</code> with value <code>0</code></li><li><strong>Repeat times</strong> 10 times:</li><li style="margin-left:20px">Change <code>num</code> by <code>1</code></li><li style="margin-left:20px">Use <strong>If</strong> with condition <code>num % 2 == 1</code>:</li><li style="margin-left:40px"><strong>Continue</strong></li><li style="margin-left:20px">Print variable <code>num</code></li></ol>',
+                expected: '2\n4\n6\n8\n10'
+            },
+            {
+                title: 'Reverse a List',
+                difficulty: 'expert',
+                goal: 'Build a reversed copy of a list.',
+                instructions: '<ol><li>Create list <code>original</code> with items <code>1, 2, 3, 4, 5</code></li><li>Create empty list <code>reversed</code></li><li>Create variable <code>i</code> with value <code>5</code></li><li><strong>Repeat times</strong> 5 times:</li><li style="margin-left:20px">Change <code>i</code> by <code>-1</code></li><li style="margin-left:20px">Use <strong>Get item at</strong> index <code>i</code> from <code>original</code>, store in <code>item</code></li><li style="margin-left:20px">Add <code>item</code> to list <code>reversed</code></li><li>Print variable <code>reversed</code></li></ol>',
+                expected: '[5, 4, 3, 2, 1]'
+            }
+        ];
+    }
+
+    openExercises() {
+        this.currentExercise = 0;
+        this.showExerciseModal();
+    }
+
+    showExerciseModal() {
+        // Remove existing modal if any
+        var existing = document.getElementById('exerciseModal');
+        if (existing) existing.remove();
+
+        var ex = this.exercises[this.currentExercise];
+        var num = this.currentExercise + 1;
+        var total = this.exercises.length;
+
+        var diffColors = {
+            beginner: { bg: 'rgba(22,163,74,0.1)', color: '#16A34A' },
+            easy: { bg: 'rgba(37,99,235,0.1)', color: '#2563EB' },
+            medium: { bg: 'rgba(245,158,11,0.1)', color: '#F59E0B' },
+            hard: { bg: 'rgba(220,38,38,0.1)', color: '#DC2626' },
+            expert: { bg: 'rgba(168,85,247,0.1)', color: '#A855F7' }
+        };
+        var dc = diffColors[ex.difficulty] || diffColors.medium;
+
+        var modal = document.createElement('div');
+        modal.id = 'exerciseModal';
+        modal.className = 'exercise-modal';
+
+        var challengeHtml = ex.challenge
+            ? '<div class="exercise-challenge"><strong>Challenge:</strong> ' + ex.challenge + '</div>'
+            : '';
+
+        modal.innerHTML =
+            '<div class="exercise-modal-content">' +
+                '<div class="exercise-modal-header">' +
+                    '<div class="exercise-modal-title-row">' +
+                        '<span class="exercise-num">' + num + '</span>' +
+                        '<h3 class="exercise-modal-title">' + ex.title + '</h3>' +
+                        '<span class="exercise-diff" style="background:' + dc.bg + ';color:' + dc.color + '">' + ex.difficulty + '</span>' +
+                    '</div>' +
+                    '<button class="exercise-close" id="exerciseCloseBtn">&times;</button>' +
+                '</div>' +
+                '<div class="exercise-modal-body">' +
+                    '<div class="exercise-goal">' + ex.goal + '</div>' +
+                    '<div class="exercise-instructions">' + ex.instructions + '</div>' +
+                    '<div class="exercise-expected">' +
+                        '<div class="exercise-expected-label">Expected Output:</div>' +
+                        '<pre class="exercise-expected-code">' + ex.expected + '</pre>' +
+                    '</div>' +
+                    challengeHtml +
+                '</div>' +
+                '<div class="exercise-modal-footer">' +
+                    '<div class="exercise-nav">' +
+                        '<button class="exercise-nav-btn" id="exercisePrev"' + (this.currentExercise === 0 ? ' disabled' : '') + '>&larr; Prev</button>' +
+                        '<span class="exercise-counter">' + num + ' / ' + total + '</span>' +
+                        '<button class="exercise-nav-btn" id="exerciseNext"' + (this.currentExercise === total - 1 ? ' disabled' : '') + '>Next &rarr;</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+
+        document.body.appendChild(modal);
+
+        // Wire up buttons
+        var self = this;
+        document.getElementById('exerciseCloseBtn').onclick = function() {
+            modal.remove();
+        };
+        document.getElementById('exercisePrev').onclick = function() {
+            if (self.currentExercise > 0) {
+                self.currentExercise--;
+                self.showExerciseModal();
+            }
+        };
+        document.getElementById('exerciseNext').onclick = function() {
+            if (self.currentExercise < self.exercises.length - 1) {
+                self.currentExercise++;
+                self.showExerciseModal();
+            }
+        };
+
+        // Keyboard navigation
+        modal._keyHandler = function(e) {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', modal._keyHandler);
+            } else if (e.key === 'ArrowLeft' && self.currentExercise > 0) {
+                self.currentExercise--;
+                document.removeEventListener('keydown', modal._keyHandler);
+                self.showExerciseModal();
+            } else if (e.key === 'ArrowRight' && self.currentExercise < self.exercises.length - 1) {
+                self.currentExercise++;
+                document.removeEventListener('keydown', modal._keyHandler);
+                self.showExerciseModal();
+            }
+        };
+        document.addEventListener('keydown', modal._keyHandler);
     }
 }
 

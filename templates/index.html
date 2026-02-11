@@ -16,7 +16,7 @@
                 <span class="logo-text">TrustAI</span>
             </a>
             <nav class="nav-actions">
-                <a href="{{ url_for('static', filename='exercises.html') }}" target="_blank" class="btn btn-secondary">Exercises</a>
+                <button class="btn btn-secondary" id="exercisesBtn" onclick="window.app.openExercises()">Exercises</button>
                 <button class="btn btn-secondary" id="loadExampleBtn">Load Example</button>
                 <button class="btn btn-secondary" id="clearBtn">Clear All</button>
                 <button class="btn btn-primary" id="runBtn">
