@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustAI - Canvas Assignments</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FFF8F0;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5EDE3;
+            --bg-elevated: #FFF1E6;
+            --border-color: #E8DDD0;
+            --text-primary: #2D2319;
+            --text-secondary: #6B5D50;
+            --text-muted: #A09488;
+            --accent-primary: #0D9488;
+            --accent-hover: #0F766E;
+            --accent-amber: #f59e0b;
+            --accent-error: #DC2626;
+            --accent-success: #16A34A;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+
+        .header {
+            background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);
+            padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent-primary), #14B8A6);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; color: white;
+        }
+        .logo-text { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+        .teacher-badge { background: var(--accent-primary); color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-left: 8px; }
+        .header-actions { display: flex; gap: 12px; }
+        .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background: var(--bg-elevated); }
+        .btn-teal { background: linear-gradient(135deg, var(--accent-primary), #14B8A6); color: white; }
+        .btn-teal:hover { box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25); }
+        .btn-teal:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+        .btn-sm { padding: 6px 14px; font-size: 13px; }
+        .btn-danger { background: rgba(220,38,38,0.08); color: var(--accent-error); border: 1px solid rgba(220,38,38,0.2); }
+        .btn-danger:hover { background: rgba(220,38,38,0.15); }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 32px; }
+        .page-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .page-subtitle { color: var(--text-muted); margin-bottom: 32px; font-size: 15px; }
+
+        .section {
+            background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 14px;
+            padding: 28px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(45, 35, 25, 0.06);
+        }
+        .section h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--bg-tertiary); border-radius: 10px; padding: 4px; }
+        .tab { flex: 1; padding: 10px 16px; border: none; background: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; color: var(--text-muted); transition: all 0.2s; }
+        .tab.active { background: var(--bg-secondary); color: var(--text-primary); box-shadow: 0 1px 3px rgba(45,35,25,0.08); }
+
+        /* Paste mode */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .paste-area {
+            width: 100%; min-height: 140px; padding: 14px; background: var(--bg-tertiary); border: 1px solid var(--border-color);
+            border-radius: 10px; font-family: 'Courier New', monospace; font-size: 13px; color: var(--text-primary); resize: vertical;
+        }
+        .paste-area:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+        .paste-area::placeholder { color: var(--text-muted); font-family: 'Inter', sans-serif; }
+        .paste-hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+
+        /* Canvas import */
+        .canvas-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        .field-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .field-input {
+            width: 100%; padding: 10px 14px; background: var(--bg-tertiary); border: 1px solid var(--border-color);
+            border-radius: 8px; font-size: 14px; color: var(--text-primary); font-family: inherit;
+        }
+        .field-input:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+        .canvas-not-connected { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: 10px; padding: 16px; margin-bottom: 16px; font-size: 13px; color: #92400E; }
+
+        /* Actions row */
+        .actions-row { display: flex; gap: 12px; margin-top: 16px; align-items: center; }
+
+        /* Review table */
+        .review-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .review-table th { text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--border-color); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: var(--text-muted); }
+        .review-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color); }
+        .review-table tr:last-child td { border-bottom: none; }
+        .review-table .code-cell { font-family: monospace; font-weight: 600; letter-spacing: 1px; color: var(--accent-primary); }
+        .review-table .remove-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 2px 6px; border-radius: 4px; }
+        .review-table .remove-btn:hover { background: rgba(220,38,38,0.1); color: var(--accent-error); }
+        .no-code-row { color: var(--text-muted); font-style: italic; }
+        .entry-count { font-size: 13px; color: var(--text-muted); }
+
+        /* Progress */
+        .progress-section { display: none; margin-bottom: 24px; }
+        .progress-section.visible { display: block; }
+        .progress-bar-container { background: var(--bg-tertiary); border-radius: 8px; height: 8px; overflow: hidden; margin-bottom: 8px; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent-primary), #14B8A6); border-radius: 8px; transition: width 0.3s ease; width: 0%; }
+        .progress-text { font-size: 13px; color: var(--text-muted); }
+
+        /* Results */
+        .results-section { display: none; }
+        .results-section.visible { display: block; }
+        .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .results-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .results-table th { text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--border-color); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: var(--text-muted); }
+        .results-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-color); vertical-align: top; }
+        .results-table tr { cursor: pointer; transition: background 0.15s; }
+        .results-table tr:hover { background: var(--bg-elevated); }
+
+        .score-badge { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; font-size: 14px; font-weight: 700; color: white; }
+        .score-low { background: linear-gradient(135deg, #DC2626, #EF4444); }
+        .score-mid { background: linear-gradient(135deg, #F59E0B, #FBBF24); color: #000; }
+        .score-high { background: linear-gradient(135deg, #16A34A, #22C55E); }
+        .score-na { background: var(--bg-tertiary); color: var(--text-muted); font-size: 11px; }
+        .error-tag { background: rgba(220,38,38,0.08); color: var(--accent-error); padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+
+        /* Expanded analysis row */
+        .expanded-row { display: none; }
+        .expanded-row.visible { display: table-row; }
+        .expanded-row td { padding: 20px; background: var(--bg-primary); }
+        .analysis-content { line-height: 1.7; color: var(--text-secondary); font-size: 13px; }
+        .analysis-content h2 { font-size: 15px; font-weight: 600; color: var(--accent-primary); margin: 20px 0 8px 0; padding-bottom: 4px; border-bottom: 1px solid var(--border-color); }
+        .analysis-content h2:first-child { margin-top: 0; }
+        .analysis-content ul { margin: 6px 0; padding-left: 18px; }
+        .analysis-content li { margin-bottom: 4px; }
+        .analysis-content strong { color: var(--text-primary); }
+        .analysis-content p { margin-bottom: 6px; }
+
+        /* Canvas settings */
+        .settings-toggle { background: none; border: none; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; padding: 12px 0; display: flex; align-items: center; gap: 8px; font-family: inherit; }
+        .settings-toggle:hover { color: var(--text-primary); }
+        .settings-toggle .arrow { transition: transform 0.2s; font-size: 10px; }
+        .settings-toggle.open .arrow { transform: rotate(180deg); }
+        .settings-content { display: none; padding-top: 16px; }
+        .settings-content.open { display: block; }
+        .settings-connected { background: rgba(13,148,136,0.06); border: 1px solid rgba(13,148,136,0.15); border-radius: 10px; padding: 14px 16px; font-size: 13px; color: var(--accent-primary); display: flex; align-items: center; justify-content: space-between; }
+
+        /* Copy template */
+        .template-box { background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; font-size: 13px; line-height: 1.6; color: var(--text-secondary); position: relative; white-space: pre-wrap; font-family: inherit; }
+        .copy-btn { position: absolute; top: 8px; right: 8px; padding: 4px 10px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px; cursor: pointer; color: var(--text-muted); font-family: inherit; }
+        .copy-btn:hover { background: var(--bg-elevated); color: var(--text-primary); }
+
+        .error-msg { background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.2); color: var(--accent-error); padding: 12px 16px; border-radius: 10px; font-size: 14px; display: none; margin-bottom: 16px; }
+        .error-msg.visible { display: block; }
+
+        .stats-row { display: flex; gap: 16px; margin-bottom: 16px; }
+        .stat-pill { background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 14px; font-size: 13px; }
+        .stat-pill strong { color: var(--text-primary); }
+
+        @media (max-width: 640px) {
+            .header { padding: 16px; }
+            .container { padding: 16px; }
+            .canvas-fields { grid-template-columns: 1fr; }
+            .tabs { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">
+            <div class="logo-icon">&lt;/&gt;</div>
+            <span class="logo-text">TrustAI</span>
+            <span class="teacher-badge">Teacher</span>
+        </a>
+        <div class="header-actions">
+            <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-secondary">Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">Canvas Assignments</h1>
+        <p class="page-subtitle">Batch-analyze student AI usage from Canvas assignment submissions</p>
+
+        <!-- Assignment Instructions Template -->
+        <div class="section">
+            <h2>Assignment Instructions for Students</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Copy and paste this into your Canvas assignment description:</p>
+            <div class="template-box" id="templateBox">When submitting this assignment, please include your TrustAI AI Helper chat code.
+
+1. Open TrustAI and go to the AI Study Helper
+2. Find the share code next to your chat channel (e.g. ABC123)
+3. In your Canvas submission, include: TRUSTAI: [your code]
+
+Example: TRUSTAI: ABC123</div>
+            <button class="copy-btn" onclick="copyTemplate()">Copy</button>
+        </div>
+
+        <!-- Input Section -->
+        <div class="section">
+            <h2>Import Student Codes</h2>
+            <div class="error-msg" id="inputError"></div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('paste')">Paste Codes</button>
+                <button class="tab" onclick="switchTab('canvas')">Import from Canvas</button>
+            </div>
+
+            <!-- Paste mode -->
+            <div class="tab-content active" id="tab-paste">
+                <textarea class="paste-area" id="pasteArea" placeholder="Paste student names and chat codes, one per line:&#10;&#10;Jane Smith, ABC123&#10;John Doe, XYZ789&#10;Maria Garcia, QRS456"></textarea>
+                <p class="paste-hint">Format: StudentName, ChatCode (comma or tab separated, one per line)</p>
+                <div class="actions-row">
+                    <button class="btn btn-teal" onclick="parsePastedCodes()">Parse Codes</button>
+                </div>
+            </div>
+
+            <!-- Canvas import mode -->
+            <div class="tab-content" id="tab-canvas">
+                {% if not has_canvas %}
+                <div class="canvas-not-connected">
+                    Canvas is not connected yet. Set up your Canvas settings below to import submissions automatically.
+                </div>
+                {% endif %}
+                <div class="canvas-fields">
+                    <div class="field-group">
+                        <label>Course ID</label>
+                        <input type="text" class="field-input" id="courseId" placeholder="e.g. 12345">
+                    </div>
+                    <div class="field-group">
+                        <label>Assignment ID</label>
+                        <input type="text" class="field-input" id="assignmentId" placeholder="e.g. 67890">
+                    </div>
+                </div>
+                <p class="paste-hint" style="margin-bottom: 12px;">Find these in the Canvas URL: /courses/<strong>COURSE_ID</strong>/assignments/<strong>ASSIGNMENT_ID</strong></p>
+                <div class="actions-row">
+                    <button class="btn btn-teal" id="fetchBtn" onclick="fetchCanvasSubmissions()" {% if not has_canvas %}disabled{% endif %}>Fetch Submissions</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Table -->
+        <div class="section" id="reviewSection" style="display: none;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <h2 style="margin-bottom: 0;">Review Entries</h2>
+                <span class="entry-count" id="entryCount"></span>
+            </div>
+            <table class="review-table">
+                <thead>
+                    <tr><th>Student</th><th>Chat Code</th><th></th></tr>
+                </thead>
+                <tbody id="reviewBody"></tbody>
+            </table>
+            <div class="actions-row">
+                <button class="btn btn-teal" id="analyzeAllBtn" onclick="analyzeAll()">Analyze All</button>
+                <button class="btn btn-secondary btn-sm" onclick="clearEntries()">Clear</button>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-section" id="progressSection">
+            <div class="section">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <p class="progress-text" id="progressText">Preparing analysis...</p>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="results-section" id="resultsSection">
+            <div class="section">
+                <div class="results-header">
+                    <h2>Results</h2>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary btn-sm" onclick="exportCSV()">Export CSV</button>
+                    </div>
+                </div>
+                <div class="stats-row" id="statsRow"></div>
+                <table class="results-table">
+                    <thead>
+                        <tr><th>Student</th><th>Score</th><th>TrustAI User</th><th>Messages</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="resultsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Canvas Settings -->
+        <div class="section">
+            <button class="settings-toggle" id="settingsToggle" onclick="toggleSettings()">
+                <span class="arrow">&#9660;</span> Canvas Settings
+            </button>
+            <div class="settings-content" id="settingsContent">
+                {% if has_canvas %}
+                <div class="settings-connected" id="connectedBanner">
+                    <span>Connected to <strong>{{ canvas_domain }}</strong></span>
+                    <button class="btn btn-danger btn-sm" onclick="removeCanvas()">Disconnect</button>
+                </div>
+                {% endif %}
+                <div id="settingsForm" {% if has_canvas %}style="display:none"{% endif %}>
+                    <div class="canvas-fields" style="margin-bottom: 12px;">
+                        <div class="field-group">
+                            <label>Canvas Domain</label>
+                            <input type="text" class="field-input" id="canvasDomain" placeholder="myschool.instructure.com" value="{{ canvas_domain }}">
+                        </div>
+                        <div class="field-group">
+                            <label>API Token</label>
+                            <input type="password" class="field-input" id="canvasToken" placeholder="Your Canvas API token">
+                        </div>
+                    </div>
+                    <p class="paste-hint" style="margin-bottom: 12px;">Generate a token in Canvas: Account &gt; Settings &gt; New Access Token</p>
+                    <button class="btn btn-teal btn-sm" onclick="saveCanvasSettings()">Save &amp; Test Connection</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var entries = [];
+        var analysisResults = [];
+
+        // --- Tab switching ---
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+            document.getElementById('tab-' + tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // --- Paste mode ---
+        function parsePastedCodes() {
+            var text = document.getElementById('pasteArea').value.trim();
+            if (!text) { showError('Please paste student names and codes.'); return; }
+            hideError();
+
+            var lines = text.split('\n');
+            entries = [];
+            lines.forEach(function(line) {
+                line = line.trim();
+                if (!line) return;
+                // Split by comma or tab
+                var parts = line.split(/[,\t]+/);
+                if (parts.length >= 2) {
+                    var name = parts[0].trim();
+                    var code = parts[1].trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    if (name && code) {
+                        entries.push({ student_name: name, chat_code: code });
+                    }
+                }
+            });
+
+            if (entries.length === 0) {
+                showError('No valid entries found. Use format: StudentName, ChatCode');
+                return;
+            }
+            showReviewTable();
+        }
+
+        // --- Canvas import ---
+        function fetchCanvasSubmissions() {
+            var courseId = document.getElementById('courseId').value.trim();
+            var assignmentId = document.getElementById('assignmentId').value.trim();
+            if (!courseId || !assignmentId) { showError('Please enter both Course ID and Assignment ID.'); return; }
+            hideError();
+
+            var btn = document.getElementById('fetchBtn');
+            btn.disabled = true;
+            btn.textContent = 'Fetching...';
+
+            fetch('/api/canvas/fetch-submissions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ course_id: courseId, assignment_id: assignmentId })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                btn.disabled = false;
+                btn.textContent = 'Fetch Submissions';
+                if (data.success) {
+                    entries = data.entries.filter(function(e) { return e.chat_code; });
+                    if (entries.length === 0) {
+                        showError('No chat codes found in ' + data.total_submissions + ' submissions. Make sure students included TRUSTAI: CODE in their submission.');
+                    } else {
+                        showReviewTable();
+                    }
+                } else {
+                    showError(data.error || 'Failed to fetch submissions.');
+                }
+            })
+            .catch(function() {
+                btn.disabled = false;
+                btn.textContent = 'Fetch Submissions';
+                showError('Network error. Please try again.');
+            });
+        }
+
+        // --- Review table ---
+        function showReviewTable() {
+            var section = document.getElementById('reviewSection');
+            section.style.display = 'block';
+            document.getElementById('entryCount').textContent = entries.length + ' entries';
+
+            var html = '';
+            entries.forEach(function(e, i) {
+                html += '<tr>' +
+                    '<td>' + escapeHtml(e.student_name) + '</td>' +
+                    '<td class="code-cell">' + escapeHtml(e.chat_code) + '</td>' +
+                    '<td><button class="remove-btn" onclick="removeEntry(' + i + ')">&times;</button></td>' +
+                    '</tr>';
+            });
+            document.getElementById('reviewBody').innerHTML = html;
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function removeEntry(index) {
+            entries.splice(index, 1);
+            if (entries.length === 0) {
+                document.getElementById('reviewSection').style.display = 'none';
+            } else {
+                showReviewTable();
+            }
+        }
+
+        function clearEntries() {
+            entries = [];
+            document.getElementById('reviewSection').style.display = 'none';
+        }
+
+        // --- Batch analysis ---
+        function analyzeAll() {
+            if (entries.length === 0) return;
+            analysisResults = [];
+
+            document.getElementById('analyzeAllBtn').disabled = true;
+            document.getElementById('progressSection').classList.add('visible');
+            document.getElementById('resultsSection').classList.remove('visible');
+
+            processBatch(0);
+        }
+
+        function processBatch(startIndex) {
+            var batchSize = 3;
+            var batch = entries.slice(startIndex, startIndex + batchSize);
+            if (batch.length === 0) {
+                finishAnalysis();
+                return;
+            }
+
+            var done = Math.min(startIndex, entries.length);
+            var pct = Math.round((done / entries.length) * 100);
+            document.getElementById('progressBar').style.width = pct + '%';
+            document.getElementById('progressText').textContent = 'Analyzing ' + (done + 1) + '-' + Math.min(done + batchSize, entries.length) + ' of ' + entries.length + '...';
+
+            fetch('/api/canvas/batch-analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ entries: batch })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success && data.results) {
+                    analysisResults = analysisResults.concat(data.results);
+                }
+                processBatch(startIndex + batchSize);
+            })
+            .catch(function() {
+                // Mark remaining as errors and continue
+                batch.forEach(function(e) {
+                    analysisResults.push({ student_name: e.student_name, chat_code: e.chat_code, error: 'Network error' });
+                });
+                processBatch(startIndex + batchSize);
+            });
+        }
+
+        function finishAnalysis() {
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('progressText').textContent = 'Analysis complete!';
+            document.getElementById('analyzeAllBtn').disabled = false;
+
+            setTimeout(function() {
+                document.getElementById('progressSection').classList.remove('visible');
+                showResults();
+            }, 600);
+        }
+
+        // --- Results ---
+        function showResults() {
+            document.getElementById('resultsSection').classList.add('visible');
+
+            // Stats
+            var scores = analysisResults.filter(function(r) { return r.score != null; }).map(function(r) { return r.score; });
+            var avgScore = scores.length > 0 ? (scores.reduce(function(a, b) { return a + b; }, 0) / scores.length).toFixed(1) : 'N/A';
+            var errorCount = analysisResults.filter(function(r) { return r.error; }).length;
+
+            document.getElementById('statsRow').innerHTML =
+                '<div class="stat-pill"><strong>' + analysisResults.length + '</strong> students</div>' +
+                '<div class="stat-pill">Avg score: <strong>' + avgScore + '/10</strong></div>' +
+                (errorCount > 0 ? '<div class="stat-pill" style="color: var(--accent-error);">' + errorCount + ' errors</div>' : '');
+
+            // Table
+            var html = '';
+            analysisResults.forEach(function(r, i) {
+                var scoreHtml;
+                if (r.error) {
+                    scoreHtml = '<span class="error-tag">Error</span>';
+                } else if (r.score != null) {
+                    var cls = r.score <= 3 ? 'score-low' : r.score <= 6 ? 'score-mid' : 'score-high';
+                    scoreHtml = '<span class="score-badge ' + cls + '">' + r.score + '</span>';
+                } else {
+                    scoreHtml = '<span class="score-badge score-na">?</span>';
+                }
+
+                var statusHtml = r.error
+                    ? '<span class="error-tag">' + escapeHtml(r.error) + '</span>'
+                    : '<span style="color: var(--accent-success); font-size: 12px;">Analyzed</span>';
+
+                html += '<tr onclick="toggleExpanded(' + i + ')" data-index="' + i + '">' +
+                    '<td><strong>' + escapeHtml(r.student_name) + '</strong></td>' +
+                    '<td>' + scoreHtml + '</td>' +
+                    '<td>' + escapeHtml(r.trustai_student || '-') + '</td>' +
+                    '<td>' + (r.message_count || '-') + '</td>' +
+                    '<td>' + statusHtml + '</td>' +
+                    '</tr>';
+
+                html += '<tr class="expanded-row" id="expanded-' + i + '">' +
+                    '<td colspan="5">' +
+                    (r.analysis ? '<div class="analysis-content">' + renderMarkdown(r.analysis) + '</div>' : '<em style="color: var(--text-muted);">No analysis available</em>') +
+                    '</td></tr>';
+            });
+            document.getElementById('resultsBody').innerHTML = html;
+
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function toggleExpanded(index) {
+            var row = document.getElementById('expanded-' + index);
+            if (row) row.classList.toggle('visible');
+        }
+
+        // --- CSV export ---
+        function exportCSV() {
+            var csv = 'Student Name,Chat Code,TrustAI User,Score,Messages,Status\n';
+            analysisResults.forEach(function(r) {
+                csv += '"' + (r.student_name || '').replace(/"/g, '""') + '",' +
+                       '"' + (r.chat_code || '') + '",' +
+                       '"' + (r.trustai_student || '') + '",' +
+                       (r.score != null ? r.score : '') + ',' +
+                       (r.message_count || '') + ',' +
+                       '"' + (r.error ? 'Error: ' + r.error : 'OK') + '"\n';
+            });
+            var blob = new Blob([csv], { type: 'text/csv' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'trustai_analysis_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+        }
+
+        // --- Canvas settings ---
+        function toggleSettings() {
+            var btn = document.getElementById('settingsToggle');
+            var content = document.getElementById('settingsContent');
+            btn.classList.toggle('open');
+            content.classList.toggle('open');
+        }
+
+        function saveCanvasSettings() {
+            var domain = document.getElementById('canvasDomain').value.trim();
+            var token = document.getElementById('canvasToken').value.trim();
+            if (!domain || !token) { showError('Please enter both Canvas domain and API token.'); return; }
+            hideError();
+
+            fetch('/api/canvas/save-settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ domain: domain, token: token })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    document.getElementById('settingsForm').style.display = 'none';
+                    var banner = document.getElementById('connectedBanner');
+                    if (!banner) {
+                        banner = document.createElement('div');
+                        banner.id = 'connectedBanner';
+                        banner.className = 'settings-connected';
+                        document.getElementById('settingsContent').insertBefore(banner, document.getElementById('settingsForm'));
+                    }
+                    banner.innerHTML = '<span>Connected to <strong>' + escapeHtml(domain) + '</strong> (' + escapeHtml(data.name) + ')</span>' +
+                        '<button class="btn btn-danger btn-sm" onclick="removeCanvas()">Disconnect</button>';
+                    // Enable fetch button
+                    var fetchBtn = document.getElementById('fetchBtn');
+                    if (fetchBtn) fetchBtn.disabled = false;
+                    // Remove warning
+                    document.querySelectorAll('.canvas-not-connected').forEach(function(el) { el.remove(); });
+                } else {
+                    showError(data.error || 'Failed to connect.');
+                }
+            })
+            .catch(function() { showError('Network error. Please try again.'); });
+        }
+
+        function removeCanvas() {
+            fetch('/api/canvas/remove-settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    var banner = document.getElementById('connectedBanner');
+                    if (banner) banner.remove();
+                    document.getElementById('settingsForm').style.display = 'block';
+                    document.getElementById('canvasToken').value = '';
+                    var fetchBtn = document.getElementById('fetchBtn');
+                    if (fetchBtn) fetchBtn.disabled = true;
+                }
+            });
+        }
+
+        // --- Helpers ---
+        function showError(msg) {
+            var el = document.getElementById('inputError');
+            el.textContent = msg;
+            el.classList.add('visible');
+        }
+        function hideError() {
+            document.getElementById('inputError').classList.remove('visible');
+        }
+        function escapeHtml(text) {
+            if (!text) return '';
+            var d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+        function renderMarkdown(text) {
+            var html = text
+                .replace(/## (.+)/g, '<h2>$1</h2>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^- (.+)$/gm, '<li>$1</li>');
+            html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+            html = html.split('\n').map(function(line) {
+                line = line.trim();
+                if (!line || line.startsWith('<h2>') || line.startsWith('<ul>') || line.startsWith('<li>') || line.startsWith('</')) return line;
+                return '<p>' + line + '</p>';
+            }).join('\n');
+            return html;
+        }
+        function copyTemplate() {
+            var text = document.getElementById('templateBox').textContent;
+            navigator.clipboard.writeText(text).then(function() {
+                var btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                setTimeout(function() { btn.textContent = 'Copy'; }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>

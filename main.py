@@ -751,6 +751,56 @@ A brief 2-3 sentence encouraging assessment suitable for sharing with the studen
 
 Be fair, constructive, and age-appropriate for K-12 students. Focus on whether the student is LEARNING from the AI, not just getting answers."""
 
+# --- Shared chat analysis helper ---
+
+def analyze_chat_by_code(code):
+    """Look up a chat code, build transcript, run AI analysis.
+    Returns dict with analysis results or dict with 'error' key."""
+    code = code.strip().upper()
+    if not code or len(code) > 10:
+        return {'error': 'Please enter a valid chat code'}
+
+    result = get_channel_by_code(code)
+    if not result:
+        return {'error': f'No chat found with code "{code}". Check the code and try again.'}
+
+    student_username, channel_id, channel_data = result
+    conversation = channel_data.get('messages', [])
+
+    if not conversation:
+        return {'error': 'This chat has no messages yet.'}
+
+    # Build transcript for analysis
+    transcript_lines = []
+    for msg in conversation:
+        role_label = 'Student' if msg['role'] == 'user' else 'AI Assistant'
+        transcript_lines.append(f"{role_label}: {msg['content']}")
+    transcript = '\n\n'.join(transcript_lines)
+
+    if len(transcript) > 15000:
+        transcript = transcript[:15000] + '\n\n[Transcript truncated]'
+
+    messages = [
+        {'role': 'system', 'content': CHAT_ANALYSIS_SYSTEM_PROMPT},
+        {'role': 'user', 'content': f"## Chat Conversation: {channel_data.get('name', 'Untitled')}\n## Student: {student_username}\n## Messages: {len(conversation)}\n\n{transcript}"}
+    ]
+
+    response_text = call_openai(messages, max_tokens=1500)
+    if isinstance(response_text, dict) and 'error' in response_text:
+        return {'error': response_text['error']}
+
+    score_match = re.search(r'\*\*Score:\s*(\d+)/10\*\*', response_text)
+    score = int(score_match.group(1)) if score_match else None
+
+    return {
+        'analysis': response_text,
+        'student': student_username,
+        'channel_name': channel_data.get('name', 'Untitled'),
+        'message_count': len(conversation),
+        'conversation': conversation,
+        'score': score
+    }
+
 # --- Curriculum advisor helpers ---
 
 def load_curriculum_analyses():
@@ -836,6 +886,76 @@ def call_openai(messages, max_tokens=500):
     except Exception as e:
         print(f"OpenAI error: {e}")
         return {'error': f'OpenAI request failed: {str(e)}'}
+
+# --- Canvas LMS integration helpers ---
+
+def load_canvas_settings(username):
+    if UPSTASH_URL and UPSTASH_TOKEN:
+        try:
+            data = redis_get(f'trustai_canvas_{username}')
+            if data:
+                return json.loads(data)
+        except Exception as e:
+            print(f"Redis load canvas settings error: {e}")
+    return {}
+
+def save_canvas_settings(username, settings):
+    if UPSTASH_URL and UPSTASH_TOKEN:
+        try:
+            redis_set(f'trustai_canvas_{username}', json.dumps(settings))
+        except Exception as e:
+            print(f"Redis save canvas settings error: {e}")
+
+def canvas_api_get(domain, token, endpoint):
+    """Make a GET request to the Canvas REST API. Returns list of results (handles pagination)."""
+    import urllib.request
+    all_results = []
+    url = f"https://{domain}/api/v1/{endpoint}"
+
+    for _ in range(10):  # max 10 pages
+        req = urllib.request.Request(url, headers={
+            'Authorization': f'Bearer {token}',
+            'Accept': 'application/json'
+        })
+        try:
+            with urllib.request.urlopen(req, timeout=15) as response:
+                data = json.loads(response.read().decode())
+                if isinstance(data, list):
+                    all_results.extend(data)
+                else:
+                    return data  # single object response
+
+                # Check for pagination
+                link_header = response.headers.get('Link', '')
+                next_url = None
+                for part in link_header.split(','):
+                    if 'rel="next"' in part:
+                        next_url = part.split('<')[1].split('>')[0]
+                if next_url:
+                    url = next_url
+                else:
+                    break
+        except urllib.request.HTTPError as e:
+            body = e.read().decode() if e.fp else ''
+            return {'error': f'Canvas API error ({e.code}): {body[:200]}'}
+        except Exception as e:
+            return {'error': f'Canvas request failed: {str(e)}'}
+
+    return all_results
+
+def extract_chat_codes_from_text(text):
+    """Extract TrustAI chat codes from submission text.
+    Looks for TRUSTAI: CODE pattern first, then fallback to standalone 6-char codes."""
+    if not text:
+        return []
+    # Primary: look for explicit TRUSTAI prefix
+    explicit = re.findall(r'TRUSTAI[_:\s]*([A-Z0-9]{6})\b', text.upper())
+    if explicit:
+        return explicit
+    # Fallback: standalone 6-char uppercase alphanumeric (word boundary)
+    candidates = re.findall(r'\b([A-Z0-9]{6})\b', text.upper())
+    # Filter out common false positives (all digits, common words)
+    return [c for c in candidates if not c.isdigit() and re.search(r'[A-Z]', c) and re.search(r'[0-9]', c)]
 
 # Block definitions for the palette
 BLOCK_CATEGORIES = {
@@ -1753,46 +1873,148 @@ def api_teacher_analyze_chat():
 
     data = request.json
     code = data.get('code', '').strip().upper()
-    if not code or len(code) > 10:
-        return jsonify({'success': False, 'error': 'Please enter a valid chat code'}), 400
 
-    result = get_channel_by_code(code)
-    if not result:
-        return jsonify({'success': False, 'error': 'No chat found with that code. Check the code and try again.'}), 404
+    result = analyze_chat_by_code(code)
+    if 'error' in result:
+        return jsonify({'success': False, 'error': result['error']}), 400
 
-    student_username, channel_id, channel_data = result
-    conversation = channel_data.get('messages', [])
+    result['success'] = True
+    return jsonify(result)
 
-    if not conversation:
-        return jsonify({'success': False, 'error': 'This chat has no messages yet.'}), 400
+# --- Canvas LMS Integration Routes ---
 
-    # Build transcript for analysis
-    transcript_lines = []
-    for msg in conversation:
-        role_label = 'Student' if msg['role'] == 'user' else 'AI Assistant'
-        transcript_lines.append(f"{role_label}: {msg['content']}")
-    transcript = '\n\n'.join(transcript_lines)
+@app.route('/teacher/canvas-assignments')
+@teacher_required
+def teacher_canvas_assignments():
+    username = session.get('user')
+    settings = load_canvas_settings(username)
+    has_canvas = bool(settings.get('canvas_domain') and settings.get('canvas_token'))
+    return render_template('teacher-canvas-assignments.html',
+                         username=username,
+                         has_canvas=has_canvas,
+                         canvas_domain=settings.get('canvas_domain', ''))
 
-    if len(transcript) > 15000:
-        transcript = transcript[:15000] + '\n\n[Transcript truncated]'
+@app.route('/api/canvas/save-settings', methods=['POST'])
+@login_required
+def api_canvas_save_settings():
+    if session.get('role') != 'teacher' and not session.get('is_admin'):
+        return jsonify({'success': False, 'error': 'Teacher access required'}), 403
+    data = request.json
+    domain = data.get('domain', '').strip().lower()
+    token = data.get('token', '').strip()
+    username = session.get('user')
 
-    messages = [
-        {'role': 'system', 'content': CHAT_ANALYSIS_SYSTEM_PROMPT},
-        {'role': 'user', 'content': f"## Chat Conversation: {channel_data.get('name', 'Untitled')}\n## Student: {student_username}\n## Messages: {len(conversation)}\n\n{transcript}"}
-    ]
+    if not domain or not token:
+        return jsonify({'success': False, 'error': 'Domain and API token are required'}), 400
 
-    response_text = call_openai(messages, max_tokens=1500)
-    if isinstance(response_text, dict) and 'error' in response_text:
-        return jsonify({'success': False, 'error': response_text['error']}), 500
+    # Remove protocol if included
+    domain = domain.replace('https://', '').replace('http://', '').rstrip('/')
 
-    return jsonify({
-        'success': True,
-        'analysis': response_text,
-        'student': student_username,
-        'channel_name': channel_data.get('name', 'Untitled'),
-        'message_count': len(conversation),
-        'conversation': conversation
-    })
+    # Test connection
+    test = canvas_api_get(domain, token, 'users/self')
+    if isinstance(test, dict) and 'error' in test:
+        return jsonify({'success': False, 'error': 'Could not connect to Canvas. Check your domain and token. ' + test['error']}), 400
+
+    save_canvas_settings(username, {'canvas_domain': domain, 'canvas_token': token})
+    return jsonify({'success': True, 'name': test.get('name', 'Connected')})
+
+@app.route('/api/canvas/remove-settings', methods=['POST'])
+@login_required
+def api_canvas_remove_settings():
+    if session.get('role') != 'teacher' and not session.get('is_admin'):
+        return jsonify({'success': False, 'error': 'Teacher access required'}), 403
+    username = session.get('user')
+    save_canvas_settings(username, {})
+    return jsonify({'success': True})
+
+@app.route('/api/canvas/fetch-submissions', methods=['POST'])
+@login_required
+def api_canvas_fetch_submissions():
+    if session.get('role') != 'teacher' and not session.get('is_admin'):
+        return jsonify({'success': False, 'error': 'Teacher access required'}), 403
+
+    username = session.get('user')
+    settings = load_canvas_settings(username)
+    domain = settings.get('canvas_domain')
+    token = settings.get('canvas_token')
+    if not domain or not token:
+        return jsonify({'success': False, 'error': 'Canvas not connected. Please save your Canvas settings first.'}), 400
+
+    data = request.json
+    course_id = data.get('course_id', '').strip()
+    assignment_id = data.get('assignment_id', '').strip()
+    if not course_id or not assignment_id:
+        return jsonify({'success': False, 'error': 'Course ID and Assignment ID are required'}), 400
+
+    # Fetch submissions with user info
+    submissions = canvas_api_get(domain, token,
+        f'courses/{course_id}/assignments/{assignment_id}/submissions?include[]=user&per_page=100')
+    if isinstance(submissions, dict) and 'error' in submissions:
+        return jsonify({'success': False, 'error': submissions['error']}), 400
+
+    entries = []
+    for sub in submissions:
+        student_name = 'Unknown'
+        if sub.get('user'):
+            student_name = sub['user'].get('name', sub['user'].get('short_name', 'Unknown'))
+
+        # Look for chat codes in submission body, comments, or URL
+        text_sources = []
+        if sub.get('body'):
+            text_sources.append(sub['body'])
+        if sub.get('url'):
+            text_sources.append(sub['url'])
+        if sub.get('submission_comments'):
+            for comment in sub['submission_comments']:
+                text_sources.append(comment.get('comment', ''))
+
+        combined_text = ' '.join(text_sources)
+        codes = extract_chat_codes_from_text(combined_text)
+
+        if codes:
+            for code in codes:
+                entries.append({'student_name': student_name, 'chat_code': code})
+        else:
+            entries.append({'student_name': student_name, 'chat_code': '', 'no_code': True})
+
+    return jsonify({'success': True, 'entries': entries, 'total_submissions': len(submissions)})
+
+@app.route('/api/canvas/batch-analyze', methods=['POST'])
+@login_required
+def api_canvas_batch_analyze():
+    if session.get('role') != 'teacher' and not session.get('is_admin'):
+        return jsonify({'success': False, 'error': 'Teacher access required'}), 403
+
+    data = request.json
+    entries = data.get('entries', [])
+    if len(entries) > 3:
+        return jsonify({'success': False, 'error': 'Maximum 3 codes per batch request'}), 400
+
+    results = []
+    for entry in entries:
+        code = entry.get('chat_code', '').strip().upper()
+        student_name = entry.get('student_name', 'Unknown')
+
+        if not code:
+            results.append({'student_name': student_name, 'chat_code': code, 'error': 'No chat code provided'})
+            continue
+
+        analysis = analyze_chat_by_code(code)
+        if 'error' in analysis:
+            results.append({'student_name': student_name, 'chat_code': code, 'error': analysis['error']})
+        else:
+            results.append({
+                'student_name': student_name,
+                'chat_code': code,
+                'score': analysis.get('score'),
+                'analysis': analysis.get('analysis', ''),
+                'trustai_student': analysis.get('student', ''),
+                'channel_name': analysis.get('channel_name', ''),
+                'message_count': analysis.get('message_count', 0),
+                'conversation': analysis.get('conversation', [])
+            })
+
+    return jsonify({'success': True, 'results': results})
 
 # --- Teacher Student Logs ---
 
